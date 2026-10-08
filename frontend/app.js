@@ -8,7 +8,7 @@ if (!sessionStorage.getItem('geotrust_session')) {
 document.addEventListener('DOMContentLoaded', () => {
     // Session management / Sign out
     const topLoginBtn = document.getElementById('btn-login-toggle');
-    if(topLoginBtn) {
+    if (topLoginBtn) {
         topLoginBtn.innerText = "Sign Out";
         topLoginBtn.addEventListener('click', () => {
             sessionStorage.removeItem('geotrust_session');
@@ -22,28 +22,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewDetails = document.getElementById('view-details');
     const loginBtn = document.getElementById('login-btn');
     const closeDetailsBtn = document.getElementById('close-details-btn');
-    
-    if(loginBtn) {
+
+    if (loginBtn) {
         loginBtn.addEventListener('click', () => {
-            if(viewLogin) viewLogin.classList.add('hidden');
-            if(viewDashboard) viewDashboard.classList.remove('hidden');
+            if (viewLogin) viewLogin.classList.add('hidden');
+            if (viewDashboard) viewDashboard.classList.remove('hidden');
         });
     }
 
-    if(closeDetailsBtn) {
+    if (closeDetailsBtn) {
         closeDetailsBtn.addEventListener('click', () => {
-            if(viewDetails) viewDetails.classList.add('hidden');
+            if (viewDetails) viewDetails.classList.add('hidden');
         });
     }
 
     // Live Investigation feature
     const liveInvestigateBtn = document.getElementById('liveInvestigateBtn');
-    if(liveInvestigateBtn) {
+    if (liveInvestigateBtn) {
         liveInvestigateBtn.addEventListener('click', runLiveInvestigation);
     }
-    
+
     const clearLiveSearchBtn = document.getElementById('clearLiveSearchBtn');
-    if(clearLiveSearchBtn) {
+    if (clearLiveSearchBtn) {
         clearLiveSearchBtn.addEventListener('click', () => {
             document.getElementById('liveResultBox').classList.add('hidden');
             document.getElementById('liveResultBox').style.display = 'none';
@@ -66,7 +66,7 @@ async function runLiveInvestigation() {
 
     try {
         // Step A (Geocoding)
-        let osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query)); 
+        let osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query));
         let osmData = await osmRes.json();
 
         // Fallback: If exact query fails, try searching just the last word (usually the city)
@@ -92,23 +92,23 @@ async function runLiveInvestigation() {
             latitude: parseFloat(osmData[0].lat),
             longitude: parseFloat(osmData[0].lon)
         };
-        const evalRes = await fetch('http://localhost:8080/api/evaluate-live', { 
-            method: 'POST', 
-            headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify(payload) 
-        }); 
+        const evalRes = await fetch('http://192.168.1.5.8080/api/evaluate-live', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
         const evalData = await evalRes.json();
 
         // Step C (UI Update)
         const liveResultBox = document.getElementById('liveResultBox');
-        liveResultBox.style.display = 'block'; 
-        if(liveResultBox.classList.contains('hidden')) liveResultBox.classList.remove('hidden');
-        
+        liveResultBox.style.display = 'block';
+        if (liveResultBox.classList.contains('hidden')) liveResultBox.classList.remove('hidden');
+
         document.getElementById('mainDashboardContent').classList.add('hidden');
-        
+
         document.getElementById('liveResultBusinessName').innerText = query;
         document.getElementById('liveScore').innerText = 'Score: ' + evalData.score;
-        
+
         const explanationsList = document.getElementById('liveExplanations');
         explanationsList.innerHTML = '';
         if (evalData.explanations && evalData.explanations.length > 0) {
@@ -120,9 +120,9 @@ async function runLiveInvestigation() {
         }
 
         // Step D (Leaflet Map)
-        if (mapInstance !== null) { 
-            mapInstance.remove(); 
-        } 
+        if (mapInstance !== null) {
+            mapInstance.remove();
+        }
 
         mapInstance = L.map('map-container').setView([osmData[0].lat, osmData[0].lon], 16);
 
@@ -132,7 +132,7 @@ async function runLiveInvestigation() {
             .addTo(mapInstance)
             .bindPopup(osmData[0].display_name)
             .openPopup();
-            
+
     } catch (err) {
         console.error(err);
         alert("An error occurred during the live investigation.");
