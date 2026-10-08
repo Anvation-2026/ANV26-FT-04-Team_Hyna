@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GeoTrust — Location Verification</title>
+  <title>GeoTrust — Location Verification & Risk Intelligence</title>
   <meta name="description" content="Enterprise Trading Address Verification Platform for Compliance and Risk Intelligence." />
   
   <!-- Inter font -->
@@ -11,50 +11,70 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
+  <!-- Leaflet CSS for Map Overview -->
+  <link rel="stylesheet" href="vendor/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <style>
     /* ==========================================================================
-       Enterprise FinTech / Risk Investigation System Design Tokens
-       Quiet, Precise, Data-Driven Design System
+       ENTERPRISE NEUMORPHIC DESIGN SYSTEM — GEOTRUST PLATFORM
+       Subtle, Professional, Quiet, Data-Driven FinTech Aesthetic
        ========================================================================== */
     :root {
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-      /* Official Prompt Colors */
-      --bg-page: #F7F8FA;
-      --bg-sidebar: #FFFFFF;
+      /* Primary Surfaces & Neumorphic Palettes */
+      --bg-page: #F5F7FA;
+      --bg-sidebar: #F8FAFC;
       --bg-card: #FFFFFF;
-      --bg-subtle: #F3F4F6;
-      --bg-hover: #F9FAFB;
+      --bg-subtle: #F1F4F9;
+      --bg-hover: #F8FAFC;
+      --bg-input: #FFFFFF;
 
-      --text-primary: #111827;
+      /* High-Legibility Typography */
+      --text-primary: #172033;
       --text-secondary: #667085;
-      --text-muted: #9CA3AF;
-      --border-color: #E5E7EB;
-      --border-light: #F3F4F6;
+      --text-muted: #8E9BAE;
+      
+      /* Subtle Physical Separators */
+      --border-color: #E3E7ED;
+      --border-light: #EEF2F6;
+      --border-focus: #2563EB;
 
+      /* Brand Blue */
       --primary: #2563EB;
       --primary-hover: #1D4ED8;
       --primary-subtle: #EFF6FF;
       --primary-border: #BFDBFE;
 
-      --success: #15803D;
+      /* Semantic Status Signals */
+      --success: #16A34A;
       --success-bg: #F0FDF4;
       --success-border: #BBF7D0;
 
-      --warning: #B45309;
+      --warning: #D97706;
       --warning-bg: #FFFBEB;
       --warning-border: #FDE68A;
 
-      --danger: #B91C1C;
+      --danger: #DC2626;
       --danger-bg: #FEF2F2;
       --danger-border: #FECACA;
 
-      /* Dimensions & Radii */
+      /* Restrained Neumorphic Depth Tokens */
+      --shadow-soft: 0 2px 8px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+      --shadow-hover: 0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.04);
+      --shadow-inset: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-nav-active: inset 0 1px 2px rgba(37, 99, 235, 0.1), inset 0 -1px 1px rgba(255, 255, 255, 0.8);
+      --shadow-btn-primary: 0 2px 6px rgba(37, 99, 235, 0.25);
+      --shadow-btn-primary-hover: 0 4px 10px rgba(37, 99, 235, 0.35);
+
+      /* Structural Dimensions */
       --sidebar-width: 240px;
       --topbar-height: 52px;
       --radius-sm: 4px;
       --radius-md: 6px;
+      --radius-lg: 8px;
       --content-max-width: 1440px;
     }
 
@@ -87,7 +107,7 @@
     }
 
     /* ==========================================================================
-       App Layout Shell
+       APP LAYOUT SHELL
        ========================================================================== */
     #app {
       display: flex;
@@ -95,7 +115,7 @@
       background-color: var(--bg-page);
     }
 
-    /* Left Sidebar */
+    /* Level 1 & 2: Left Sidebar (Slightly softer physical frame) */
     #sidebar {
       width: var(--sidebar-width);
       background-color: var(--bg-sidebar);
@@ -117,6 +137,7 @@
       flex-direction: column;
       justify-content: center;
       border-bottom: 1px solid var(--border-color);
+      background: var(--bg-sidebar);
     }
 
     .brand-name {
@@ -126,7 +147,13 @@
       letter-spacing: -0.01em;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+    }
+
+    .brand-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
     }
 
     .brand-subtitle {
@@ -157,7 +184,7 @@
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 9px;
       padding: 7px 10px;
       color: var(--text-secondary);
       font-size: 13px;
@@ -165,17 +192,21 @@
       border-radius: var(--radius-sm);
       text-decoration: none;
       cursor: pointer;
-      transition: background-color 0.12s ease, color 0.12s ease;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
     }
 
     .nav-item:hover {
-      background-color: var(--bg-subtle);
+      background-color: #EDF2F7;
       color: var(--text-primary);
     }
 
+    /* LEVEL 3: ACTIVE NAVIGATION (Subtle inset neumorphic effect) */
     .nav-item.active {
       background-color: var(--primary-subtle);
       color: var(--primary);
+      border-color: var(--primary-border);
+      box-shadow: var(--shadow-nav-active);
       font-weight: 600;
     }
 
@@ -184,6 +215,7 @@
       height: 15px;
       stroke-width: 1.8;
       flex-shrink: 0;
+      color: currentColor;
     }
 
     .nav-badge {
@@ -191,7 +223,7 @@
       font-size: 10.5px;
       padding: 1px 6px;
       border-radius: 10px;
-      background: var(--bg-subtle);
+      background: #E2E8F0;
       color: var(--text-secondary);
       font-weight: 600;
     }
@@ -208,7 +240,7 @@
     }
 
     .sidebar-user {
-      padding: 12px 16px;
+      padding: 12px 14px;
       border-top: 1px solid var(--border-color);
       background-color: var(--bg-sidebar);
       display: flex;
@@ -226,13 +258,14 @@
       width: 28px;
       height: 28px;
       border-radius: var(--radius-sm);
-      background-color: #E5E7EB;
+      background-color: #E2E8F0;
       color: var(--text-primary);
       font-size: 11px;
       font-weight: 600;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: var(--shadow-soft);
     }
 
     .user-name {
@@ -252,7 +285,9 @@
       padding: 0;
     }
 
-    /* Top Header */
+    /* ==========================================================================
+       TOPBAR HEADER (Elevated Workspace Boundary)
+       ========================================================================== */
     #topbar {
       position: fixed;
       top: 0;
@@ -261,6 +296,7 @@
       height: var(--topbar-height);
       background-color: #FFFFFF;
       border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -286,26 +322,35 @@
       gap: 12px;
     }
 
-    /* Demo switcher pills */
+    /* Demo switcher segmented control (Prompt 5) */
     .demo-cases-pill {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
       background: var(--bg-subtle);
       border: 1px solid var(--border-color);
-      padding: 2px 4px;
-      border-radius: var(--radius-sm);
+      padding: 2px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-inset);
+    }
+
+    .demo-pill-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin: 0 6px;
+      font-weight: 600;
     }
 
     .demo-btn {
-      padding: 2px 8px;
+      padding: 3px 9px;
       font-size: 11.5px;
       font-weight: 500;
-      border-radius: 3px;
-      border: none;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
       background: transparent;
       color: var(--text-secondary);
       cursor: pointer;
+      transition: all 0.15s ease;
     }
 
     .demo-btn:hover {
@@ -316,7 +361,8 @@
       background: #FFFFFF;
       color: var(--text-primary);
       font-weight: 600;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+      border-color: var(--border-color);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
     }
 
     .top-search-wrap {
@@ -324,7 +370,7 @@
     }
 
     .top-search-input {
-      width: 190px;
+      width: 200px;
       height: 30px;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
@@ -334,10 +380,13 @@
       color: var(--text-primary);
       outline: none;
       background: #FFFFFF;
+      box-shadow: var(--shadow-inset);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
 
     .top-search-input:focus {
       border-color: var(--primary);
+      box-shadow: inset 0 1px 2px rgba(37, 99, 235, 0.08), 0 0 0 2px rgba(37, 99, 235, 0.12);
     }
 
     .top-search-icon {
@@ -351,7 +400,7 @@
     }
 
     .icon-btn {
-      background: transparent;
+      background: #FFFFFF;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       width: 30px;
@@ -361,31 +410,34 @@
       justify-content: center;
       color: var(--text-secondary);
       cursor: pointer;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      transition: all 0.15s ease;
     }
 
     .icon-btn:hover {
       background: var(--bg-subtle);
       color: var(--text-primary);
+      border-color: #CBD5E1;
     }
 
-    /* Main Content */
+    /* Main Content Area */
     #main-content {
       margin-left: var(--sidebar-width);
       margin-top: var(--topbar-height);
       flex: 1;
-      padding: 20px 24px 48px;
+      padding: 24px 28px 48px;
       max-width: var(--content-max-width);
       width: calc(100% - var(--sidebar-width));
     }
 
     /* ==========================================================================
-       General Components & UI Tokens
+       NEUMORPHIC LEVEL 2: CARDS & CONTAINERS
        ========================================================================== */
     .page-header {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .page-title {
@@ -399,19 +451,22 @@
     .page-subtitle {
       font-size: 12.5px;
       color: var(--text-secondary);
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
+    /* Base Neumorphic Card (Soft Level 2) */
     .card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      margin-bottom: 16px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
       overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
     .card-header {
-      padding: 12px 16px;
+      padding: 12px 18px;
       border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
@@ -420,7 +475,7 @@
     }
 
     .card-title {
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 600;
       color: var(--text-primary);
     }
@@ -428,61 +483,80 @@
     .card-subtitle {
       font-size: 11.5px;
       color: var(--text-secondary);
+      margin-top: 1px;
     }
 
     .card-body {
-      padding: 16px;
+      padding: 18px;
     }
 
-    /* Buttons */
+    /* Buttons (Section 6: 5-6px radius, subtle shadow, clean hover elevation) */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      height: 30px;
-      padding: 0 12px;
+      height: 32px;
+      padding: 0 14px;
       font-size: 12px;
       font-weight: 500;
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-md);
       cursor: pointer;
       border: 1px solid transparent;
       font-family: inherit;
       text-decoration: none;
       white-space: nowrap;
-      transition: background-color 0.12s ease;
+      transition: all 0.15s ease;
     }
 
     .btn-primary {
       background-color: var(--primary);
       color: #FFFFFF;
       border-color: var(--primary);
+      box-shadow: var(--shadow-btn-primary);
     }
+
     .btn-primary:hover {
       background-color: var(--primary-hover);
+      box-shadow: var(--shadow-btn-primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
     }
 
     .btn-secondary {
       background-color: #FFFFFF;
       color: var(--text-primary);
       border-color: var(--border-color);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     }
+
     .btn-secondary:hover {
       background-color: var(--bg-subtle);
+      border-color: #CBD5E1;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(0);
     }
 
     .btn-sm {
       height: 26px;
-      padding: 0 8px;
+      padding: 0 9px;
       font-size: 11.5px;
+      border-radius: var(--radius-sm);
     }
 
-    /* Badges & Chips */
+    /* Status Badges */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      padding: 1px 6px;
+      padding: 1.5px 7px;
       border-radius: var(--radius-sm);
       font-size: 11px;
       font-weight: 500;
@@ -514,52 +588,414 @@
     }
 
     /* ==========================================================================
-       Dashboard Summary Metric Row
+       SECTION 7: KPI CARDS (Soft Raised Neumorphic Appearance)
        ========================================================================== */
     .metric-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 14px;
+      margin-bottom: 20px;
     }
 
     .metric-card {
       background: #FFFFFF;
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.18s ease;
+      user-select: none;
+    }
+
+    .metric-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-1.5px);
+      border-color: #CBD5E1;
+    }
+
+    .metric-card.active-kpi {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary), var(--shadow-hover);
+      background: #FAFCFF;
     }
 
     .metric-label {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-secondary);
-      font-weight: 500;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .metric-value-row {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-top: 6px;
+      margin-top: 10px;
     }
 
     .metric-value {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: 700;
       color: var(--text-primary);
       line-height: 1;
     }
 
     .metric-trend {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       SECTIONS 8 & 9: ANALYTICS ROW (Distribution & Activity)
+       ========================================================================== */
+    .analytics-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Section 8: Assessment Distribution Horizontal Bar Chart */
+    .dist-bars-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 4px;
+    }
+
+    .dist-bar-item {
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: var(--radius-md);
+      transition: background-color 0.15s ease;
+    }
+
+    .dist-bar-item:hover {
+      background-color: var(--bg-subtle);
+    }
+
+    .dist-bar-item.active {
+      background-color: #EFF6FF;
+      outline: 1px solid var(--primary-border);
+    }
+
+    .dist-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .dist-label-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dist-indicator-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dist-bar-track {
+      width: 100%;
+      height: 8px;
+      background: #E2E8F0;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+
+    .dist-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* Section 9: Assessment Activity 7-Day Line Chart */
+    .activity-chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .activity-svg {
+      width: 100%;
+      height: 110px;
+      overflow: visible;
+    }
+
+    .activity-axis-labels {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 6px;
+      border-top: 1px solid var(--border-color);
       font-size: 11px;
       color: var(--text-secondary);
     }
 
+    .chart-tooltip {
+      position: absolute;
+      background: #172033;
+      color: #FFFFFF;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      white-space: nowrap;
+      z-index: 50;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      display: none;
+    }
+
     /* ==========================================================================
-       Tables (Primary Information Structure)
+       SECTIONS 10, 11, 12, 13, 14, 15: GEOSPATIAL INTELLIGENCE ROW
+       Location Overview (Map) & Requires Attention Panel
+       ========================================================================== */
+    .geo-attention-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    /* Location Overview Container */
+    .map-container-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .map-controls-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: #FAFAFC;
+      border-bottom: 1px solid var(--border-color);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .map-filter-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      padding: 2px;
+      border-radius: var(--radius-sm);
+    }
+
+    .map-filter-btn {
+      padding: 2px 8px;
+      font-size: 11.5px;
+      border-radius: 3px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .map-filter-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .map-filter-btn.active {
+      background: #FFFFFF;
+      color: var(--text-primary);
+      font-weight: 600;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+    }
+
+    .map-action-btns {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #geo-leaflet-map {
+      height: 340px;
+      width: 100%;
+      background: #F1F4F8;
+      border-bottom: 1px solid var(--border-color);
+      z-index: 10;
+    }
+
+    /* Clean Muted Leaflet Presentation */
+    .leaflet-container {
+      font-family: var(--font-family) !important;
+    }
+
+    .leaflet-tile {
+      filter: saturate(0.85) contrast(1.02);
+    }
+
+    /* Custom Color-coded Neumorphic Leaflet Markers */
+    .custom-geo-marker {
+      background: transparent;
+      border: none;
+    }
+
+    .marker-pin-wrap {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .marker-pulse {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      opacity: 0.35;
+    }
+
+    .marker-core {
+      position: relative;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2.5px solid #FFFFFF;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.35);
+      transition: transform 0.15s ease;
+    }
+
+    .marker-pin-wrap:hover .marker-core {
+      transform: scale(1.25);
+    }
+
+    /* Marker Popup Custom Styling */
+    .leaflet-popup-content-wrapper {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-hover);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .leaflet-popup-content {
+      margin: 12px 14px;
+      line-height: 1.4;
+      font-size: 12px;
+      min-width: 210px;
+    }
+
+    .popup-biz-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .popup-biz-addr {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .popup-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-top: 1px solid var(--border-light);
+      margin-bottom: 8px;
+    }
+
+    /* Section 14: Location Summary Bar (Compact Statistics) */
+    .map-summary-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 10px 16px;
+      background: #FFFFFF;
+      font-size: 12px;
+    }
+
+    .summary-stat-item {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .summary-stat-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .summary-stat-val {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Section 15: Requires Attention Side Panel */
+    .attention-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .attention-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: #FFFFFF;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .attention-row:hover {
+      box-shadow: var(--shadow-soft);
+      transform: translateY(-1px);
+      border-color: #CBD5E1;
+      background-color: #FCFDFE;
+    }
+
+    .attention-biz-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .attention-reason {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .attention-arrow {
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+
+    /* ==========================================================================
+       SECTIONS 16, 17, 18: RECENT INVESTIGATIONS TABLE (Flat Level 1)
+       Professional Enterprise Layout — Keeps flat, no raised card rows
        ========================================================================== */
     .table-container {
       width: 100%;
@@ -575,8 +1011,8 @@
     }
 
     table.data-table th {
-      background-color: #FAFAFA;
-      padding: 8px 12px;
+      background-color: #F8FAFC;
+      padding: 10px 14px;
       font-weight: 600;
       color: var(--text-secondary);
       border-bottom: 1px solid var(--border-color);
@@ -585,29 +1021,51 @@
     }
 
     table.data-table td {
-      padding: 10px 12px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border-color);
       color: var(--text-primary);
       vertical-align: middle;
+      transition: background-color 0.12s ease;
     }
 
-    table.data-table tr:hover td {
-      background-color: var(--bg-hover);
-    }
-
-    .clickable-row {
+    table.data-table tr.clickable-row {
       cursor: pointer;
     }
 
+    table.data-table tr.clickable-row:hover td {
+      background-color: var(--bg-hover);
+    }
+
+    .table-empty-notice {
+      padding: 24px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 12.5px;
+    }
+
+    /* Section 29: Data Disclaimer Note */
+    .data-disclaimer-note {
+      margin-top: 20px;
+      padding: 10px 14px;
+      background: #F8FAFC;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      text-align: center;
+    }
+
     /* ==========================================================================
-       Investigation Detail View Components
+       INVESTIGATION DETAIL VIEW (Sections 21, 22, 23)
        ========================================================================== */
     .case-header-bar {
       background: #FFFFFF;
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 14px 18px;
-      margin-bottom: 16px;
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-soft);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -633,7 +1091,6 @@
       color: var(--text-secondary);
     }
 
-    /* Business Info 2-Column Section */
     .info-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -661,7 +1118,7 @@
       font-weight: 500;
     }
 
-    /* Horizontal Assessment Panel */
+    /* Section 22: Analyst Score Presentation */
     .assessment-panel {
       display: grid;
       grid-template-columns: 2fr 1fr;
@@ -691,33 +1148,28 @@
     .assessment-status-label {
       font-size: 14px;
       font-weight: 600;
-      color: var(--success);
-    }
-
-    .assessment-risk-badge {
-      font-size: 11.5px;
-      font-weight: 600;
     }
 
     .assessment-bar-wrap {
       width: 100%;
       height: 8px;
       background-color: var(--border-color);
-      border-radius: 2px;
+      border-radius: 4px;
       overflow: hidden;
       margin: 4px 0;
+      box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
     }
 
     .assessment-bar-fill {
       height: 100%;
-      background-color: var(--success);
-      width: 87%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
     }
 
     .assessment-explain-text {
       font-size: 12.5px;
       color: var(--text-secondary);
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
     .assessment-right-box {
@@ -743,26 +1195,19 @@
       color: var(--text-primary);
     }
 
-    /* Schematic Map & Location Panel */
+    /* Detail View Map and Location Overview */
     .location-panel-grid {
       display: grid;
       grid-template-columns: 1.7fr 1fr;
       gap: 16px;
     }
 
-    .schematic-map-container {
-      background: #FAFAFB;
+    #detail-map-box {
+      height: 260px;
+      background: #F1F4F8;
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      height: 250px;
-      position: relative;
+      border-radius: var(--radius-md);
       overflow: hidden;
-    }
-
-    .schematic-svg {
-      width: 100%;
-      height: 100%;
-      display: block;
     }
 
     /* Contradictions Rows */
@@ -774,6 +1219,7 @@
       border-bottom: 1px solid var(--border-light);
       font-size: 12.5px;
     }
+
     .contradiction-row:last-child {
       border-bottom: none;
     }
@@ -783,17 +1229,18 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .compare-col {
       background: #FFFFFF;
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
+      border-radius: var(--radius-lg);
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      box-shadow: var(--shadow-soft);
     }
 
     .compare-case-num {
@@ -816,282 +1263,74 @@
       margin: 4px 0;
     }
 
-    /* New Investigation Workflow Steps */
-    .workflow-steps-indicator {
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      background: #FAFAFA;
-      padding: 8px 16px;
-      gap: 20px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-
-    .workflow-step {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-    }
-
-    .workflow-step.active {
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 11.5px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 4px;
-    }
-
-    .form-input, .form-select {
-      width: 100%;
-      height: 32px;
-      padding: 0 10px;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 12.5px;
-      color: var(--text-primary);
-      background: #FFFFFF;
-      outline: none;
-    }
-
-    .form-input:focus, .form-select:focus {
-      border-color: var(--primary);
-    }
-
-    /* Modal */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(17, 24, 39, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 16px;
-    }
-
-    .modal-window {
-      background: #FFFFFF;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      width: 100%;
-      max-width: 580px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Login Screen Modal/State */
-    .login-container {
-      max-width: 360px;
-      margin: 80px auto;
-      background: #FFFFFF;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 24px;
-    }
-
-    /* Toast */
-    .toast-box {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #111827;
-      color: #FFFFFF;
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 500;
-      z-index: 2000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      animation: fadeInToast 0.15s ease;
-    }
-
-    @keyframes fadeInToast {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ==========================================================================
-       Audit Reports Page — Production Grade Compliance Dashboard
-       ========================================================================== */
-
-    /* Toolbar / Filter Bar */
+    /* Reports View */
     .reports-toolbar {
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       margin-bottom: 16px;
+      gap: 12px;
       flex-wrap: wrap;
-    }
-
-    .reports-toolbar-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .filter-search-wrap {
-      position: relative;
-    }
-
-    .filter-search-input {
-      height: 30px;
-      width: 220px;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 0 8px 0 26px;
-      font-size: 12px;
-      font-family: inherit;
-      color: var(--text-primary);
-      outline: none;
-      background: #FFFFFF;
-    }
-
-    .filter-search-input:focus {
-      border-color: var(--primary);
-    }
-
-    .filter-search-icon {
-      position: absolute;
-      left: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 12px;
-      height: 12px;
-      color: var(--text-muted);
     }
 
     .filter-chip-group {
       display: flex;
-      align-items: center;
       gap: 4px;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      padding: 2px 4px;
     }
 
     .filter-chip {
-      padding: 2px 8px;
-      font-size: 11.5px;
-      font-weight: 500;
-      border-radius: 3px;
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: #FFFFFF;
+      font-size: 12px;
       cursor: pointer;
-      transition: background 0.1s ease, color 0.1s ease;
+      color: var(--text-secondary);
+      transition: all 0.15s ease;
     }
 
     .filter-chip:hover {
+      background: var(--bg-subtle);
       color: var(--text-primary);
     }
 
     .filter-chip.active {
-      background: #FFFFFF;
-      color: var(--text-primary);
+      background: var(--primary-subtle);
+      color: var(--primary);
+      border-color: var(--primary-border);
       font-weight: 600;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.06);
     }
 
-    /* Summary KPIs for Reports */
-    .reports-kpi-row {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 1px;
-      background: var(--border-color);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    .rpt-kpi {
-      background: #FFFFFF;
-      padding: 12px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .rpt-kpi-label {
-      font-size: 11px;
-      color: var(--text-secondary);
-      font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .rpt-kpi-value {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.1;
-    }
-
-    .rpt-kpi-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    /* Score band legend */
-    .score-band-legend {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 11.5px;
-      color: var(--text-secondary);
-    }
-
-    .band-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 3px;
-    }
-
-    /* Report Card Grid */
     .report-cards-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
     .report-card {
       background: #FFFFFF;
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 16px;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      cursor: pointer;
-      transition: box-shadow 0.15s ease;
+      gap: 10px;
+      transition: all 0.18s ease;
     }
 
     .report-card:hover {
-      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-1.5px);
+      border-color: #CBD5E1;
     }
 
     .report-card-top {
-      padding: 12px 14px 10px;
-      border-bottom: 1px solid var(--border-color);
       display: flex;
-      align-items: flex-start;
       justify-content: space-between;
+      align-items: flex-start;
       gap: 8px;
     }
 
@@ -1099,20 +1338,16 @@
       font-size: 13.5px;
       font-weight: 700;
       color: var(--text-primary);
-      line-height: 1.25;
     }
 
     .report-card-addr {
       font-size: 11.5px;
       color: var(--text-secondary);
-      margin-top: 1px;
+      margin-top: 2px;
     }
 
     .report-card-score-block {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      flex-shrink: 0;
+      text-align: right;
     }
 
     .report-card-score {
@@ -1122,176 +1357,118 @@
     }
 
     .report-card-score-label {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      text-align: right;
+      font-size: 10px;
+      color: var(--text-secondary);
     }
 
     .report-card-scorebar {
-      height: 3px;
-      background: var(--border-color);
-      position: relative;
+      width: 100%;
+      height: 4px;
+      background: #E2E8F0;
+      border-radius: 2px;
+      overflow: hidden;
     }
 
     .report-card-scorebar-fill {
       height: 100%;
-      position: absolute;
-      left: 0;
-      top: 0;
+      border-radius: 2px;
     }
 
     .report-card-body {
-      padding: 10px 14px 12px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      flex: 1;
+      gap: 4px;
+      font-size: 11.5px;
     }
 
     .report-card-meta-row {
       display: flex;
       justify-content: space-between;
-      font-size: 11.5px;
       color: var(--text-secondary);
     }
 
     .report-card-meta-row span:last-child {
-      font-weight: 500;
       color: var(--text-primary);
-    }
-
-    .report-card-signals {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-      margin-top: 2px;
+      font-weight: 500;
     }
 
     .report-card-footer {
-      padding: 8px 14px;
-      border-top: 1px solid var(--border-color);
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      background: #FAFAFA;
+      align-items: center;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-light);
+      font-size: 11px;
     }
 
     .report-card-id {
       font-family: var(--font-mono);
-      font-size: 11px;
       color: var(--text-muted);
     }
 
-    /* Audit Timeline */
-    .audit-timeline {
+    /* Modal Windows */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 1000;
       display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .audit-timeline-entry {
-      display: flex;
-      gap: 16px;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border-light);
-      font-size: 12.5px;
-    }
-
-    .audit-timeline-entry:last-child {
-      border-bottom: none;
-    }
-
-    .audit-tl-indicator {
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      padding-top: 2px;
-      flex-shrink: 0;
-      width: 20px;
+      justify-content: center;
+      padding: 20px;
     }
 
-    .audit-tl-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
+    .modal-window {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+      width: 100%;
+      max-width: 540px;
+      overflow: hidden;
     }
 
-    .audit-tl-line {
-      width: 1px;
-      flex: 1;
-      background: var(--border-color);
-      margin-top: 4px;
-    }
-
-    .audit-tl-content {
-      flex: 1;
-    }
-
-    .audit-tl-action {
-      font-weight: 600;
-      color: var(--text-primary);
-      line-height: 1.3;
-    }
-
-    .audit-tl-detail {
-      font-size: 11.5px;
-      color: var(--text-secondary);
-      margin-top: 1px;
-    }
-
-    .audit-tl-time {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      flex-shrink: 0;
-      padding-top: 2px;
-      min-width: 120px;
-      text-align: right;
-    }
-
-    /* Report Detail Modal */
     .rpt-modal-window {
       background: #FFFFFF;
       border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
       width: 100%;
-      max-width: 720px;
+      max-width: 760px;
       max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.12);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     .rpt-modal-header {
-      padding: 14px 18px;
+      padding: 16px 20px;
       border-bottom: 1px solid var(--border-color);
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      background: #FFFFFF;
-      z-index: 10;
+      background: #FAFAFC;
     }
 
     .rpt-modal-body {
-      padding: 18px;
-    }
-
-    .rpt-section {
-      margin-bottom: 18px;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .rpt-section-title {
-      font-size: 11.5px;
-      font-weight: 700;
-      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.04em;
       margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border-color);
     }
 
     .rpt-info-grid {
@@ -1307,85 +1484,162 @@
     }
 
     .rpt-info-label {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      font-size: 11px;
+      color: var(--text-secondary);
     }
 
     .rpt-info-val {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 600;
       color: var(--text-primary);
     }
 
-    /* Score Band Visualization */
-    .score-band-bar {
-      position: relative;
-      height: 18px;
-      border-radius: 3px;
-      overflow: hidden;
-      display: flex;
-    }
-
-    .score-band-seg {
-      height: 100%;
+    /* Workflow Modal Steps */
+    .workflow-steps-indicator {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 9px;
+      border-bottom: 1px solid var(--border-color);
+      background: #FAFAFC;
+      padding: 10px 18px;
+      gap: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .workflow-step {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .workflow-step.active {
+      color: var(--primary);
       font-weight: 600;
-      color: rgba(255,255,255,0.85);
-      letter-spacing: 0.03em;
     }
 
-    .score-band-marker {
-      position: absolute;
-      top: 0;
-      height: 100%;
-      width: 2px;
-      background: #111827;
-      border-radius: 1px;
-      transform: translateX(-50%);
-      box-shadow: 0 0 0 1px #FFF;
+    .form-group {
+      margin-bottom: 14px;
     }
 
-    .close-icon-btn {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      padding: 2px;
+    .form-label {
+      display: block;
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
-    }
-
-    .close-icon-btn:hover {
+      font-size: 12px;
+      font-family: inherit;
       color: var(--text-primary);
-      background: var(--bg-subtle);
+      background: #FFFFFF;
+      box-shadow: var(--shadow-inset);
+      outline: none;
     }
 
-    /* Print-ready report */
-    @media print {
-      #sidebar, #topbar, .reports-toolbar, .reports-kpi-row, .filter-chip-group,
-      .report-card-footer .btn, .btn-print-report { display: none !important; }
-      .rpt-modal-window { box-shadow: none; border: none; }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
     }
 
-    /* Responsive */
+    /* Login Modal Container */
+    .login-container {
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+      width: 100%;
+      max-width: 360px;
+      padding: 24px;
+    }
+
+    /* Toast Container */
+    .toast-box {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #172033;
+      color: #FFFFFF;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Audit Timeline */
+    .audit-timeline-entry {
+      display: flex;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
+    .audit-tl-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 14px;
+    }
+
+    .audit-tl-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-top: 4px;
+    }
+
+    .audit-tl-line {
+      width: 1px;
+      background: var(--border-color);
+      flex: 1;
+      margin-top: 4px;
+    }
+
+    .audit-tl-content {
+      flex: 1;
+      font-size: 12px;
+    }
+
+    .audit-tl-action {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .audit-tl-detail {
+      color: var(--text-secondary);
+      font-size: 11.5px;
+      margin-top: 2px;
+    }
+
+    .audit-tl-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Responsive Adaptations */
     @media (max-width: 1200px) {
       .report-cards-grid {
         grid-template-columns: repeat(2, 1fr);
-      }
-      .reports-kpi-row {
-        grid-template-columns: repeat(3, 1fr);
       }
     }
 
     @media (max-width: 1024px) {
       .metric-grid {
         grid-template-columns: repeat(2, 1fr);
+      }
+      .analytics-row, .geo-attention-row {
+        grid-template-columns: 1fr;
       }
       .compare-grid {
         grid-template-columns: 1fr;
@@ -1402,22 +1656,29 @@
       .report-cards-grid {
         grid-template-columns: 1fr;
       }
-      .reports-kpi-row {
-        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media print {
+      #sidebar, #topbar, .reports-toolbar, .map-controls-strip, .btn {
+        display: none !important;
       }
-      .rpt-info-grid {
-        grid-template-columns: repeat(2, 1fr);
+      #main-content {
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
       }
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <!-- Left Sidebar (240px) -->
+    <!-- ==========================================================================
+         LEFT SIDEBAR (Section 4: Enterprise Neumorphic Sidebar)
+         ========================================================================== -->
     <aside id="sidebar" role="navigation" aria-label="Main Navigation">
       <div class="sidebar-brand">
         <div class="brand-name">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
           GeoTrust
         </div>
         <div class="brand-subtitle">Location Verification</div>
@@ -1467,7 +1728,7 @@
         </a>
       </nav>
 
-      <!-- Bottom User Profile with Role Switcher -->
+      <!-- Bottom User Profile -->
       <div class="sidebar-user">
         <div class="user-info">
           <div class="user-avatar" id="sidebar-avatar">VL</div>
@@ -1485,22 +1746,24 @@
       </div>
     </aside>
 
-    <!-- Top Header Bar -->
+    <!-- ==========================================================================
+         HEADER / TOPBAR (Section 5: Compact Elevated Workspace Header)
+         ========================================================================== -->
     <header id="topbar" role="banner">
       <div class="topbar-left">
         <span class="topbar-title" id="breadcrumb-title">Dashboard</span>
       </div>
 
       <div class="topbar-right">
-        <!-- Demo Cases Switcher -->
-        <div class="demo-cases-pill" title="Switch between 3 primary test cases">
-          <span style="font-size:11px; color:var(--text-secondary); margin:0 4px; font-weight:600;">Demo:</span>
-          <button class="demo-btn active" data-case="apex">Apex (87)</button>
-          <button class="demo-btn" data-case="nova">Nova (28)</button>
-          <button class="demo-btn" data-case="vertex">Vertex (58)</button>
+        <!-- Demo Cases Switcher Segmented Control (Section 5) -->
+        <div class="demo-cases-pill" title="Switch between three primary test scenarios">
+          <span class="demo-pill-label">Demo:</span>
+          <button class="demo-btn active" data-case="apex">Apex 87</button>
+          <button class="demo-btn" data-case="nova">Nova 28</button>
+          <button class="demo-btn" data-case="vertex">Vertex 58</button>
         </div>
 
-        <!-- Quick Search -->
+        <!-- Quick Search with Soft Inset Shadow (Section 19) -->
         <div class="top-search-wrap">
           <svg class="top-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
           <input type="text" id="global-search" class="top-search-input" placeholder="Search business or ref..." />
@@ -1516,10 +1779,14 @@
       </div>
     </header>
 
-    <!-- Main Workspace Container -->
+    <!-- ==========================================================================
+         MAIN WORKSPACE CONTAINER
+         ========================================================================== -->
     <main id="main-content" role="main">
+
       <!-- VIEW 1: DASHBOARD -->
       <section id="view-dashboard-section" class="view-panel">
+        <!-- Page Header (Section 6) -->
         <div class="page-header">
           <div>
             <h1 class="page-title">Investigation Dashboard</h1>
@@ -1530,47 +1797,273 @@
           </button>
         </div>
 
-        <!-- Metric Summary Row (4 Compact Cards) -->
+        <!-- Section 7: KPI Overview Cards (Soft Neumorphic Depth) -->
         <div class="metric-grid">
-          <div class="metric-card">
+          <div class="metric-card" id="kpi-card-all" data-kpi="all" title="Click to view all cases">
             <span class="metric-label">Active Cases</span>
             <div class="metric-value-row">
               <span class="metric-value tabular">24</span>
               <span class="metric-trend">+4 this week</span>
             </div>
           </div>
-          <div class="metric-card">
+          <div class="metric-card" id="kpi-card-risk" data-kpi="Suspicious" title="Click to filter high risk cases">
             <span class="metric-label">High Risk</span>
             <div class="metric-value-row">
               <span class="metric-value tabular" style="color:var(--danger);">06</span>
               <span class="metric-trend">Requires review</span>
             </div>
           </div>
-          <div class="metric-card">
+          <div class="metric-card" id="kpi-card-ambiguous" data-kpi="Ambiguous" title="Click to filter ambiguous cases">
             <span class="metric-label">Ambiguous</span>
             <div class="metric-value-row">
               <span class="metric-value tabular" style="color:var(--warning);">08</span>
               <span class="metric-trend">Shared / Mixed</span>
             </div>
           </div>
-          <div class="metric-card">
+          <div class="metric-card" id="kpi-card-confident" data-kpi="Credible" title="Click to filter credible high confidence cases">
             <span class="metric-label">High Confidence</span>
             <div class="metric-value-row">
               <span class="metric-value tabular" style="color:var(--success);">10</span>
-              <span class="metric-trend">Validated</span>
+              <span class="metric-trend">Strong evidence</span>
             </div>
           </div>
         </div>
 
-        <!-- Recent Investigations Table -->
-        <div class="card">
+        <!-- Sections 8 & 9: Analytics Row (Assessment Distribution & Activity) -->
+        <div class="analytics-row">
+          <!-- Left Panel: Assessment Distribution (Section 8) -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <span class="card-title">Assessment Distribution</span>
+                <div class="card-subtitle">Triangulated business credibility categories</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" id="btn-dist-view-all" style="font-size:11px; height:22px;">
+                View all
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="dist-bars-container">
+                <!-- Credible Bar -->
+                <div class="dist-bar-item" data-filter-class="Credible" title="Click to filter investigations to Credible">
+                  <div class="dist-label-row">
+                    <span class="dist-label-title" style="color:var(--success);">
+                      <span class="dist-indicator-dot" style="background:var(--success);"></span>
+                      Credible
+                    </span>
+                    <span class="tabular"><strong>10</strong> <span style="color:var(--text-secondary);">(42%)</span></span>
+                  </div>
+                  <div class="dist-bar-track">
+                    <div class="dist-bar-fill" style="width:42%; background:var(--success);"></div>
+                  </div>
+                </div>
+
+                <!-- Ambiguous Bar -->
+                <div class="dist-bar-item" data-filter-class="Ambiguous" title="Click to filter investigations to Ambiguous">
+                  <div class="dist-label-row">
+                    <span class="dist-label-title" style="color:var(--warning);">
+                      <span class="dist-indicator-dot" style="background:var(--warning);"></span>
+                      Ambiguous
+                    </span>
+                    <span class="tabular"><strong>8</strong> <span style="color:var(--text-secondary);">(33%)</span></span>
+                  </div>
+                  <div class="dist-bar-track">
+                    <div class="dist-bar-fill" style="width:33%; background:var(--warning);"></div>
+                  </div>
+                </div>
+
+                <!-- Suspicious Bar -->
+                <div class="dist-bar-item" data-filter-class="Suspicious" title="Click to filter investigations to Suspicious">
+                  <div class="dist-label-row">
+                    <span class="dist-label-title" style="color:var(--danger);">
+                      <span class="dist-indicator-dot" style="background:var(--danger);"></span>
+                      Suspicious
+                    </span>
+                    <span class="tabular"><strong>6</strong> <span style="color:var(--text-secondary);">(25%)</span></span>
+                  </div>
+                  <div class="dist-bar-track">
+                    <div class="dist-bar-fill" style="width:25%; background:var(--danger);"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel: Assessment Activity (Section 9) -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <span class="card-title">Assessment Activity</span>
+                <div class="card-subtitle">7-day volume: Cases assessed (Demo / Operational log)</div>
+              </div>
+              <span class="badge badge-neutral" style="font-size:10.5px;">Past 7 Days</span>
+            </div>
+            <div class="card-body">
+              <div class="activity-chart-wrap" id="activity-chart-container">
+                <!-- SVG Line Chart (Cases Assessed) -->
+                <svg class="activity-svg" viewBox="0 0 460 110" id="activity-svg">
+                  <!-- Grid Lines -->
+                  <line x1="20" y1="20" x2="440" y2="20" stroke="#E3E7ED" stroke-width="1" stroke-dasharray="3 3" />
+                  <line x1="20" y1="55" x2="440" y2="55" stroke="#E3E7ED" stroke-width="1" stroke-dasharray="3 3" />
+                  <line x1="20" y1="90" x2="440" y2="90" stroke="#E3E7ED" stroke-width="1" stroke-dasharray="3 3" />
+                  
+                  <!-- Thin Clean Trend Line (No Glowing Line, No Gradients) -->
+                  <polyline
+                    fill="none"
+                    stroke="#2563EB"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    points="30,70  95,40  160,60  225,30  290,50  355,20  420,40"
+                  />
+                  <!-- Data Circles -->
+                  <circle cx="30" cy="70" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Monday" data-count="4" />
+                  <circle cx="95" cy="40" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Tuesday" data-count="7" />
+                  <circle cx="160" cy="60" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Wednesday" data-count="5" />
+                  <circle cx="225" cy="30" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Thursday" data-count="8" />
+                  <circle cx="290" cy="50" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Friday" data-count="6" />
+                  <circle cx="355" cy="20" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Saturday" data-count="9" />
+                  <circle cx="420" cy="40" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Sunday" data-count="7" />
+                </svg>
+
+                <div class="activity-axis-labels">
+                  <span>Mon (4)</span>
+                  <span>Tue (7)</span>
+                  <span>Wed (5)</span>
+                  <span>Thu (8)</span>
+                  <span>Fri (6)</span>
+                  <span>Sat (9)</span>
+                  <span>Sun (7)</span>
+                </div>
+
+                <div id="chart-tooltip" class="chart-tooltip"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sections 10, 11, 12, 13, 14, 15: Geospatial Overview & Requires Attention -->
+        <div class="geo-attention-row">
+          <!-- Main Map Card (Sections 10, 11, 12, 13, 14) -->
+          <div class="card map-container-card">
+            <div class="card-header">
+              <div>
+                <span class="card-title">Location Overview</span>
+                <div class="card-subtitle">Geographic distribution of monitored commercial entities (India Corridors)</div>
+              </div>
+              <div class="map-action-btns">
+                <button class="btn btn-secondary btn-sm" id="btn-map-fit-all" title="Fit all markers in view">
+                  Fit all
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-map-reset-view" title="Reset map center">
+                  Reset view
+                </button>
+              </div>
+            </div>
+
+            <!-- Compact Map Filter Strip (Section 13) -->
+            <div class="map-controls-strip">
+              <div style="font-size:11.5px; color:var(--text-secondary); font-weight:600;">Filter Classification:</div>
+              <div class="map-filter-group" id="map-filter-controls">
+                <button class="map-filter-btn active" data-map-filter="All">All</button>
+                <button class="map-filter-btn" data-map-filter="Credible">Credible</button>
+                <button class="map-filter-btn" data-map-filter="Ambiguous">Ambiguous</button>
+                <button class="map-filter-btn" data-map-filter="Suspicious">Suspicious</button>
+              </div>
+              <div style="font-size:11px; color:var(--text-secondary); margin-left:auto;">
+                6 Business Coordinates Loaded
+              </div>
+            </div>
+
+            <!-- Leaflet Map Container -->
+            <div id="geo-leaflet-map" aria-label="Interactive Map of India Business Locations"></div>
+
+            <!-- Compact Location Summary Bar (Section 14) -->
+            <div class="map-summary-bar">
+              <div class="summary-stat-item">
+                <span class="summary-stat-label">Locations monitored:</span>
+                <span class="summary-stat-val tabular" id="sum-monitored">6</span>
+              </div>
+              <div class="summary-stat-item">
+                <span class="summary-stat-label" style="color:var(--success);">Credible:</span>
+                <span class="summary-stat-val tabular" id="sum-credible" style="color:var(--success);">2</span>
+              </div>
+              <div class="summary-stat-item">
+                <span class="summary-stat-label" style="color:var(--warning);">Ambiguous:</span>
+                <span class="summary-stat-val tabular" id="sum-ambiguous" style="color:var(--warning);">2</span>
+              </div>
+              <div class="summary-stat-item">
+                <span class="summary-stat-label" style="color:var(--danger);">Suspicious:</span>
+                <span class="summary-stat-val tabular" id="sum-suspicious" style="color:var(--danger);">2</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 15: Requires Attention Side Panel -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <span class="card-title">Requires Attention</span>
+                <div class="card-subtitle">Urgent location anomalies & discrepancy flags</div>
+              </div>
+              <span class="badge badge-danger" style="font-size:10.5px;">3 Anomalies</span>
+            </div>
+            <div class="card-body">
+              <div class="attention-list">
+                <!-- Nova Trading Network -->
+                <div class="attention-row" data-case="nova" title="Click to inspect Nova Trading Network">
+                  <div>
+                    <div class="attention-biz-name">Nova Trading Network</div>
+                    <div class="attention-reason">Location activity mismatch</div>
+                  </div>
+                  <div style="display:flex; align-items:center;">
+                    <span class="badge badge-danger">High Risk</span>
+                    <span class="attention-arrow">&rarr;</span>
+                  </div>
+                </div>
+
+                <!-- Global Marine Impex -->
+                <div class="attention-row" data-case="global_marine" title="Click to inspect Global Marine Impex">
+                  <div>
+                    <div class="attention-biz-name">Global Marine Impex</div>
+                    <div class="attention-reason">Weak location evidence</div>
+                  </div>
+                  <div style="display:flex; align-items:center;">
+                    <span class="badge badge-danger">High Risk</span>
+                    <span class="attention-arrow">&rarr;</span>
+                  </div>
+                </div>
+
+                <!-- Vertex Solutions -->
+                <div class="attention-row" data-case="vertex" title="Click to inspect Vertex Solutions">
+                  <div>
+                    <div class="attention-biz-name">Vertex Solutions</div>
+                    <div class="attention-reason">Shared location</div>
+                  </div>
+                  <div style="display:flex; align-items:center;">
+                    <span class="badge badge-warning">Medium Risk</span>
+                    <span class="attention-arrow">&rarr;</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sections 16, 17, 18: Recent Investigations Flat Enterprise Table -->
+        <div class="card" id="investigations-card-container">
           <div class="card-header">
             <div>
               <div class="card-title">Recent Investigations</div>
-              <div class="card-subtitle">Showing active business location credibility assessments</div>
+              <div class="card-subtitle">Active business location credibility assessments</div>
             </div>
-            <div style="font-size:12px; color:var(--text-secondary);">
-              Filter: <span style="font-weight:600; color:var(--text-primary);">All Cases (24)</span>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="active-table-filter-badge" style="font-size:12px; color:var(--text-secondary);">
+                Filter: <strong style="color:var(--text-primary);" id="active-table-filter-text">All Cases (24)</strong>
+              </span>
+              <button class="btn btn-secondary btn-sm" id="btn-clear-table-filter" style="display:none; height:22px; font-size:11px;">
+                Clear filter
+              </button>
             </div>
           </div>
 
@@ -1582,68 +2075,25 @@
                   <th>Claimed Location</th>
                   <th style="text-align:right;">Evidence Score</th>
                   <th>Classification</th>
-                  <th>Status</th>
+                  <th>Risk</th>
                   <th>Updated</th>
                 </tr>
               </thead>
               <tbody id="investigations-tbody">
-                <tr class="clickable-row" data-case="apex">
-                  <td><strong>Apex Industrial Supplies</strong></td>
-                  <td>24 Industrial Estate Road, Bengaluru</td>
-                  <td style="text-align:right;" class="tabular"><strong>87</strong></td>
-                  <td><span class="badge badge-success">Credible</span></td>
-                  <td><span class="badge badge-neutral">Reviewed</span></td>
-                  <td style="color:var(--text-secondary);">10 min ago</td>
-                </tr>
-                <tr class="clickable-row" data-case="nova">
-                  <td><strong>Nova Trading Network</strong></td>
-                  <td>14 North Harbour Road, Chennai</td>
-                  <td style="text-align:right;" class="tabular"><strong>28</strong></td>
-                  <td><span class="badge badge-danger">Suspicious</span></td>
-                  <td><span class="badge badge-warning">Under Review</span></td>
-                  <td style="color:var(--text-secondary);">24 min ago</td>
-                </tr>
-                <tr class="clickable-row" data-case="vertex">
-                  <td><strong>Vertex Solutions</strong></td>
-                  <td>Cyber Heights 4th Floor, Hyderabad</td>
-                  <td style="text-align:right;" class="tabular"><strong>58</strong></td>
-                  <td><span class="badge badge-warning">Ambiguous</span></td>
-                  <td><span class="badge badge-neutral">Reviewed</span></td>
-                  <td style="color:var(--text-secondary);">1 hr ago</td>
-                </tr>
-                <tr class="clickable-row" data-case="apex">
-                  <td><strong>Precision Die & Castings</strong></td>
-                  <td>Plot 22 Peenya 1st Stage, Bengaluru</td>
-                  <td style="text-align:right;" class="tabular"><strong>84</strong></td>
-                  <td><span class="badge badge-success">Credible</span></td>
-                  <td><span class="badge badge-neutral">Reviewed</span></td>
-                  <td style="color:var(--text-secondary);">3 hrs ago</td>
-                </tr>
-                <tr class="clickable-row" data-case="nova">
-                  <td><strong>Global Marine Impex</strong></td>
-                  <td>Customs Gate 3 Byway, Chennai</td>
-                  <td style="text-align:right;" class="tabular"><strong>22</strong></td>
-                  <td><span class="badge badge-danger">Suspicious</span></td>
-                  <td><span class="badge badge-warning">Under Review</span></td>
-                  <td style="color:var(--text-secondary);">5 hrs ago</td>
-                </tr>
-                <tr class="clickable-row" data-case="vertex">
-                  <td><strong>Kaveri Agro Logistics</strong></td>
-                  <td>Survey 18 Doddaballapura, Bengaluru</td>
-                  <td style="text-align:right;" class="tabular"><strong>54</strong></td>
-                  <td><span class="badge badge-warning">Ambiguous</span></td>
-                  <td><span class="badge badge-neutral">Reviewed</span></td>
-                  <td style="color:var(--text-secondary);">Yesterday</td>
-                </tr>
+                <!-- Dynamically populated rows -->
               </tbody>
             </table>
           </div>
         </div>
+
+        <!-- Section 29: Data Disclaimer Note -->
+        <div class="data-disclaimer-note">
+          Demo environment — assessments use open, organizer-provided or synthetic evidence. GeoTrust does not provide official government, tax, banking or regulatory verification.
+        </div>
       </section>
 
-      <!-- VIEW 2: INVESTIGATION DETAIL (Apex, Nova, or Vertex) -->
+      <!-- VIEW 2: INVESTIGATION DETAIL (Section 21, 22, 23) -->
       <section id="view-detail-section" class="view-panel" style="display:none;">
-        <!-- Header Strip -->
         <div class="case-header-bar">
           <div class="case-title-area">
             <h1 class="case-main-name" id="detail-biz-name">Apex Industrial Supplies</h1>
@@ -1651,13 +2101,16 @@
           </div>
 
           <div style="display:flex; align-items:center; gap:8px;">
+            <button class="btn btn-secondary btn-sm" id="btn-back-to-dashboard">
+              &larr; Back to Dashboard
+            </button>
             <span class="badge badge-neutral" id="detail-status-badge">Reviewed</span>
             <button class="btn btn-secondary btn-sm" id="btn-detail-compare">Compare</button>
             <button class="btn btn-secondary btn-sm" id="btn-detail-export">Export</button>
           </div>
         </div>
 
-        <!-- 8. Business Information -->
+        <!-- Business Information (Level 2 Card) -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Business Information</span>
@@ -1681,11 +2134,19 @@
                 <span class="info-label">Claimed Trading Address</span>
                 <span class="info-val" id="info-address">24 Industrial Estate Road, Bengaluru</span>
               </div>
+              <div class="info-item">
+                <span class="info-label">Exact GPS Coordinates</span>
+                <span class="info-val font-mono" id="info-coords">13.0312° N, 77.5186° E</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Municipal Cadastre Status</span>
+                <span class="info-val" id="info-cadastre">Verified Commercial Parcel</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- 9. Location Assessment Panel -->
+        <!-- Section 22: Location Assessment Score Panel -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Location Assessment</span>
@@ -1696,21 +2157,21 @@
               <div class="assessment-left">
                 <div class="assessment-score-row">
                   <span class="assessment-big-score tabular" id="assessment-score">87 / 100</span>
-                  <span class="assessment-status-label" id="assessment-classification">High Confidence</span>
-                  <span class="badge badge-success assessment-risk-badge" id="assessment-risk">Risk: Low</span>
+                  <span class="assessment-status-label" id="assessment-classification" style="color:var(--success);">Credible</span>
+                  <span class="badge badge-success" id="assessment-risk">Risk: Low</span>
                 </div>
 
                 <div class="assessment-bar-wrap">
-                  <div class="assessment-bar-fill" id="assessment-bar" style="width:87%;"></div>
+                  <div class="assessment-bar-fill" id="assessment-bar" style="width:87%; background:var(--success);"></div>
                 </div>
 
                 <p class="assessment-explain-text" id="assessment-explanation">
-                  The supplied evidence is broadly consistent with the claimed trading location.
+                  Strong supporting evidence across registry, utility, and municipal cadastral sources. High spatial concordance with verified industrial estate boundaries.
                 </p>
               </div>
 
               <div class="assessment-right-box">
-                <div style="font-size:12px; font-weight:600; color:var(--text-primary); margin-bottom:2px;">Assessment Summary</div>
+                <div style="font-size:12px; font-weight:600; color:var(--text-primary); margin-bottom:2px;">Signal Breakdown</div>
                 <div class="summary-metric-row">
                   <span>Supporting signals:</span>
                   <span id="sum-supporting" class="tabular">5</span>
@@ -1728,7 +2189,7 @@
           </div>
         </div>
 
-        <!-- 10. Evidence Table (Main Focus) -->
+        <!-- Evidence Signals Table -->
         <div class="card">
           <div class="card-header">
             <div>
@@ -1755,68 +2216,19 @@
           </div>
         </div>
 
-        <!-- 11. Location Evidence (Schematic Map & Summary) -->
+        <!-- Location Evidence (Interactive Detail Map & Summary) -->
         <div class="card">
           <div class="card-header">
             <div>
-              <span class="card-title">Location Evidence</span>
-              <div class="card-subtitle">Schematic topological map of claimed trading point vs observed activity</div>
+              <span class="card-title">Location Evidence & Geospatial Telemetry</span>
+              <div class="card-subtitle">Interactive geographical confirmation of claimed premises and cluster radius</div>
             </div>
-            <span class="badge badge-neutral">Analytical Topology</span>
+            <span class="badge badge-neutral">Corroborated Telemetry</span>
           </div>
           <div class="card-body">
             <div class="location-panel-grid">
-              <!-- Subtle Schematic Map SVG -->
-              <div class="schematic-map-container">
-                <svg class="schematic-svg" viewBox="0 0 520 250" xmlns="http://www.w3.org/2000/svg">
-                  <!-- Grey Grid -->
-                  <defs>
-                    <pattern id="cadastral-grid" width="26" height="26" patternUnits="userSpaceOnUse">
-                      <path d="M 26 0 L 0 0 0 26" fill="none" stroke="#E5E7EB" stroke-width="0.8" />
-                    </pattern>
-                  </defs>
-                  <rect width="520" height="250" fill="#F9FAFB" />
-                  <rect width="520" height="250" fill="url(#cadastral-grid)" />
+              <div id="detail-map-box"></div>
 
-                  <!-- Roads -->
-                  <path d="M 0 130 L 520 130" stroke="#CBD5E1" stroke-width="18" />
-                  <path d="M 0 130 L 520 130" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="6 4" />
-                  <text x="14" y="134" fill="#64748B" font-size="9" font-family="sans-serif" font-weight="600">INDUSTRIAL ESTATE 2ND STAGE ROAD</text>
-
-                  <path d="M 220 0 L 220 250" stroke="#E2E8F0" stroke-width="12" />
-
-                  <!-- Adjacent Parcels -->
-                  <rect x="40" y="30" width="100" height="70" fill="#FFFFFF" stroke="#E5E7EB" rx="3" />
-                  <text x="50" y="65" fill="#9CA3AF" font-size="9" font-family="sans-serif">Plot 22 (Die Casting)</text>
-
-                  <rect x="360" y="30" width="120" height="70" fill="#FFFFFF" stroke="#E5E7EB" rx="3" />
-                  <text x="370" y="65" fill="#9CA3AF" font-size="9" font-family="sans-serif">Plot 26 (Alloy Depot)</text>
-
-                  <!-- Target Parcel 24 -->
-                  <rect x="180" y="35" width="140" height="80" fill="rgba(37,99,235,0.04)" stroke="#2563EB" stroke-width="1" stroke-dasharray="3 3" rx="3" />
-                  
-                  <!-- Observed Footprint -->
-                  <rect x="195" y="45" width="110" height="60" fill="rgba(21,128,61,0.08)" stroke="#15803D" stroke-width="1.5" rx="2" />
-                  <text x="205" y="75" fill="#15803D" font-size="9.5" font-weight="600" font-family="sans-serif">Observed Shed</text>
-                  <text x="205" y="88" fill="#15803D" font-size="8.5" font-family="sans-serif">26,400 sq ft</text>
-
-                  <!-- Claimed Pin (Blue) -->
-                  <circle cx="230" cy="72" r="4.5" fill="#2563EB" stroke="#FFFFFF" stroke-width="1.5" />
-                  <text x="238" y="76" fill="#1E40AF" font-size="9" font-weight="600" font-family="sans-serif">Claimed Address</text>
-
-                  <!-- Related Cluster Connection -->
-                  <line x1="230" y1="72" x2="390" y2="180" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 2" />
-                  <circle cx="390" cy="180" r="4" fill="#64748B" stroke="#FFFFFF" stroke-width="1.5" />
-                  <text x="400" y="184" fill="#475569" font-size="8.5" font-family="sans-serif">Activity Cluster (420 m)</text>
-
-                  <!-- Shared Location Pin -->
-                  <line x1="230" y1="72" x2="100" y2="185" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 2" />
-                  <circle cx="100" cy="185" r="4" fill="#B45309" stroke="#FFFFFF" stroke-width="1.5" />
-                  <text x="110" y="189" fill="#92400E" font-size="8.5" font-family="sans-serif">Shared Location (Plot 20)</text>
-                </svg>
-              </div>
-
-              <!-- Location Summary -->
               <div style="display:flex; flex-direction:column; justify-content:center; gap:10px;">
                 <div style="font-size:12px; font-weight:600; color:var(--text-primary); border-bottom:1px solid var(--border-color); padding-bottom:6px;">
                   Location Summary
@@ -1842,7 +2254,7 @@
           </div>
         </div>
 
-        <!-- 12. Contradictions Section -->
+        <!-- Contradictions Section -->
         <div class="card">
           <div class="card-header">
             <div>
@@ -1857,12 +2269,12 @@
         </div>
       </section>
 
-      <!-- VIEW 3: CASE COMPARISON (Section 13) -->
+      <!-- VIEW 3: CASE COMPARISON (Section 23: Apex vs Nova vs Vertex) -->
       <section id="view-compare-section" class="view-panel" style="display:none;">
         <div class="page-header">
           <div>
             <h1 class="page-title">Case Comparison</h1>
-            <div class="page-subtitle">Compare evidence patterns across three business locations.</div>
+            <div class="page-subtitle">Compare evidence patterns across three primary business location typologies.</div>
           </div>
           <span class="badge badge-neutral">3 Demo Typologies</span>
         </div>
@@ -1879,7 +2291,7 @@
               Strong location evidence<br />Low contradiction
             </div>
             <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('apex')">
-              Open Case 01
+              Open Case 01 &rarr;
             </button>
           </div>
 
@@ -1888,12 +2300,12 @@
             <div class="compare-case-num">Case 02</div>
             <div class="compare-biz-title">Nova Trading Network</div>
             <div class="compare-score-box tabular" style="color:var(--danger);">28 / 100</div>
-            <div><span class="badge badge-danger">Suspicious</span></div>
+            <div><span class="badge badge-danger">Suspicious location pattern</span></div>
             <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
-              Weak activity evidence<br />Multiple contradictions
+              Weak activity evidence<br />Multiple contradictions (3.2 km mismatch)
             </div>
             <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('nova')">
-              Open Case 02
+              Open Case 02 &rarr;
             </button>
           </div>
 
@@ -1902,12 +2314,12 @@
             <div class="compare-case-num">Case 03</div>
             <div class="compare-biz-title">Vertex Solutions</div>
             <div class="compare-score-box tabular" style="color:var(--warning);">58 / 100</div>
-            <div><span class="badge badge-warning">Ambiguous</span></div>
+            <div><span class="badge badge-warning">Ambiguous location</span></div>
             <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
-              Shared address<br />Mixed evidence
+              Shared co-working desk<br />Mixed telemetry evidence
             </div>
             <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('vertex')">
-              Open Case 03
+              Open Case 03 &rarr;
             </button>
           </div>
         </div>
@@ -1923,47 +2335,47 @@
               <thead>
                 <tr>
                   <th>Signal</th>
-                  <th>Apex</th>
-                  <th>Nova</th>
-                  <th>Vertex</th>
+                  <th>Apex Industrial Supplies</th>
+                  <th>Nova Trading Network</th>
+                  <th>Vertex Solutions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>Registry</strong></td>
-                  <td><span class="badge badge-success">Strong</span></td>
-                  <td><span class="badge badge-danger">Weak</span></td>
-                  <td><span class="badge badge-neutral">Moderate</span></td>
+                  <td><strong>Registry consistency</strong></td>
+                  <td><span class="badge badge-success">Supported (+18)</span></td>
+                  <td><span class="badge badge-warning">Mixed (+8)</span></td>
+                  <td><span class="badge badge-success">Supported (+15)</span></td>
                 </tr>
                 <tr>
-                  <td><strong>Activity</strong></td>
-                  <td><span class="badge badge-success">Strong</span></td>
-                  <td><span class="badge badge-danger">Weak</span></td>
-                  <td><span class="badge badge-warning">Mixed</span></td>
+                  <td><strong>Location activity</strong></td>
+                  <td><span class="badge badge-success">Supported (+15)</span></td>
+                  <td><span class="badge badge-danger">Contradiction (-24)</span></td>
+                  <td><span class="badge badge-warning">Mixed (+6)</span></td>
                 </tr>
                 <tr>
                   <td><strong>Address uniqueness</strong></td>
-                  <td><span class="badge badge-success">Strong</span></td>
-                  <td><span class="badge badge-danger">Weak</span></td>
-                  <td><span class="badge badge-warning">Shared</span></td>
+                  <td><span class="badge badge-success">Supported (+12)</span></td>
+                  <td><span class="badge badge-danger">Contradiction (-18)</span></td>
+                  <td><span class="badge badge-warning">Shared (-10)</span></td>
                 </tr>
                 <tr>
                   <td><strong>Geographic consistency</strong></td>
-                  <td><span class="badge badge-success">Strong</span></td>
-                  <td><span class="badge badge-danger">Weak</span></td>
-                  <td><span class="badge badge-warning">Mixed</span></td>
+                  <td><span class="badge badge-success">Supported (+14)</span></td>
+                  <td><span class="badge badge-danger">Contradiction (-14)</span></td>
+                  <td><span class="badge badge-success">Supported (+12)</span></td>
                 </tr>
                 <tr>
                   <td><strong>Contradictions</strong></td>
-                  <td><span class="badge badge-success">Low</span></td>
-                  <td><span class="badge badge-danger">High</span></td>
-                  <td><span class="badge badge-warning">Medium</span></td>
+                  <td><span class="badge badge-success">1 Minor (-8)</span></td>
+                  <td><span class="badge badge-danger">3 Severe (-40)</span></td>
+                  <td><span class="badge badge-warning">2 Moderate (-16)</span></td>
                 </tr>
-                <tr style="background-color:#F9FAFB;">
+                <tr style="background-color:#F8FAFC;">
                   <td><strong>Evidence score</strong></td>
-                  <td class="tabular" style="font-weight:700; color:var(--success);">87</td>
-                  <td class="tabular" style="font-weight:700; color:var(--danger);">28</td>
-                  <td class="tabular" style="font-weight:700; color:var(--warning);">58</td>
+                  <td class="tabular" style="font-weight:700; color:var(--success);">87 / 100</td>
+                  <td class="tabular" style="font-weight:700; color:var(--danger);">28 / 100</td>
+                  <td class="tabular" style="font-weight:700; color:var(--warning);">58 / 100</td>
                 </tr>
               </tbody>
             </table>
@@ -1971,174 +2383,317 @@
         </div>
       </section>
 
-      <!-- VIEW 4: AUDIT REPORTS — Production-Grade Compliance Dashboard -->
+      <!-- VIEW 4: AUDIT REPORTS -->
       <section id="view-reports-section" class="view-panel" style="display:none;">
-        <!-- Page Header -->
         <div class="page-header">
           <div>
             <h1 class="page-title">Compliance Audit Reports</h1>
-            <div class="page-subtitle">Trading address verification reports — evidence-based estimates only, not regulatory determinations.</div>
+            <div class="page-subtitle">Trading address verification reports — evidence-based estimates only.</div>
           </div>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <button class="btn btn-secondary" id="btn-export-all">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              Export All
-            </button>
-            <button class="btn btn-primary" id="btn-new-report">
-              + New Report
-            </button>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-secondary" id="btn-export-all">Export All (PDF)</button>
+            <button class="btn btn-primary" id="btn-new-report">+ New Investigation</button>
           </div>
         </div>
 
-        <!-- Summary KPI Row (5 cells) -->
-        <div class="reports-kpi-row">
-          <div class="rpt-kpi">
-            <span class="rpt-kpi-label">Total Reports</span>
-            <span class="rpt-kpi-value tabular">24</span>
-            <span class="rpt-kpi-sub">All cases</span>
-          </div>
-          <div class="rpt-kpi">
-            <span class="rpt-kpi-label">High Confidence</span>
-            <span class="rpt-kpi-value tabular" style="color:var(--success);">10</span>
-            <span class="rpt-kpi-sub">Score ≥ 81</span>
-          </div>
-          <div class="rpt-kpi">
-            <span class="rpt-kpi-label">Ambiguous</span>
-            <span class="rpt-kpi-value tabular" style="color:var(--warning);">08</span>
-            <span class="rpt-kpi-sub">Score 31–60</span>
-          </div>
-          <div class="rpt-kpi">
-            <span class="rpt-kpi-label">High Risk</span>
-            <span class="rpt-kpi-value tabular" style="color:var(--danger);">06</span>
-            <span class="rpt-kpi-sub">Score 0–30</span>
-          </div>
-          <div class="rpt-kpi">
-            <span class="rpt-kpi-label">Avg. Score</span>
-            <span class="rpt-kpi-value tabular">61</span>
-            <span class="rpt-kpi-sub">/ 100 evidence</span>
-          </div>
-        </div>
-
-        <!-- Filter & Search Toolbar -->
         <div class="reports-toolbar">
-          <div class="reports-toolbar-left">
-            <div class="filter-search-wrap">
-              <svg class="filter-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-              <input type="text" id="report-search" class="filter-search-input" placeholder="Search business, ID, location..." />
-            </div>
-
-            <div class="filter-chip-group">
-              <button class="filter-chip active" data-filter="all">All</button>
-              <button class="filter-chip" data-filter="credible">Credible</button>
-              <button class="filter-chip" data-filter="ambiguous">Ambiguous</button>
-              <button class="filter-chip" data-filter="suspicious">Suspicious</button>
-            </div>
+          <div class="filter-chip-group">
+            <button class="filter-chip active" data-filter="all">All Reports (24)</button>
+            <button class="filter-chip" data-filter="credible">Credible</button>
+            <button class="filter-chip" data-filter="ambiguous">Ambiguous</button>
+            <button class="filter-chip" data-filter="suspicious">Suspicious</button>
           </div>
-
-          <div class="score-band-legend">
-            <span><span class="band-dot" style="background:var(--danger);"></span>High Risk (0–30)</span>
-            <span><span class="band-dot" style="background:var(--warning);"></span>Ambiguous (31–60)</span>
-            <span><span class="band-dot" style="background:#2563EB;"></span>Moderate (61–80)</span>
-            <span><span class="band-dot" style="background:var(--success);"></span>High Confidence (81–100)</span>
-          </div>
+          <input type="text" id="report-search" class="form-input" style="width:220px;" placeholder="Filter reports by business..." />
         </div>
 
-        <!-- Report Cards Grid -->
         <div class="report-cards-grid" id="report-cards-container">
-          <!-- Populated by JS -->
+          <!-- Rendered dynamically -->
         </div>
 
-        <!-- Audit Activity Timeline -->
         <div class="card">
           <div class="card-header">
-            <div>
-              <span class="card-title">Audit Activity Log</span>
-              <div class="card-subtitle">Chronological record of all investigation events and analyst actions</div>
-            </div>
-            <span class="badge badge-neutral">Last 30 days</span>
+            <span class="card-title">Recent Audit Trail</span>
+            <span class="card-subtitle">Automated ledger of verification runs</span>
           </div>
-          <div class="card-body" style="padding:0 16px;">
-            <div class="audit-timeline" id="audit-timeline-container">
-              <!-- Populated by JS -->
-            </div>
+          <div class="card-body" id="audit-timeline-container">
+            <!-- Rendered by JS -->
           </div>
-        </div>
-
-        <!-- Compliance Notice -->
-        <div style="margin-top:8px; padding:10px 14px; background:#FAFAFA; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:11.5px; color:var(--text-secondary); line-height:1.5;">
-          <strong style="color:var(--text-primary);">⚠ Compliance Notice:</strong>
-          All reports represent evidence-based location credibility estimates generated from synthetic demonstration datasets.
-          These assessments are <strong>not</strong> regulatory determinations, official compliance decisions, or government verifications.
-          For internal review and audit trail purposes only.
         </div>
       </section>
 
-      <!-- Report Detail Modal (appears over the audit reports page) -->
-      <div id="report-detail-modal" class="modal-backdrop" style="display:none;">
-        <div class="rpt-modal-window">
-          <!-- Sticky Modal Header -->
-          <div class="rpt-modal-header">
-            <div style="flex:1;">
-              <div style="font-size:16px; font-weight:700; color:var(--text-primary);" id="rmd-biz-name">Apex Industrial Supplies</div>
-              <div style="font-size:11.5px; color:var(--text-secondary); margin-top:1px;">
-                <span class="font-mono" id="rmd-case-id">GT-2026-00124</span>
-                <span style="margin:0 6px;">•</span>
-                <span id="rmd-timestamp">Generated Oct 8, 2026 at 15:49 IST</span>
-              </div>
-            </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <span class="badge" id="rmd-class-badge">High Confidence</span>
-              <button class="btn btn-secondary btn-sm" id="rmd-btn-print">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                Print
-              </button>
-              <button class="close-icon-btn" id="rmd-btn-close" title="Close">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-              </button>
+      <!-- VIEW 5: INVESTIGATIONS QUEUE VIEW -->
+      <section id="view-investigations-section" class="view-panel" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Investigations Queue</h1>
+            <div class="page-subtitle">Active compliance queue of businesses undergoing location integrity corroboration.</div>
+          </div>
+          <button class="btn btn-primary" onclick="document.getElementById('btn-open-new-case').click()">
+            + New Investigation
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">All Monitored Entities (24 Total)</span>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('All')">All</button>
+              <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('Credible')">Credible</button>
+              <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('Ambiguous')">Ambiguous</button>
+              <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('Suspicious')">Suspicious</button>
             </div>
           </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Business Name</th>
+                  <th>Claimed Trading Address</th>
+                  <th style="text-align:right;">Evidence Score</th>
+                  <th>Classification</th>
+                  <th>Risk Tier</th>
+                  <th>Last Evaluation</th>
+                </tr>
+              </thead>
+              <tbody id="full-queue-tbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-          <!-- Modal Body -->
-          <div class="rpt-modal-body">
-            <!-- Score Band Visualization -->
-            <div class="rpt-section">
-              <div class="rpt-section-title">Credibility Score</div>
-              <div style="display:flex; align-items:center; gap:16px;">
-                <div style="font-size:32px; font-weight:700; line-height:1;" id="rmd-score-big">87</div>
-                <div style="flex:1;">
-                  <div class="score-band-bar" id="rmd-score-band">
-                    <div class="score-band-seg" style="width:30%; background:#B91C1C;">High Risk</div>
-                    <div class="score-band-seg" style="width:30%; background:#B45309;">Ambiguous</div>
-                    <div class="score-band-seg" style="width:20%; background:#1D4ED8;">Moderate</div>
-                    <div class="score-band-seg" style="width:20%; background:#15803D;">High Conf.</div>
-                    <div class="score-band-marker" id="rmd-score-marker" style="left:87%;"></div>
+      <!-- VIEW 6: EVIDENCE VAULT -->
+      <section id="view-evidence-section" class="view-panel" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Evidence Vault & Corroboration Datasets</h1>
+            <div class="page-subtitle">Standardized data connectors used for cross-source spatial triangulation.</div>
+          </div>
+          <span class="badge badge-neutral">4 Telemetric Pipelines</span>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <span class="metric-label">Registry Connector</span>
+            <div class="metric-value-row">
+              <span class="metric-value tabular">MCA & GST</span>
+              <span class="badge badge-success">Online</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Municipal GIS</span>
+            <div class="metric-value-row">
+              <span class="metric-value tabular">Cadastre</span>
+              <span class="badge badge-success">Online</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Utility & Power</span>
+            <div class="metric-value-row">
+              <span class="metric-value tabular">Substation</span>
+              <span class="badge badge-success">Online</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Freight Telemetry</span>
+            <div class="metric-value-row">
+              <span class="metric-value tabular">E-Way Port</span>
+              <span class="badge badge-success">Online</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Evidence Normalization Rules</span>
+            <span class="card-subtitle">Mathematical weightings applied during synthesis</span>
+          </div>
+          <div class="card-body">
+            <p style="color:var(--text-secondary); margin-bottom:12px;">
+              GeoTrust synthesizes independent physical telemetry across discrete operational dimensions. Discrepancies between claimed premises and actual logistics footprints result in penalizing score deductions.
+            </p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <span class="badge badge-neutral">Cadastral Distance Penalty: -12 pts / km</span>
+              <span class="badge badge-neutral">Shared Address Ghost Multiplier: -6 pts / entity</span>
+              <span class="badge badge-neutral">Utility Absence Penalty: -18 pts</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 7: RISK ANALYSIS -->
+      <section id="view-risk-section" class="view-panel" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Risk Analysis & Discrepancy Matrix</h1>
+            <div class="page-subtitle">Automated taxonomy of physical location risk classifications.</div>
+          </div>
+        </div>
+
+        <div class="analytics-row">
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Risk Distribution</span>
+              <span class="card-subtitle">Active cases grouped by severity tier</span>
+            </div>
+            <div class="card-body">
+              <div class="dist-bars-container">
+                <div class="dist-bar-item" onclick="app.filterTableByClassification('Suspicious')">
+                  <div class="dist-label-row">
+                    <span class="dist-label-title" style="color:var(--danger);">High Risk (Suspicious)</span>
+                    <span class="tabular"><strong>6 Cases</strong> (25%)</span>
                   </div>
-                  <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-top:3px;">
-                    <span>0</span><span>30</span><span>60</span><span>80</span><span>100</span>
+                  <div class="dist-bar-track">
+                    <div class="dist-bar-fill" style="width:25%; background:var(--danger);"></div>
+                  </div>
+                </div>
+                <div class="dist-bar-item" onclick="app.filterTableByClassification('Ambiguous')">
+                  <div class="dist-label-row">
+                    <span class="dist-label-title" style="color:var(--warning);">Medium Risk (Ambiguous)</span>
+                    <span class="tabular"><strong>8 Cases</strong> (33%)</span>
+                  </div>
+                  <div class="dist-bar-track">
+                    <div class="dist-bar-fill" style="width:33%; background:var(--warning);"></div>
+                  </div>
+                </div>
+                <div class="dist-bar-item" onclick="app.filterTableByClassification('Credible')">
+                  <div class="dist-label-row">
+                    <span class="dist-label-title" style="color:var(--success);">Low Risk (Credible)</span>
+                    <span class="tabular"><strong>10 Cases</strong> (42%)</span>
+                  </div>
+                  <div class="dist-bar-track">
+                    <div class="dist-bar-fill" style="width:42%; background:var(--success);"></div>
                   </div>
                 </div>
               </div>
-              <div style="margin-top:8px; font-size:12.5px; color:var(--text-secondary); line-height:1.45;" id="rmd-explanation"></div>
             </div>
+          </div>
 
-            <!-- Business Info -->
-            <div class="rpt-section">
-              <div class="rpt-section-title">Business Information</div>
-              <div class="rpt-info-grid" id="rmd-info-grid">
-                <!-- populated by JS -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-title">Dominant Exception Typologies</span>
+              <span class="card-subtitle">Primary triggers for manual investigation</span>
+            </div>
+            <div class="card-body">
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="attention-row" onclick="app.loadCase('nova')">
+                  <div>
+                    <div class="attention-biz-name">Activity Distance Mismatch (&gt; 2 km)</div>
+                    <div class="attention-reason">Physical telemetry far removed from claimed postal premises</div>
+                  </div>
+                  <span class="badge badge-danger">High Severity</span>
+                </div>
+                <div class="attention-row" onclick="app.loadCase('vertex')">
+                  <div>
+                    <div class="attention-biz-name">Shared Shell Density (&gt; 5 entities)</div>
+                    <div class="attention-reason">Multiple independent ventures registered to identical unpartitioned desk</div>
+                  </div>
+                  <span class="badge badge-warning">Medium Severity</span>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <!-- Evidence Signals Table -->
+      <!-- VIEW 8: ACTIVITY STREAM -->
+      <section id="view-activity-section" class="view-panel" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Activity Stream</h1>
+            <div class="page-subtitle">Real-time system telemetry and investigator assessment events.</div>
+          </div>
+          <span class="badge badge-neutral">Live Feed</span>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Chronological Event Stream</span>
+            <span class="card-subtitle">Synchronized across compliance analysts</span>
+          </div>
+          <div class="card-body" id="full-activity-stream">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 9: SETTINGS -->
+      <section id="view-settings-section" class="view-panel" style="display:none;">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Workspace Settings</h1>
+            <div class="page-subtitle">Configure compliance policies, geospatial tolerance, and API keys.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Geospatial Corroboration Thresholds</span>
+          </div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="form-group">
+                <label class="form-label">Cluster Distance Tolerance</label>
+                <input type="text" class="form-input" value="500 meters" readonly />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Shared Address Warning Limit</label>
+                <input type="text" class="form-input" value="3 co-located entities" readonly />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Baseline Scoring Model</label>
+                <input type="text" class="form-input" value="GeoTrust Triangulation v2.4 (Enterprise)" readonly />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Geocoding Provider</label>
+                <input type="text" class="form-input" value="OpenStreetMap & Local Cached Cadastre" readonly />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MODAL: REPORT DETAIL (Section 28) -->
+      <div id="report-detail-modal" class="modal-backdrop" style="display:none;">
+        <div class="rpt-modal-window">
+          <div class="rpt-modal-header">
+            <div>
+              <div style="font-size:16px; font-weight:700; color:var(--text-primary);" id="rmd-biz-name">Apex Industrial Supplies</div>
+              <div style="font-size:11.5px; color:var(--text-secondary);" id="rmd-case-id">GT-2026-00124</div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span class="badge badge-success" id="rmd-class-badge">Credible</span>
+              <button class="btn btn-secondary btn-sm" id="rmd-btn-print">Print / PDF</button>
+              <button class="icon-btn" id="rmd-btn-close">&times;</button>
+            </div>
+          </div>
+
+          <div class="rpt-modal-body">
+            <div style="background:#F8FAFC; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:14px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:11px; text-transform:uppercase; color:var(--text-secondary); font-weight:600;">Overall Evidence Score</div>
+                <div style="font-size:26px; font-weight:700; color:var(--success);" id="rmd-score-big" class="tabular">87</div>
+              </div>
+              <p style="max-width:480px; font-size:12px; color:var(--text-secondary);" id="rmd-explanation">
+                Strong supporting evidence across registry, utility, and municipal cadastral sources.
+              </p>
+            </div>
+
             <div class="rpt-section">
-              <div class="rpt-section-title">Evidence Signals</div>
+              <div class="rpt-section-title">Business Information</div>
+              <div id="rmd-info-grid" class="rpt-info-grid"></div>
+            </div>
+
+            <div class="rpt-section">
+              <div class="rpt-section-title">Corroborated Signals</div>
               <div class="table-container">
-                <table class="data-table" id="rmd-signals-table">
+                <table class="data-table">
                   <thead>
                     <tr>
                       <th>Signal</th>
                       <th>Result</th>
-                      <th style="text-align:right;">Score Impact</th>
+                      <th style="text-align:right;">Contribution</th>
                       <th>Source</th>
                     </tr>
                   </thead>
@@ -2147,39 +2702,35 @@
               </div>
             </div>
 
-            <!-- Contradictions -->
             <div class="rpt-section">
               <div class="rpt-section-title">Contradictions & Exceptions</div>
               <div id="rmd-contradictions"></div>
             </div>
 
-            <!-- Geospatial Summary -->
             <div class="rpt-section">
-              <div class="rpt-section-title">Geospatial Assessment</div>
+              <div class="rpt-section-title">Geospatial Telemetry Summary</div>
               <div id="rmd-geo-grid" class="rpt-info-grid"></div>
             </div>
 
-            <!-- Disclaimer -->
-            <div style="padding:10px 12px; background:#FAFAFA; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:11px; color:var(--text-secondary); line-height:1.5; margin-top:8px;">
-              This report is an evidence-based estimate generated from synthetic demonstration data. It is not a regulatory determination, legal advice, or official compliance clearance. Results are for internal analytical purposes only.
+            <div style="padding:10px 12px; background:#FAFAFA; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:11px; color:var(--text-secondary); line-height:1.5;">
+              Demo environment — assessments use open, organizer-provided or synthetic evidence. GeoTrust does not provide official government, tax, banking or regulatory verification.
             </div>
           </div>
         </div>
       </div>
 
-      <!-- VIEW 5: NEW INVESTIGATION WORKFLOW (Section 14 Modal) -->
+      <!-- MODAL: NEW INVESTIGATION 4-STEP WORKFLOW (Section 20) -->
       <div id="new-investigation-modal" class="modal-backdrop" style="display:none;">
         <div class="modal-window">
-          <!-- Step indicator -->
           <div class="workflow-steps-indicator">
-            <div class="workflow-step active" id="step-tab-1">01 Business</div>
+            <div class="workflow-step active" id="step-tab-1">01 Business Details</div>
             <div class="workflow-step" id="step-tab-2">02 Evidence</div>
-            <div class="workflow-step" id="step-tab-3">03 Analysis</div>
-            <div class="workflow-step" id="step-tab-4">04 Result</div>
+            <div class="workflow-step" id="step-tab-3">03 Location Analysis</div>
+            <div class="workflow-step" id="step-tab-4">04 Assessment</div>
           </div>
 
-          <div style="padding:18px;">
-            <!-- Step 1: Business -->
+          <div style="padding:20px;">
+            <!-- Step 1: Business Details -->
             <div id="wf-step-1" class="wf-step-content">
               <div class="form-group">
                 <label class="form-label">Business Name</label>
@@ -2206,52 +2757,51 @@
 
             <!-- Step 2: Evidence -->
             <div id="wf-step-2" class="wf-step-content" style="display:none;">
-              <div style="font-size:12px; color:var(--text-secondary); margin-bottom:10px;">
-                Select datasets to ingest for automated triangulation:
+              <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">
+                Select telemetric datasets for automated geographic triangulation:
               </div>
               <div style="display:flex; flex-direction:column; gap:8px;">
                 <label style="display:flex; align-items:center; gap:8px; font-size:12.5px;">
-                  <input type="checkbox" checked /> Registry Dataset (MCA & GST Master)
+                  <input type="checkbox" checked /> Registry Master Dataset (MCA & GST Data)
                 </label>
                 <label style="display:flex; align-items:center; gap:8px; font-size:12.5px;">
-                  <input type="checkbox" checked /> Location Dataset (Municipal & GIS)
+                  <input type="checkbox" checked /> Municipal GIS & Cadastral Footprint
                 </label>
                 <label style="display:flex; align-items:center; gap:8px; font-size:12.5px;">
-                  <input type="checkbox" checked /> Activity Dataset (Utility & Freight Telemetry)
+                  <input type="checkbox" checked /> Utility Substation Power Signature
                 </label>
                 <label style="display:flex; align-items:center; gap:8px; font-size:12.5px;">
-                  <input type="checkbox" checked /> Transaction-like Dataset
+                  <input type="checkbox" checked /> Commercial E-Way Bill Logistics Corridor
                 </label>
               </div>
-              <div style="margin-top:12px; background:var(--bg-subtle); padding:8px 10px; border-radius:4px; font-size:11.5px; color:var(--text-secondary);">
-                Source: <span style="font-weight:600;">Synthetic / Organizer Dataset</span>
+              <div style="margin-top:14px; background:var(--bg-subtle); padding:8px 12px; border-radius:4px; font-size:11.5px; color:var(--text-secondary);">
+                Data Pipeline: <strong style="color:var(--text-primary);">Synthetic / Organizer Verification Pack</strong>
               </div>
             </div>
 
-            <!-- Step 3: Analysis Processing List -->
+            <!-- Step 3: Location Analysis Pipeline -->
             <div id="wf-step-3" class="wf-step-content" style="display:none;">
-              <div style="font-size:12px; font-weight:600; margin-bottom:10px;">Synthesis Pipeline Running...</div>
-              <div style="display:flex; flex-direction:column; gap:6px; font-size:12px; color:var(--text-secondary);">
-                <div style="color:var(--success);">✓ Evidence loaded</div>
-                <div style="color:var(--success);">✓ Signals normalized</div>
-                <div style="color:var(--success);">✓ Geographic relationships calculated</div>
-                <div style="color:var(--success);">✓ Contradictions checked</div>
-                <div style="color:var(--success); font-weight:600;">✓ Score generated: 81 / 100 (Credible)</div>
+              <div style="font-size:12.5px; font-weight:600; margin-bottom:12px;">Synthesis Pipeline Running...</div>
+              <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-secondary);">
+                <div style="color:var(--success);">✓ Datasets normalized across coordinate bounds</div>
+                <div style="color:var(--success);">✓ Address cadastral matching executed (Peenya Phase 3)</div>
+                <div style="color:var(--success);">✓ Industrial power signature confirmed</div>
+                <div style="color:var(--success);">✓ Shared address shell density verified (0 conflicts)</div>
+                <div style="color:var(--success); font-weight:600;">✓ Triangulated Score: 81 / 100 (Credible)</div>
               </div>
             </div>
 
-            <!-- Step 4: Result -->
+            <!-- Step 4: Assessment Result -->
             <div id="wf-step-4" class="wf-step-content" style="display:none;">
-              <div style="background:var(--success-bg); border:1px solid var(--success-border); padding:12px; border-radius:4px;">
+              <div style="background:var(--success-bg); border:1px solid var(--success-border); padding:14px; border-radius:var(--radius-md);">
                 <div style="font-weight:700; color:var(--success); font-size:14px;">Assessment Complete</div>
-                <div style="font-size:12px; color:var(--text-primary); margin-top:2px;">
-                  Zenith Precision Tools assessed at <strong>81 / 100</strong> (High Confidence).
+                <div style="font-size:12.5px; color:var(--text-primary); margin-top:4px;">
+                  Zenith Precision Tools verified with strong spatial evidence. Score: <strong>81 / 100</strong> (High Confidence).
                 </div>
               </div>
             </div>
 
-            <!-- Modal footer buttons -->
-            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:18px; border-top:1px solid var(--border-color); padding-top:12px;">
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px; border-top:1px solid var(--border-color); padding-top:14px;">
               <button class="btn btn-secondary" id="btn-wf-cancel">Cancel</button>
               <button class="btn btn-primary" id="btn-wf-next">Next Step &rarr;</button>
             </div>
@@ -2259,245 +2809,519 @@
         </div>
       </div>
 
-      <!-- VIEW 6: LOGIN SCREEN (Section 17) -->
+      <!-- MODAL: LOGIN / AUTHENTICATION (Section 28) -->
       <div id="login-modal" class="modal-backdrop" style="display:none;">
         <div class="login-container">
-          <div style="text-align:center; margin-bottom:18px;">
+          <div style="text-align:center; margin-bottom:20px;">
             <div style="font-size:18px; font-weight:700; color:var(--text-primary); display:flex; align-items:center; justify-content:center; gap:6px;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
               GeoTrust
             </div>
-            <div style="font-size:13px; font-weight:600; color:var(--text-primary); margin-top:6px;">
-              Sign in to Investigation Workspace
+            <div style="font-size:12.5px; color:var(--text-secondary); margin-top:4px;">
+              Enterprise Investigation Workspace
             </div>
           </div>
 
           <form id="login-form">
             <div class="form-group">
-              <label class="form-label">Work Email</label>
+              <label class="form-label">Corporate Email</label>
               <input type="email" class="form-input" value="vignesh.vl@geotrust-risk.internal" required />
             </div>
             <div class="form-group">
-              <label class="form-label">Password</label>
+              <label class="form-label">Security Key</label>
               <input type="password" class="form-input" value="••••••••••••" required />
             </div>
-            <button type="submit" class="btn btn-primary" style="width:100%; height:34px; margin-top:6px;">
-              Sign In
+            <button type="submit" class="btn btn-primary" style="width:100%; height:34px; margin-top:8px;">
+              Sign In to Session
             </button>
           </form>
 
-          <div style="margin-top:16px; text-align:center; font-size:11px; color:var(--text-secondary); border-top:1px solid var(--border-color); padding-top:10px;">
-            Demo Environment • Pre-authorized
+          <div style="margin-top:18px; text-align:center; font-size:11px; color:var(--text-secondary); border-top:1px solid var(--border-color); padding-top:12px;">
+            Pre-authorized Demo Workspace • Active License
           </div>
         </div>
       </div>
+
     </main>
   </div>
 
-  <!-- Toast Notification placeholder -->
+  <!-- Toast Notification Container -->
   <div id="toast" class="toast-box" style="display:none;"></div>
 
+  <!-- Leaflet Vendor Script with Fallback -->
+  <script src="vendor/leaflet.js"></script>
+  <script>
+    if (typeof L === 'undefined') {
+      document.write('<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>');
+    }
+  </script>
+
+  <!-- Centralized Business Datasets (Actual Coordinates for the 6 Demo Businesses) -->
+  <script src="data/businesses.js"></script>
+
   <!-- ==========================================================================
-       Pure Vanilla JavaScript Application Logic
+       MAIN ENTERPRISE JAVASCRIPT APPLICATION LOGIC
        ========================================================================== -->
   <script>
-    // Primary Datasets for Demo Switching (Section 16: Apex, Nova, Vertex)
-    const CASES_DATA = {
-      apex: {
-        id: "GT-2026-00124",
-        name: "Apex Industrial Supplies",
-        industry: "Industrial Equipment",
-        reg: "REG-48291",
-        address: "24 Industrial Estate Road, Bengaluru",
-        score: 87,
-        classification: "High Confidence",
-        risk: "Low",
-        explanation: "The supplied evidence is broadly consistent with the claimed trading location.",
-        supportingCount: 5,
-        contradictionCount: 1,
-        sourceCount: 4,
-        status: "Reviewed",
-        updated: "10 min ago",
-        signals: [
-          { name: "Registry consistency", result: "Supported", contribution: "+18", source: "Registry dataset", type: "success" },
-          { name: "Location activity", result: "Supported", contribution: "+15", source: "Activity dataset", type: "success" },
-          { name: "Address uniqueness", result: "Supported", contribution: "+12", source: "Location dataset", type: "success" },
-          { name: "Geographic consistency", result: "Supported", contribution: "+14", source: "Location dataset", type: "success" },
-          { name: "Transaction-like activity", result: "Supported", contribution: "+16", source: "Activity dataset", type: "success" },
-          { name: "Contradiction", result: "Minor", contribution: "-8", source: "Cross-signal analysis", type: "danger" }
-        ],
-        locationSummary: {
-          claimed: "24 Industrial Estate Road",
-          nearestCluster: "420 m",
-          related: "3",
-          shared: "2"
-        },
-        contradictions: [
-          {
-            title: "Address Formatting Syntax",
-            severity: "Low",
-            desc: "Sub-plot identifier '24-B' differs slightly from master plot indexing '24'.",
-            impact: "-8"
-          }
-        ]
-      },
-
-      nova: {
-        id: "GT-2026-00084",
-        name: "Nova Trading Network",
-        industry: "Bulk Maritime Commodities",
-        reg: "REG-11920",
-        address: "14 North Harbour Road, Chennai",
-        score: 28,
-        classification: "Suspicious",
-        risk: "High",
-        explanation: "Activity concentration is significantly displaced from claimed postal address with multiple severe discrepancies.",
-        supportingCount: 1,
-        contradictionCount: 4,
-        sourceCount: 3,
-        status: "Under Review",
-        updated: "24 min ago",
-        signals: [
-          { name: "Registry consistency", result: "Mixed", contribution: "+8", source: "Registry dataset", type: "warning" },
-          { name: "Location activity", result: "Contradiction", contribution: "-24", source: "Activity dataset", type: "danger" },
-          { name: "Address uniqueness", result: "Contradiction", contribution: "-18", source: "Location dataset", type: "danger" },
-          { name: "Geographic consistency", result: "Contradiction", contribution: "-14", source: "Location dataset", type: "danger" },
-          { name: "Transaction-like activity", result: "Mixed", contribution: "+6", source: "Activity dataset", type: "warning" },
-          { name: "Entity Cluster Flag", result: "Contradiction", contribution: "-16", source: "Cross-signal analysis", type: "danger" }
-        ],
-        locationSummary: {
-          claimed: "14 North Harbour Road",
-          nearestCluster: "3.2 km",
-          related: "1",
-          shared: "12"
-        },
-        contradictions: [
-          {
-            title: "Address Activity Mismatch",
-            severity: "Medium",
-            desc: "Activity concentration is approximately 3.2 km from the claimed location.",
-            impact: "-12"
-          },
-          {
-            title: "Shared Address",
-            severity: "High",
-            desc: "Multiple shell businesses (12 entities) are associated with the same supplied address.",
-            impact: "-16"
-          }
-        ]
-      },
-
-      vertex: {
-        id: "GT-2026-00099",
-        name: "Vertex Solutions",
-        industry: "IT & Managed Services",
-        reg: "REG-33418",
-        address: "Cyber Heights 4th Floor, Hyderabad",
-        score: 58,
-        classification: "Ambiguous",
-        risk: "Medium",
-        explanation: "Claimed address represents a multi-tenant co-working desk with shared commercial telemetry.",
-        supportingCount: 3,
-        contradictionCount: 2,
-        sourceCount: 3,
-        status: "Reviewed",
-        updated: "1 hr ago",
-        signals: [
-          { name: "Registry consistency", result: "Supported", contribution: "+15", source: "Registry dataset", type: "success" },
-          { name: "Location activity", result: "Mixed", contribution: "+6", source: "Activity dataset", type: "warning" },
-          { name: "Address uniqueness", result: "Mixed", contribution: "-10", source: "Location dataset", type: "warning" },
-          { name: "Geographic consistency", result: "Supported", contribution: "+12", source: "Location dataset", type: "success" },
-          { name: "Commercial Telemetry", result: "Mixed", contribution: "+8", source: "Activity dataset", type: "warning" },
-          { name: "Shared Address Footprint", result: "Minor", contribution: "-6", source: "Cross-signal analysis", type: "danger" }
-        ],
-        locationSummary: {
-          claimed: "Cyber Heights 4th Floor",
-          nearestCluster: "180 m",
-          related: "8",
-          shared: "6"
-        },
-        contradictions: [
-          {
-            title: "Shared Address Co-working Flag",
-            severity: "Low",
-            desc: "Multiple independent software entities share suite 402 reception desk.",
-            impact: "-6"
-          }
-        ]
-      }
-    };
-
-    // Main App Controller
+    // Robust Application Controller
     const app = {
       activeCase: "apex",
       activeView: "dashboard",
+      currentFilter: "all",
+      mapInstance: null,
+      detailMapInstance: null,
+      mapMarkers: [],
       wfStep: 1,
+
+      // Initial Data Fallback if businesses.js is loading asynchronously
+      get businesses() {
+        return window.GEOTRUST_BUSINESSES || [];
+      },
 
       init() {
         this.bindNav();
         this.bindDemoButtons();
+        this.bindKpiCards();
+        this.bindAnalyticsClicks();
+        this.bindSearch();
         this.bindDetailEvents();
         this.bindWorkflowModal();
         this.bindLogin();
+        this.initActivityChart();
+        this.renderTable(this.businesses);
+        this.renderFullQueue();
+        this.renderActivityStream();
+        this.initReportsPage();
+        this.initOverviewMap();
         this.renderCase(this.activeCase);
       },
 
       showToast(text) {
         const toast = document.getElementById('toast');
-        toast.textContent = text;
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+        if (!toast) return;
+        toast.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> <span>${text}</span>`;
+        toast.style.display = 'flex';
+        setTimeout(() => { toast.style.display = 'none'; }, 2400);
       },
 
+      // ── Navigation & View Switching ───────────────────────────────────────
       switchView(viewName) {
         this.activeView = viewName;
-        // Hide all views
         document.querySelectorAll('.view-panel').forEach(p => p.style.display = 'none');
-        // Update nav active states
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(n => n.classList.remove('active'));
 
         const targetNav = document.getElementById(`nav-${viewName}`);
         if (targetNav) targetNav.classList.add('active');
 
-        // Show view
         const viewEl = document.getElementById(`view-${viewName}-section`);
         if (viewEl) {
           viewEl.style.display = 'block';
-        } else if (viewName === 'detail' || viewName === 'businesses' || viewName === 'evidence' || viewName === 'risk') {
+        } else if (['detail', 'businesses'].includes(viewName)) {
           document.getElementById('view-detail-section').style.display = 'block';
         }
 
-        // Update Topbar Breadcrumb
+        // Title sync
         const titleMap = {
-          dashboard: "Dashboard",
+          dashboard: "Investigation Dashboard",
           investigations: "Investigations Queue",
-          detail: `Investigation #${CASES_DATA[this.activeCase].id}`,
-          evidence: "Evidence Vault",
-          risk: "Risk Analysis",
-          reports: "Compliance Reports",
-          compare: "Case Comparison",
+          detail: `Investigation Detail • ${this.activeCase.toUpperCase()}`,
+          businesses: `Business Investigation • ${this.activeCase.toUpperCase()}`,
+          evidence: "Evidence Vault & Datasets",
+          risk: "Risk Analysis & Discrepancies",
+          reports: "Compliance Audit Reports",
+          compare: "Case Comparison Matrix",
           activity: "Activity Stream",
           settings: "Workspace Settings"
         };
         document.getElementById('breadcrumb-title').textContent = titleMap[viewName] || "Dashboard";
+
+        if (viewName === 'dashboard' && this.mapInstance) {
+          setTimeout(() => { this.mapInstance.invalidateSize(); }, 150);
+        } else if (viewName === 'detail' || viewName === 'businesses') {
+          setTimeout(() => { this.renderDetailMap(this.activeCase); }, 150);
+        }
+      },
+
+      bindNav() {
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const view = item.dataset.view;
+            if (view) app.switchView(view);
+          });
+        });
+
+        document.getElementById('btn-back-to-dashboard')?.addEventListener('click', () => {
+          app.switchView('dashboard');
+        });
+
+        document.getElementById('role-select')?.addEventListener('change', (e) => {
+          app.showToast(`Switched active workspace role to: ${e.target.value}`);
+        });
+
+        // Requires Attention items
+        document.querySelectorAll('.attention-row').forEach(row => {
+          row.addEventListener('click', () => {
+            const caseKey = row.dataset.case;
+            if (caseKey) app.loadCase(caseKey);
+          });
+        });
+      },
+
+      // ── Demo Cases Segmented Control (Section 5 & 23) ─────────────────────
+      bindDemoButtons() {
+        document.querySelectorAll('.demo-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const caseKey = btn.dataset.case;
+            app.loadCase(caseKey);
+          });
+        });
       },
 
       loadCase(caseKey) {
         this.activeCase = caseKey;
-        // Update demo buttons
         document.querySelectorAll('.demo-btn').forEach(btn => {
           btn.classList.toggle('active', btn.dataset.case === caseKey);
         });
-        this.renderCase(caseKey);
-        this.switchView('detail');
-        this.showToast(`Switched to Case: ${CASES_DATA[caseKey].name}`);
+
+        const biz = this.businesses.find(b => b.key === caseKey);
+        if (biz) {
+          this.renderCase(caseKey);
+          this.switchView('detail');
+          this.showToast(`Loaded Case: ${biz.name} (${biz.score}/100)`);
+        }
       },
 
+      // ── KPI Cards & Click-to-Filter (Section 7) ───────────────────────────
+      bindKpiCards() {
+        document.querySelectorAll('.metric-card[data-kpi]').forEach(card => {
+          card.addEventListener('click', () => {
+            const kpi = card.dataset.kpi;
+            document.querySelectorAll('.metric-card[data-kpi]').forEach(c => c.classList.remove('active-kpi'));
+            card.classList.add('active-kpi');
+
+            if (kpi === 'all') {
+              app.filterTableByClassification('All');
+              app.showToast("Showing all 24 monitored business records.");
+            } else {
+              app.filterTableByClassification(kpi);
+              app.showToast(`Filtered queue to: ${kpi}`);
+            }
+          });
+        });
+      },
+
+      // ── Assessment Distribution & Activity (Sections 8 & 9) ───────────────
+      bindAnalyticsClicks() {
+        document.querySelectorAll('.dist-bar-item').forEach(bar => {
+          bar.addEventListener('click', () => {
+            const classification = bar.dataset.filterClass;
+            document.querySelectorAll('.dist-bar-item').forEach(b => b.classList.remove('active'));
+            bar.classList.add('active');
+            app.filterTableByClassification(classification);
+            app.showToast(`Filtered Investigations to: ${classification}`);
+          });
+        });
+
+        document.getElementById('btn-dist-view-all')?.addEventListener('click', () => {
+          document.querySelectorAll('.dist-bar-item').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.metric-card[data-kpi]').forEach(c => c.classList.remove('active-kpi'));
+          app.filterTableByClassification('All');
+          app.showToast("Reset table filter: Viewing all cases.");
+        });
+
+        document.getElementById('btn-clear-table-filter')?.addEventListener('click', () => {
+          app.filterTableByClassification('All');
+        });
+      },
+
+      initActivityChart() {
+        const tooltip = document.getElementById('chart-tooltip');
+        const container = document.getElementById('activity-chart-container');
+        document.querySelectorAll('.activity-pt').forEach(pt => {
+          pt.addEventListener('mouseenter', (e) => {
+            const day = pt.dataset.day;
+            const count = pt.dataset.count;
+            tooltip.textContent = `${day}: ${count} cases assessed`;
+            tooltip.style.display = 'block';
+
+            const rect = pt.getBoundingClientRect();
+            const parentRect = container.getBoundingClientRect();
+            tooltip.style.left = `${rect.left - parentRect.left + 4}px`;
+            tooltip.style.top = `${rect.top - parentRect.top - 8}px`;
+          });
+
+          pt.addEventListener('mouseleave', () => {
+            tooltip.style.display = 'none';
+          });
+        });
+      },
+
+      // ── Interactive Leaflet Overview Map (Sections 10, 11, 12, 13) ─────────
+      initOverviewMap() {
+        const mapEl = document.getElementById('geo-leaflet-map');
+        if (!mapEl || typeof L === 'undefined') return;
+
+        // India bounds centered on the peninsula (Bengaluru, Chennai, Hyderabad corridors)
+        this.mapInstance = L.map('geo-leaflet-map', {
+          center: [14.5, 78.8],
+          zoom: 6,
+          zoomControl: false,
+          scrollWheelZoom: false
+        });
+
+        // Add compact zoom control at top-right
+        L.control.zoom({ position: 'topright' }).addTo(this.mapInstance);
+
+        // Muted CartoDB Positron / OSM tiles
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; OpenStreetMap &copy; CARTO',
+          subdomains: 'abcd',
+          maxZoom: 19
+        }).addTo(this.mapInstance);
+
+        this.renderMapMarkers('All');
+        this.bindMapControls();
+      },
+
+      createMarkerIcon(classification) {
+        const colorMap = {
+          Credible: { bg: '#16A34A', ring: 'rgba(22, 163, 74, 0.2)' },
+          Ambiguous: { bg: '#D97706', ring: 'rgba(217, 119, 6, 0.2)' },
+          Suspicious: { bg: '#DC2626', ring: 'rgba(220, 38, 38, 0.2)' }
+        };
+        const c = colorMap[classification] || colorMap.Credible;
+
+        return L.divIcon({
+          className: 'custom-geo-marker',
+          html: `
+            <div class="marker-pin-wrap">
+              <div class="marker-pulse" style="background:${c.ring};"></div>
+              <div class="marker-core" style="background:${c.bg};"></div>
+            </div>
+          `,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
+          popupAnchor: [0, -14]
+        });
+      },
+
+      renderMapMarkers(filter) {
+        if (!this.mapInstance) return;
+
+        // Clear existing markers
+        this.mapMarkers.forEach(m => this.mapInstance.removeLayer(m));
+        this.mapMarkers = [];
+
+        let items = this.businesses;
+        if (filter && filter !== 'All') {
+          items = items.filter(b => b.classification === filter);
+        }
+
+        const bounds = L.latLngBounds();
+
+        items.forEach(biz => {
+          if (!biz.coordinates) return;
+          const latLng = [biz.coordinates.lat, biz.coordinates.lng];
+          bounds.extend(latLng);
+
+          const icon = this.createMarkerIcon(biz.classification);
+          const marker = L.marker(latLng, { icon }).addTo(this.mapInstance);
+
+          const badgeClass = biz.classification === 'Credible' ? 'badge-success' : (biz.classification === 'Ambiguous' ? 'badge-warning' : 'badge-danger');
+
+          const popupContent = `
+            <div class="popup-biz-title">${biz.name}</div>
+            <div class="popup-biz-addr">${biz.address}</div>
+            <div class="popup-meta-row">
+              <span class="badge ${badgeClass}">${biz.classification}</span>
+              <span class="tabular"><strong>${biz.score}</strong> / 100</span>
+            </div>
+            <button class="btn btn-primary btn-sm" style="width:100%; height:26px;" onclick="app.loadCase('${biz.key}')">
+              View Investigation &rarr;
+            </button>
+          `;
+
+          marker.bindPopup(popupContent);
+          this.mapMarkers.push(marker);
+        });
+
+        // Update Location Summary statistics (Section 14)
+        document.getElementById('sum-monitored').textContent = this.businesses.length;
+        document.getElementById('sum-credible').textContent = this.businesses.filter(b => b.classification === 'Credible').length;
+        document.getElementById('sum-ambiguous').textContent = this.businesses.filter(b => b.classification === 'Ambiguous').length;
+        document.getElementById('sum-suspicious').textContent = this.businesses.filter(b => b.classification === 'Suspicious').length;
+      },
+
+      bindMapControls() {
+        document.querySelectorAll('#map-filter-controls .map-filter-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const filter = btn.dataset.mapFilter;
+            document.querySelectorAll('#map-filter-controls .map-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            app.renderMapMarkers(filter);
+            app.showToast(`Map displaying ${filter} locations.`);
+          });
+        });
+
+        document.getElementById('btn-map-fit-all')?.addEventListener('click', () => {
+          if (app.mapInstance && app.mapMarkers.length > 0) {
+            const group = L.featureGroup(app.mapMarkers);
+            app.mapInstance.fitBounds(group.getBounds().pad(0.15));
+            app.showToast("Map bounds fitted to all businesses.");
+          }
+        });
+
+        document.getElementById('btn-map-reset-view')?.addEventListener('click', () => {
+          if (app.mapInstance) {
+            app.mapInstance.setView([14.5, 78.8], 6);
+            document.querySelectorAll('#map-filter-controls .map-filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('#map-filter-controls .map-filter-btn[data-map-filter="All"]')?.classList.add('active');
+            app.renderMapMarkers('All');
+            app.showToast("Map view reset to default center.");
+          }
+        });
+      },
+
+      // ── Detail View Map (Section 21) ──────────────────────────────────────
+      renderDetailMap(caseKey) {
+        const biz = this.businesses.find(b => b.key === caseKey);
+        const mapEl = document.getElementById('detail-map-box');
+        if (!mapEl || !biz || typeof L === 'undefined') return;
+
+        if (this.detailMapInstance) {
+          this.detailMapInstance.remove();
+          this.detailMapInstance = null;
+        }
+
+        const latLng = [biz.coordinates.lat, biz.coordinates.lng];
+        this.detailMapInstance = L.map('detail-map-box', {
+          center: latLng,
+          zoom: 14,
+          zoomControl: false,
+          scrollWheelZoom: false
+        });
+
+        L.control.zoom({ position: 'topright' }).addTo(this.detailMapInstance);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; OpenStreetMap &copy; CARTO',
+          maxZoom: 19
+        }).addTo(this.detailMapInstance);
+
+        // Claimed Address Marker
+        const icon = this.createMarkerIcon(biz.classification);
+        L.marker(latLng, { icon }).addTo(this.detailMapInstance)
+          .bindPopup(`<strong>Claimed Trading Address</strong><br/>${biz.address}`).openPopup();
+
+        // If cluster coords exist, show cluster pin or radius
+        if (biz.locationSummary && biz.locationSummary.clusterCoords) {
+          const clusterLatLng = [biz.locationSummary.clusterCoords.lat, biz.locationSummary.clusterCoords.lng];
+          L.circle(latLng, {
+            color: biz.classification === 'Credible' ? '#16A34A' : (biz.classification === 'Ambiguous' ? '#D97706' : '#DC2626'),
+            fillColor: biz.classification === 'Credible' ? '#16A34A' : (biz.classification === 'Ambiguous' ? '#D97706' : '#DC2626'),
+            fillOpacity: 0.12,
+            radius: biz.classification === 'Credible' ? 420 : (biz.classification === 'Ambiguous' ? 300 : 3200)
+          }).addTo(this.detailMapInstance);
+
+          if (biz.classification !== 'Credible') {
+            L.circleMarker(clusterLatLng, {
+              radius: 6,
+              fillColor: '#2563EB',
+              color: '#FFFFFF',
+              weight: 2,
+              fillOpacity: 0.9
+            }).addTo(this.detailMapInstance).bindPopup("<strong>Observed Activity Cluster</strong>");
+          }
+        }
+      },
+
+      // ── Investigations Table Rendering & Filtering (Sections 16, 17, 18) ───
+      renderTable(data) {
+        const tbody = document.getElementById('investigations-tbody');
+        if (!tbody) return;
+
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="table-empty-notice">No investigations match the selected filter.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.map(b => {
+          const badgeClass = b.classification === 'Credible' ? 'badge-success' : (b.classification === 'Ambiguous' ? 'badge-warning' : 'badge-danger');
+          const riskClass = b.risk === 'Low' ? 'badge-success' : (b.risk === 'Medium' ? 'badge-warning' : 'badge-danger');
+
+          return `
+            <tr class="clickable-row" data-case="${b.key}" onclick="app.loadCase('${b.key}')">
+              <td><strong>${b.name}</strong></td>
+              <td>${b.address}</td>
+              <td style="text-align:right;" class="tabular"><strong>${b.score}</strong></td>
+              <td><span class="badge ${badgeClass}">${b.classification}</span></td>
+              <td><span class="badge ${riskClass}">${b.risk} Risk</span></td>
+              <td style="color:var(--text-secondary);">${b.updated}</td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      filterTableByClassification(classification) {
+        this.currentFilter = classification;
+        const badge = document.getElementById('active-table-filter-text');
+        const clearBtn = document.getElementById('btn-clear-table-filter');
+
+        if (classification === 'All') {
+          badge.textContent = `All Cases (${this.businesses.length})`;
+          if (clearBtn) clearBtn.style.display = 'none';
+          this.renderTable(this.businesses);
+        } else {
+          const filtered = this.businesses.filter(b => b.classification === classification);
+          badge.textContent = `${classification} (${filtered.length})`;
+          if (clearBtn) clearBtn.style.display = 'inline-block';
+          this.renderTable(filtered);
+        }
+      },
+
+      // ── Instant Search (Section 19) ───────────────────────────────────────
+      bindSearch() {
+        const searchInput = document.getElementById('global-search');
+        if (!searchInput) return;
+
+        searchInput.addEventListener('input', (e) => {
+          const q = e.target.value.toLowerCase().trim();
+          if (!q) {
+            app.renderTable(app.businesses);
+            return;
+          }
+
+          const filtered = app.businesses.filter(b =>
+            b.name.toLowerCase().includes(q) ||
+            b.id.toLowerCase().includes(q) ||
+            b.address.toLowerCase().includes(q) ||
+            b.city.toLowerCase().includes(q) ||
+            b.classification.toLowerCase().includes(q)
+          );
+
+          app.renderTable(filtered);
+          document.getElementById('active-table-filter-text').textContent = `Search: "${q}" (${filtered.length})`;
+          document.getElementById('btn-clear-table-filter').style.display = 'inline-block';
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            const rows = document.querySelectorAll('#investigations-tbody tr.clickable-row');
+            if (rows.length > 0) {
+              const caseKey = rows[0].dataset.case;
+              if (caseKey) app.loadCase(caseKey);
+            }
+          }
+        });
+      },
+
+      // ── Case Detail Renderer (Sections 21, 22, 23) ─────────────────────────
       renderCase(caseKey) {
-        const d = CASES_DATA[caseKey];
+        const d = this.businesses.find(b => b.key === caseKey);
         if (!d) return;
 
-        // Header
+        // Header Strip
         document.getElementById('detail-biz-name').textContent = d.name;
         document.getElementById('detail-case-meta').textContent = `Investigation ${d.id} • Last updated ${d.updated}`;
         document.getElementById('detail-status-badge').textContent = d.status;
@@ -2507,6 +3331,7 @@
         document.getElementById('info-industry').textContent = d.industry;
         document.getElementById('info-reg').textContent = d.reg;
         document.getElementById('info-address').textContent = d.address;
+        document.getElementById('info-coords').textContent = `${d.coordinates.lat.toFixed(4)}° N, ${d.coordinates.lng.toFixed(4)}° E`;
 
         // Assessment Panel
         const scoreEl = document.getElementById('assessment-score');
@@ -2519,19 +3344,18 @@
         riskEl.textContent = `Risk: ${d.risk}`;
         barEl.style.width = `${d.score}%`;
 
-        // Color coding based on score
         if (d.score >= 80) {
           classEl.style.color = "var(--success)";
           barEl.style.backgroundColor = "var(--success)";
-          riskEl.className = "badge badge-success assessment-risk-badge";
+          riskEl.className = "badge badge-success";
         } else if (d.score >= 45) {
           classEl.style.color = "var(--warning)";
           barEl.style.backgroundColor = "var(--warning)";
-          riskEl.className = "badge badge-warning assessment-risk-badge";
+          riskEl.className = "badge badge-warning";
         } else {
           classEl.style.color = "var(--danger)";
           barEl.style.backgroundColor = "var(--danger)";
-          riskEl.className = "badge badge-danger assessment-risk-badge";
+          riskEl.className = "badge badge-danger";
         }
 
         document.getElementById('assessment-explanation').textContent = d.explanation;
@@ -2539,7 +3363,7 @@
         document.getElementById('sum-contradictions').textContent = d.contradictionCount;
         document.getElementById('sum-sources').textContent = d.sourceCount;
 
-        // Evidence Table
+        // Evidence Signals Table
         const tbody = document.getElementById('evidence-tbody');
         tbody.innerHTML = d.signals.map(s => `
           <tr>
@@ -2558,13 +3382,13 @@
           </tr>
         `).join('');
 
-        // Location Summary
+        // Location Summary Text
         document.getElementById('loc-claimed').textContent = d.locationSummary.claimed;
         document.getElementById('loc-cluster').textContent = d.locationSummary.nearestCluster;
         document.getElementById('loc-related').textContent = d.locationSummary.related;
         document.getElementById('loc-shared').textContent = d.locationSummary.shared;
 
-        // Contradictions Section
+        // Contradictions
         document.getElementById('contra-count-badge').textContent = `${d.contradictions.length} ${d.contradictions.length === 1 ? 'Exception' : 'Exceptions'}`;
         const contraContainer = document.getElementById('contra-list-container');
         if (d.contradictions.length === 0) {
@@ -2579,7 +3403,7 @@
                     ${c.severity}
                   </span>
                 </div>
-                <div style="color:var(--text-secondary); font-size:12px; margin-top:2px;">
+                <div style="color:var(--text-secondary); font-size:12px; margin-top:3px;">
                   ${c.desc}
                 </div>
               </div>
@@ -2589,307 +3413,6 @@
             </div>
           `).join('');
         }
-
-        // Reports View: no longer using old static report fields
-      },
-
-      // ── Audit Reports Page ──────────────────────────────────────────────────
-
-      initReportsPage() {
-        this.renderReportCards('all');
-        this.renderAuditTimeline();
-        this.bindReportFilters();
-        this.bindReportModal();
-
-        document.getElementById('btn-export-all')?.addEventListener('click', () => {
-          app.showToast('Exporting all 24 reports to PDF bundle… (demo)');
-        });
-        document.getElementById('btn-new-report')?.addEventListener('click', () => {
-          document.getElementById('btn-open-new-case').click();
-        });
-      },
-
-      // All audit report records (mock dataset)
-      AUDIT_REPORTS: [
-        {
-          id: 'GT-2026-00124', biz: 'Apex Industrial Supplies', addr: '24 Industrial Estate Road, Bengaluru',
-          industry: 'Industrial Equipment', reg: 'REG-48291', score: 87, classification: 'High Confidence',
-          risk: 'Low', status: 'Reviewed', analyst: 'Vignesh V. L.', generated: 'Oct 8, 2026 15:49 IST',
-          sources: 4, supporting: 5, contradictions: 1, caseKey: 'apex'
-        },
-        {
-          id: 'GT-2026-00084', biz: 'Nova Trading Network', addr: '14 North Harbour Road, Chennai',
-          industry: 'Bulk Maritime Commodities', reg: 'REG-11920', score: 28, classification: 'Suspicious',
-          risk: 'High', status: 'Under Review', analyst: 'Priya Nair', generated: 'Oct 8, 2026 15:25 IST',
-          sources: 3, supporting: 1, contradictions: 4, caseKey: 'nova'
-        },
-        {
-          id: 'GT-2026-00099', biz: 'Vertex Solutions', addr: 'Cyber Heights 4th Floor, Hyderabad',
-          industry: 'IT & Managed Services', reg: 'REG-33418', score: 58, classification: 'Ambiguous',
-          risk: 'Medium', status: 'Reviewed', analyst: 'Arjun Sharma', generated: 'Oct 8, 2026 14:50 IST',
-          sources: 3, supporting: 3, contradictions: 2, caseKey: 'vertex'
-        },
-        {
-          id: 'GT-2026-00118', biz: 'Precision Die & Castings', addr: 'Plot 22 Peenya 1st Stage, Bengaluru',
-          industry: 'Metal Fabrication', reg: 'REG-78234', score: 84, classification: 'High Confidence',
-          risk: 'Low', status: 'Reviewed', analyst: 'Vignesh V. L.', generated: 'Oct 8, 2026 12:30 IST',
-          sources: 4, supporting: 5, contradictions: 1, caseKey: 'apex'
-        },
-        {
-          id: 'GT-2026-00077', biz: 'Global Marine Impex', addr: 'Customs Gate 3 Byway, Chennai',
-          industry: 'Maritime Import/Export', reg: 'REG-55600', score: 22, classification: 'Suspicious',
-          risk: 'High', status: 'Under Review', analyst: 'Priya Nair', generated: 'Oct 8, 2026 10:15 IST',
-          sources: 2, supporting: 1, contradictions: 5, caseKey: 'nova'
-        },
-        {
-          id: 'GT-2026-00103', biz: 'Kaveri Agro Logistics', addr: 'Survey 18 Doddaballapura, Bengaluru',
-          industry: 'Agricultural Supply Chain', reg: 'REG-20181', score: 54, classification: 'Ambiguous',
-          risk: 'Medium', status: 'Reviewed', analyst: 'Ravi Krishnan', generated: 'Oct 7, 2026 17:40 IST',
-          sources: 3, supporting: 3, contradictions: 2, caseKey: 'vertex'
-        },
-      ],
-
-      AUDIT_TIMELINE_DATA: [
-        { action: 'Report generated: Apex Industrial Supplies', detail: 'GT-2026-00124 • Score: 87/100 • Reviewed by Vignesh V. L.', time: 'Oct 8, 2026 15:49', dot: 'var(--success)' },
-        { action: 'Flag raised: Nova Trading Network', detail: 'GT-2026-00084 • Score: 28/100 • 4 contradictions detected — escalated to Priya Nair', time: 'Oct 8, 2026 15:25', dot: 'var(--danger)' },
-        { action: 'Report generated: Vertex Solutions', detail: 'GT-2026-00099 • Score: 58/100 • Shared-address ambiguity flagged', time: 'Oct 8, 2026 14:50', dot: 'var(--warning)' },
-        { action: 'Report generated: Precision Die & Castings', detail: 'GT-2026-00118 • Score: 84/100 • Minor formatting anomaly noted', time: 'Oct 8, 2026 12:30', dot: 'var(--success)' },
-        { action: 'Analyst assigned: Global Marine Impex', detail: 'GT-2026-00077 • Assigned to Priya Nair for manual review', time: 'Oct 8, 2026 11:00', dot: '#94A3B8' },
-        { action: 'Report generated: Global Marine Impex', detail: 'GT-2026-00077 • Score: 22/100 • Suspicious pattern — multiple ghost entities', time: 'Oct 8, 2026 10:15', dot: 'var(--danger)' },
-        { action: 'Report generated: Kaveri Agro Logistics', detail: 'GT-2026-00103 • Score: 54/100 • Shared-location flag — moderate risk', time: 'Oct 7, 2026 17:40', dot: 'var(--warning)' },
-        { action: 'Bulk import: 18 cases from Batch-2026-10-06', detail: 'Cases 00065–00082 imported from CSV manifest • Processing complete', time: 'Oct 6, 2026 09:00', dot: '#2563EB' },
-      ],
-
-      renderReportCards(filter) {
-        const container = document.getElementById('report-cards-container');
-        let reports = this.AUDIT_REPORTS;
-        const searchVal = (document.getElementById('report-search')?.value || '').toLowerCase().trim();
-
-        if (filter !== 'all') {
-          const filterMap = { credible: 'High Confidence', ambiguous: 'Ambiguous', suspicious: 'Suspicious' };
-          reports = reports.filter(r => r.classification === filterMap[filter]);
-        }
-        if (searchVal) {
-          reports = reports.filter(r =>
-            r.biz.toLowerCase().includes(searchVal) ||
-            r.addr.toLowerCase().includes(searchVal) ||
-            r.id.toLowerCase().includes(searchVal)
-          );
-        }
-
-        if (reports.length === 0) {
-          container.innerHTML = `<div style="grid-column:1/-1; padding:24px; text-align:center; color:var(--text-secondary); font-size:12.5px;">No reports match current filter.</div>`;
-          return;
-        }
-
-        container.innerHTML = reports.map(r => {
-          let scoreColor, badgeClass;
-          if (r.score >= 81) { scoreColor = 'var(--success)'; badgeClass = 'badge-success'; }
-          else if (r.score >= 61) { scoreColor = '#2563EB'; badgeClass = 'badge-neutral'; }
-          else if (r.score >= 31) { scoreColor = 'var(--warning)'; badgeClass = 'badge-warning'; }
-          else { scoreColor = 'var(--danger)'; badgeClass = 'badge-danger'; }
-
-          return `
-          <div class="report-card" data-case-key="${r.caseKey}" data-report-id="${r.id}" onclick="app.openReportModal('${r.id}')">
-            <div class="report-card-top">
-              <div style="min-width:0;">
-                <div class="report-card-biz">${r.biz}</div>
-                <div class="report-card-addr">${r.addr}</div>
-              </div>
-              <div class="report-card-score-block">
-                <div class="report-card-score tabular" style="color:${scoreColor};">${r.score}</div>
-                <div class="report-card-score-label">/ 100</div>
-              </div>
-            </div>
-            <div class="report-card-scorebar">
-              <div class="report-card-scorebar-fill" style="width:${r.score}%; background:${scoreColor};"></div>
-            </div>
-            <div class="report-card-body">
-              <div class="report-card-meta-row">
-                <span>Industry</span><span>${r.industry}</span>
-              </div>
-              <div class="report-card-meta-row">
-                <span>Classification</span><span><span class="badge ${badgeClass}">${r.classification}</span></span>
-              </div>
-              <div class="report-card-meta-row">
-                <span>Supporting / Contradictions</span><span>${r.supporting} / ${r.contradictions}</span>
-              </div>
-              <div class="report-card-meta-row">
-                <span>Analyst</span><span>${r.analyst}</span>
-              </div>
-            </div>
-            <div class="report-card-footer">
-              <span class="report-card-id">${r.id}</span>
-              <div style="display:flex; gap:6px; align-items:center;">
-                <span class="badge badge-neutral" style="font-size:10.5px;">${r.status}</span>
-                <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); app.openReportModal('${r.id}')" style="height:22px; padding:0 7px; font-size:11px;">View Report</button>
-              </div>
-            </div>
-          </div>`;
-        }).join('');
-      },
-
-      renderAuditTimeline() {
-        const container = document.getElementById('audit-timeline-container');
-        container.innerHTML = this.AUDIT_TIMELINE_DATA.map((entry, i) => `
-          <div class="audit-timeline-entry">
-            <div class="audit-tl-indicator">
-              <div class="audit-tl-dot" style="background:${entry.dot};"></div>
-              ${i < this.AUDIT_TIMELINE_DATA.length - 1 ? '<div class="audit-tl-line"></div>' : ''}
-            </div>
-            <div class="audit-tl-content">
-              <div class="audit-tl-action">${entry.action}</div>
-              <div class="audit-tl-detail">${entry.detail}</div>
-            </div>
-            <div class="audit-tl-time">${entry.time}</div>
-          </div>
-        `).join('');
-      },
-
-      bindReportFilters() {
-        document.querySelectorAll('#view-reports-section .filter-chip').forEach(chip => {
-          chip.addEventListener('click', () => {
-            document.querySelectorAll('#view-reports-section .filter-chip').forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-            app.renderReportCards(chip.dataset.filter);
-          });
-        });
-        document.getElementById('report-search')?.addEventListener('input', () => {
-          const activeFilter = document.querySelector('#view-reports-section .filter-chip.active')?.dataset.filter || 'all';
-          app.renderReportCards(activeFilter);
-        });
-      },
-
-      openReportModal(reportId) {
-        const report = this.AUDIT_REPORTS.find(r => r.id === reportId);
-        const caseData = CASES_DATA[report.caseKey];
-        if (!report || !caseData) return;
-
-        // Header
-        document.getElementById('rmd-biz-name').textContent = report.biz;
-        document.getElementById('rmd-case-id').textContent = report.id;
-        document.getElementById('rmd-timestamp').textContent = 'Generated ' + report.generated;
-        const classBadge = document.getElementById('rmd-class-badge');
-        classBadge.textContent = report.classification;
-        classBadge.className = 'badge ' + (report.score >= 81 ? 'badge-success' : report.score >= 31 ? 'badge-warning' : 'badge-danger');
-
-        // Score band
-        const scoreBig = document.getElementById('rmd-score-big');
-        scoreBig.textContent = report.score;
-        scoreBig.style.color = report.score >= 81 ? 'var(--success)' : report.score >= 61 ? '#2563EB' : report.score >= 31 ? 'var(--warning)' : 'var(--danger)';
-        document.getElementById('rmd-score-marker').style.left = report.score + '%';
-        document.getElementById('rmd-explanation').textContent = caseData.explanation;
-
-        // Info grid
-        document.getElementById('rmd-info-grid').innerHTML = [
-          { label: 'Business', val: report.biz },
-          { label: 'Industry', val: report.industry },
-          { label: 'Registration Ref.', val: report.reg },
-          { label: 'Claimed Address', val: report.addr },
-          { label: 'Evidence Sources', val: report.sources + ' datasets' },
-          { label: 'Risk Level', val: report.risk },
-        ].map(item => `
-          <div class="rpt-info-item">
-            <span class="rpt-info-label">${item.label}</span>
-            <span class="rpt-info-val">${item.val}</span>
-          </div>
-        `).join('');
-
-        // Signals table
-        document.getElementById('rmd-signals-tbody').innerHTML = caseData.signals.map(s => `
-          <tr>
-            <td><strong>${s.name}</strong></td>
-            <td><span class="badge ${s.type === 'success' ? 'badge-success' : s.type === 'warning' ? 'badge-warning' : 'badge-danger'}">${s.result}</span></td>
-            <td style="text-align:right;" class="tabular"><strong style="color:${s.contribution.startsWith('+') ? 'var(--success)' : 'var(--danger)'}">${s.contribution}</strong></td>
-            <td style="color:var(--text-secondary);">${s.source}</td>
-          </tr>
-        `).join('');
-
-        // Contradictions
-        const contraEl = document.getElementById('rmd-contradictions');
-        if (caseData.contradictions.length === 0) {
-          contraEl.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No material contradictions identified.</div>';
-        } else {
-          contraEl.innerHTML = caseData.contradictions.map(c => `
-            <div class="contradiction-row">
-              <div>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <strong>${c.title}</strong>
-                  <span class="badge ${c.severity === 'Low' ? 'badge-neutral' : c.severity === 'Medium' ? 'badge-warning' : 'badge-danger'}">${c.severity}</span>
-                </div>
-                <div style="color:var(--text-secondary); font-size:12px; margin-top:2px;">${c.desc}</div>
-              </div>
-              <div style="font-weight:700; color:var(--danger);" class="tabular">Impact: ${c.impact}</div>
-            </div>
-          `).join('');
-        }
-
-        // Geo summary
-        const loc = caseData.locationSummary;
-        document.getElementById('rmd-geo-grid').innerHTML = [
-          { label: 'Claimed Location', val: loc.claimed },
-          { label: 'Nearest Activity Cluster', val: loc.nearestCluster },
-          { label: 'Related Locations', val: loc.related },
-          { label: 'Shared-Address Entities', val: loc.shared },
-        ].map(item => `
-          <div class="rpt-info-item">
-            <span class="rpt-info-label">${item.label}</span>
-            <span class="rpt-info-val">${item.val}</span>
-          </div>
-        `).join('');
-
-        document.getElementById('report-detail-modal').style.display = 'flex';
-      },
-
-      bindReportModal() {
-        const modal = document.getElementById('report-detail-modal');
-        document.getElementById('rmd-btn-close')?.addEventListener('click', () => { modal.style.display = 'none'; });
-        modal?.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
-        document.getElementById('rmd-btn-print')?.addEventListener('click', () => { window.print(); });
-      },
-
-      // ── Navigation ──────────────────────────────────────────────────────────
-
-      bindNav() {
-        document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
-          item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const view = item.dataset.view;
-            if (view) app.switchView(view);
-          });
-        });
-
-        // Table Row Click to Open Detail
-        document.querySelectorAll('#investigations-tbody tr').forEach(row => {
-          row.addEventListener('click', () => {
-            const caseKey = row.dataset.case || 'apex';
-            app.loadCase(caseKey);
-          });
-        });
-
-        // Role select
-        document.getElementById('role-select').addEventListener('change', (e) => {
-          app.showToast(`Active investigator role updated: ${e.target.value}`);
-        });
-
-        // Global search
-        document.getElementById('global-search').addEventListener('input', (e) => {
-          const q = e.target.value.toLowerCase().trim();
-          const rows = document.querySelectorAll('#investigations-tbody tr');
-          rows.forEach(r => {
-            const text = r.innerText.toLowerCase();
-            r.style.display = text.includes(q) ? '' : 'none';
-          });
-        });
-      },
-
-      bindDemoButtons() {
-        document.querySelectorAll('.demo-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const caseKey = btn.dataset.case;
-            app.loadCase(caseKey);
-          });
-        });
       },
 
       bindDetailEvents() {
@@ -2901,21 +3424,19 @@
           app.switchView('reports');
         });
 
-        document.getElementById('btn-print-report')?.addEventListener('click', () => {
-          window.print();
-        });
-
         document.getElementById('btn-notif')?.addEventListener('click', () => {
-          app.showToast("No unresolved alerts. 24 cases synchronized.");
+          app.showToast("All 24 business location telemetry feeds synchronized.");
         });
       },
 
+      // ── New Investigation 4-Step Modal Workflow (Section 20) ──────────────
       bindWorkflowModal() {
         const modal = document.getElementById('new-investigation-modal');
         const openBtn = document.getElementById('btn-open-new-case');
-        if (!openBtn) return;
         const cancelBtn = document.getElementById('btn-wf-cancel');
         const nextBtn = document.getElementById('btn-wf-next');
+
+        if (!modal || !openBtn) return;
 
         openBtn.addEventListener('click', () => {
           app.wfStep = 1;
@@ -2923,25 +3444,25 @@
           modal.style.display = 'flex';
         });
 
-        cancelBtn.addEventListener('click', () => {
+        cancelBtn?.addEventListener('click', () => {
           modal.style.display = 'none';
         });
 
-        nextBtn.addEventListener('click', () => {
+        nextBtn?.addEventListener('click', () => {
           if (app.wfStep === 1) {
             app.wfStep = 2;
             app.renderWorkflowStep(2);
           } else if (app.wfStep === 2) {
             app.wfStep = 3;
             app.renderWorkflowStep(3);
-            nextBtn.textContent = "Processing...";
+            nextBtn.textContent = "Synthesizing...";
             nextBtn.disabled = true;
             setTimeout(() => {
               app.wfStep = 4;
               app.renderWorkflowStep(4);
-              nextBtn.textContent = "Open Investigation";
+              nextBtn.textContent = "Open Investigation &rarr;";
               nextBtn.disabled = false;
-            }, 1200);
+            }, 1100);
           } else if (app.wfStep === 4) {
             modal.style.display = 'none';
             app.showToast("New investigation created and added to queue.");
@@ -2959,35 +3480,258 @@
         });
 
         const nextBtn = document.getElementById('btn-wf-next');
-        if (stepNum === 1) nextBtn.textContent = "Select Evidence Datasets →";
-        else if (stepNum === 2) nextBtn.textContent = "Run Assessment";
+        if (stepNum === 1) nextBtn.textContent = "Select Evidence Datasets \u2192";
+        else if (stepNum === 2) nextBtn.textContent = "Run Assessment \u2192";
       },
 
+      // ── Sign In Modal (Section 28) ────────────────────────────────────────
       bindLogin() {
         const loginModal = document.getElementById('login-modal');
         const toggleBtn = document.getElementById('btn-login-toggle');
         const form = document.getElementById('login-form');
 
-        toggleBtn.addEventListener('click', () => {
+        toggleBtn?.addEventListener('click', () => {
           loginModal.style.display = loginModal.style.display === 'flex' ? 'none' : 'flex';
         });
 
-        loginModal.addEventListener('click', (e) => {
+        loginModal?.addEventListener('click', (e) => {
           if (e.target === loginModal) loginModal.style.display = 'none';
         });
 
-        form.addEventListener('submit', (e) => {
+        form?.addEventListener('submit', (e) => {
           e.preventDefault();
           loginModal.style.display = 'none';
           app.showToast("Signed in as Vignesh V. L. (Investigator)");
         });
+      },
+
+      // ── Reports Page (Section 28) ─────────────────────────────────────────
+      initReportsPage() {
+        this.renderReportCards('all');
+        this.renderAuditTimeline();
+        this.bindReportFilters();
+
+        document.getElementById('btn-export-all')?.addEventListener('click', () => {
+          window.print();
+        });
+
+        const rmdModal = document.getElementById('report-detail-modal');
+        document.getElementById('rmd-btn-close')?.addEventListener('click', () => {
+          rmdModal.style.display = 'none';
+        });
+        document.getElementById('rmd-btn-print')?.addEventListener('click', () => {
+          window.print();
+        });
+        rmdModal?.addEventListener('click', (e) => {
+          if (e.target === rmdModal) rmdModal.style.display = 'none';
+        });
+      },
+
+      renderReportCards(filter) {
+        const container = document.getElementById('report-cards-container');
+        if (!container) return;
+
+        let reports = this.businesses;
+        const searchVal = (document.getElementById('report-search')?.value || '').toLowerCase().trim();
+
+        if (filter !== 'all') {
+          reports = reports.filter(r => r.classification.toLowerCase() === filter.toLowerCase());
+        }
+        if (searchVal) {
+          reports = reports.filter(r =>
+            r.name.toLowerCase().includes(searchVal) ||
+            r.address.toLowerCase().includes(searchVal) ||
+            r.id.toLowerCase().includes(searchVal)
+          );
+        }
+
+        container.innerHTML = reports.map(r => {
+          const scoreColor = r.score >= 80 ? 'var(--success)' : (r.score >= 45 ? 'var(--warning)' : 'var(--danger)');
+          const badgeClass = r.score >= 80 ? 'badge-success' : (r.score >= 45 ? 'badge-warning' : 'badge-danger');
+
+          return `
+            <div class="report-card" onclick="app.openReportModal('${r.key}')">
+              <div class="report-card-top">
+                <div style="min-width:0;">
+                  <div class="report-card-biz">${r.name}</div>
+                  <div class="report-card-addr">${r.address}</div>
+                </div>
+                <div class="report-card-score-block">
+                  <div class="report-card-score tabular" style="color:${scoreColor};">${r.score}</div>
+                  <div class="report-card-score-label">/ 100</div>
+                </div>
+              </div>
+              <div class="report-card-scorebar">
+                <div class="report-card-scorebar-fill" style="width:${r.score}%; background:${scoreColor};"></div>
+              </div>
+              <div class="report-card-body">
+                <div class="report-card-meta-row">
+                  <span>Industry</span><span>${r.industry}</span>
+                </div>
+                <div class="report-card-meta-row">
+                  <span>Classification</span><span><span class="badge ${badgeClass}">${r.classification}</span></span>
+                </div>
+                <div class="report-card-meta-row">
+                  <span>Signals / Exceptions</span><span>${r.supportingCount} / ${r.contradictionCount}</span>
+                </div>
+              </div>
+              <div class="report-card-footer">
+                <span class="report-card-id">${r.id}</span>
+                <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); app.openReportModal('${r.key}')">
+                  View Report
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      },
+
+      openReportModal(caseKey) {
+        const biz = this.businesses.find(b => b.key === caseKey);
+        if (!biz) return;
+
+        document.getElementById('rmd-biz-name').textContent = biz.name;
+        document.getElementById('rmd-case-id').textContent = `${biz.id} • ${biz.industry}`;
+        const badge = document.getElementById('rmd-class-badge');
+        badge.textContent = biz.classification;
+        badge.className = `badge ${biz.score >= 80 ? 'badge-success' : (biz.score >= 45 ? 'badge-warning' : 'badge-danger')}`;
+
+        const scoreBig = document.getElementById('rmd-score-big');
+        scoreBig.textContent = biz.score;
+        scoreBig.style.color = biz.score >= 80 ? 'var(--success)' : (biz.score >= 45 ? 'var(--warning)' : 'var(--danger)');
+
+        document.getElementById('rmd-explanation').textContent = biz.explanation;
+
+        document.getElementById('rmd-info-grid').innerHTML = [
+          { label: 'Business Name', val: biz.name },
+          { label: 'Industry Sector', val: biz.industry },
+          { label: 'Registration Ref.', val: biz.reg },
+          { label: 'Claimed Address', val: biz.address },
+          { label: 'Coordinates', val: `${biz.coordinates.lat}° N, ${biz.coordinates.lng}° E` },
+          { label: 'Risk Assessment', val: `${biz.risk} Risk` },
+        ].map(item => `
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">${item.label}</span>
+            <span class="rpt-info-val">${item.val}</span>
+          </div>
+        `).join('');
+
+        document.getElementById('rmd-signals-tbody').innerHTML = biz.signals.map(s => `
+          <tr>
+            <td><strong>${s.name}</strong></td>
+            <td><span class="badge ${s.type === 'success' ? 'badge-success' : (s.type === 'warning' ? 'badge-warning' : 'badge-danger')}">${s.result}</span></td>
+            <td style="text-align:right;" class="tabular"><strong style="color:${s.contribution.startsWith('+') ? 'var(--success)' : 'var(--danger)'};">${s.contribution}</strong></td>
+            <td style="color:var(--text-secondary);">${s.source}</td>
+          </tr>
+        `).join('');
+
+        const contraEl = document.getElementById('rmd-contradictions');
+        if (biz.contradictions.length === 0) {
+          contraEl.innerHTML = '<div style="color:var(--text-secondary); font-size:12px;">No material contradictions identified.</div>';
+        } else {
+          contraEl.innerHTML = biz.contradictions.map(c => `
+            <div class="contradiction-row">
+              <div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <strong>${c.title}</strong>
+                  <span class="badge ${c.severity === 'Low' ? 'badge-neutral' : (c.severity === 'Medium' ? 'badge-warning' : 'badge-danger')}">${c.severity}</span>
+                </div>
+                <div style="color:var(--text-secondary); font-size:12px; margin-top:2px;">${c.desc}</div>
+              </div>
+              <div style="font-weight:700; color:var(--danger);" class="tabular">Impact: ${c.impact}</div>
+            </div>
+          `).join('');
+        }
+
+        const loc = biz.locationSummary;
+        document.getElementById('rmd-geo-grid').innerHTML = [
+          { label: 'Claimed Location', val: loc.claimed },
+          { label: 'Nearest Activity Cluster', val: loc.nearestCluster },
+          { label: 'Related Branches', val: loc.related },
+          { label: 'Shared-Address Density', val: loc.shared },
+        ].map(item => `
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">${item.label}</span>
+            <span class="rpt-info-val">${item.val}</span>
+          </div>
+        `).join('');
+
+        document.getElementById('report-detail-modal').style.display = 'flex';
+      },
+
+      bindReportFilters() {
+        document.querySelectorAll('#view-reports-section .filter-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            document.querySelectorAll('#view-reports-section .filter-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            app.renderReportCards(chip.dataset.filter);
+          });
+        });
+
+        document.getElementById('report-search')?.addEventListener('input', () => {
+          const activeFilter = document.querySelector('#view-reports-section .filter-chip.active')?.dataset.filter || 'all';
+          app.renderReportCards(activeFilter);
+        });
+      },
+
+      renderAuditTimeline() {
+        const container = document.getElementById('audit-timeline-container');
+        if (!container) return;
+
+        const entries = [
+          { action: 'Report generated: Apex Industrial Supplies', detail: 'GT-2026-00124 • Score: 87/100 • Reviewed by Vignesh V. L.', time: '10 min ago', dot: 'var(--success)' },
+          { action: 'Flag raised: Nova Trading Network', detail: 'GT-2026-00084 • Score: 28/100 • 3.2 km distance mismatch escalated', time: '24 min ago', dot: 'var(--danger)' },
+          { action: 'Report generated: Vertex Solutions', detail: 'GT-2026-00099 • Score: 58/100 • Shared-address ambiguity logged', time: '1 hr ago', dot: 'var(--warning)' },
+          { action: 'Telemetry check: Precision Die & Castings', detail: 'GT-2026-00118 • Score: 84/100 • Heavy power draw confirmed', time: '3 hrs ago', dot: 'var(--success)' },
+          { action: 'Flag raised: Global Marine Impex', detail: 'GT-2026-00077 • Score: 22/100 • Zero port telemetry detected', time: '5 hrs ago', dot: 'var(--danger)' }
+        ];
+
+        container.innerHTML = entries.map((entry, i) => `
+          <div class="audit-timeline-entry">
+            <div class="audit-tl-indicator">
+              <div class="audit-tl-dot" style="background:${entry.dot};"></div>
+              ${i < entries.length - 1 ? '<div class="audit-tl-line"></div>' : ''}
+            </div>
+            <div class="audit-tl-content">
+              <div class="audit-tl-action">${entry.action}</div>
+              <div class="audit-tl-detail">${entry.detail}</div>
+            </div>
+            <div class="audit-tl-time">${entry.time}</div>
+          </div>
+        `).join('');
+      },
+
+      renderFullQueue() {
+        const tbody = document.getElementById('full-queue-tbody');
+        if (!tbody) return;
+
+        tbody.innerHTML = this.businesses.map(b => {
+          const badgeClass = b.classification === 'Credible' ? 'badge-success' : (b.classification === 'Ambiguous' ? 'badge-warning' : 'badge-danger');
+          const riskClass = b.risk === 'Low' ? 'badge-success' : (b.risk === 'Medium' ? 'badge-warning' : 'badge-danger');
+          return `
+            <tr class="clickable-row" onclick="app.loadCase('${b.key}')">
+              <td><strong>${b.name}</strong><br/><span class="font-mono" style="font-size:11px; color:var(--text-muted);">${b.id}</span></td>
+              <td>${b.address}</td>
+              <td style="text-align:right;" class="tabular"><strong>${b.score}</strong> / 100</td>
+              <td><span class="badge ${badgeClass}">${b.classification}</span></td>
+              <td><span class="badge ${riskClass}">${b.risk} Risk</span></td>
+              <td style="color:var(--text-secondary);">${b.updated}</td>
+            </tr>
+          `;
+        }).join('');
+      },
+
+      renderActivityStream() {
+        const container = document.getElementById('full-activity-stream');
+        if (!container) return;
+        this.renderAuditTimeline();
+        container.innerHTML = document.getElementById('audit-timeline-container')?.innerHTML || '';
       }
     };
 
     // Initialize application when DOM is ready
     document.addEventListener('DOMContentLoaded', () => {
       app.init();
-      app.initReportsPage();
     });
   </script>
 </body>
