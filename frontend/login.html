@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoTrust AI - Portal</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        .clay-card {
+            background-color: #1e293b;
+            border-radius: 32px;
+            box-shadow: 15px 15px 30px rgba(0, 0, 0, 0.4), inset 4px 4px 12px rgba(255, 255, 255, 0.08), inset -4px -4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .clay-input {
+            background-color: #0f172a;
+            border-radius: 20px;
+            box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .clay-btn {
+            background-color: #3b82f6;
+            border-radius: 24px;
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3), inset 3px 3px 10px rgba(255, 255, 255, 0.3), inset -3px -3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .clay-btn:active {
+            transform: scale(0.95);
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3), inset 4px 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .clay-btn-grey {
+            background-color: #475569;
+            border-radius: 24px;
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.3), inset 3px 3px 10px rgba(255, 255, 255, 0.2), inset -3px -3px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .clay-btn-grey:active {
+            transform: scale(0.95);
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3), inset 4px 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .clay-input::placeholder {
+            color: #64748b;
+        }
+
+        /* Select dropdown styling */
+        select.clay-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            color: #f1f5f9;
+        }
+
+        select.clay-input option {
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+
+        input[type="date"].clay-input::-webkit-calendar-picker-indicator {
+            filter: invert(0.6);
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-900 min-h-screen flex items-center justify-center font-sans text-slate-200 p-4">
+
+    <!-- View 1: Standard Login -->
+    <div id="view-login" class="clay-card w-full w-96 max-w-sm p-10 flex flex-col">
+        <!-- Header -->
+        <div class="flex flex-col items-center mb-8 text-center">
+            <i class="fa-solid fa-shield-halved text-5xl text-blue-500 mb-4 drop-shadow-md"></i>
+            <h1 class="text-3xl font-bold text-white tracking-wide">GeoTrust AI</h1>
+            <p class="text-sm text-slate-400 mt-2 font-medium tracking-widest uppercase">Investigator Portal</p>
+        </div>
+
+        <!-- Form Inputs -->
+        <div class="flex flex-col space-y-5">
+            <input type="text" placeholder="Investigator ID" class="clay-input w-full p-4 text-white outline-none">
+            <input type="password" placeholder="Clearance Code" class="clay-input w-full p-4 text-white outline-none">
+        </div>
+
+        <!-- Connect Button -->
+        <button class="clay-btn w-full p-4 mt-6 text-white font-bold tracking-wider"
+            onclick="window.location.href='index.html'">
+            Login to Engine
+        </button>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center text-sm text-slate-400">
+            New investigator? <a href="#" class="text-blue-400 hover:text-blue-300 font-semibold"
+                onclick="switchView('view-login', 'view-signup-1')">Sign Up</a>
+        </div>
+    </div>
+
+    <!-- View 2: Sign Up - Step 1: Authorization -->
+    <div id="view-signup-1" class="clay-card w-full max-w-[600px] p-10 flex flex-col hidden">
+        <div class="flex flex-col items-center mb-6 text-center">
+            <i class="fa-solid fa-shield-halved text-5xl text-blue-500 mb-4 drop-shadow-md"></i>
+            <h1 class="text-3xl font-bold text-white tracking-wide">GeoTrust AI - New Investigator Setup</h1>
+            <div class="mt-6 px-5 py-2 rounded-full bg-slate-800/60 border border-slate-700/50 shadow-inner">
+                <span class="text-xs font-bold text-blue-400 tracking-wider">Step 1 of 3: Authorization</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-2">
+            <input type="text" placeholder="Create Username"
+                class="clay-input w-full p-4 text-white outline-none col-span-2">
+            <input type="password" placeholder="Create Clearance Code"
+                class="clay-input w-full p-4 text-white outline-none">
+            <input type="password" placeholder="Confirm Clearance Code"
+                class="clay-input w-full p-4 text-white outline-none">
+        </div>
+
+        <button class="clay-btn w-full p-4 mt-6 text-white font-bold tracking-wider"
+            onclick="switchView('view-signup-1', 'view-signup-2')">
+            Next: Organization Details
+        </button>
+
+        <div class="mt-6 text-center text-sm text-slate-400">
+            Already verified? <a href="#" class="text-blue-400 hover:text-blue-300 font-semibold"
+                onclick="switchView('view-signup-1', 'view-login')">Login</a>
+        </div>
+    </div>
+
+    <!-- View 3: Sign Up - Step 2: Org Details -->
+    <div id="view-signup-2" class="clay-card w-full max-w-[600px] p-10 flex flex-col hidden">
+        <div class="flex flex-col items-center mb-6 text-center">
+            <i class="fa-solid fa-shield-halved text-5xl text-blue-500 mb-4 drop-shadow-md"></i>
+            <h1 class="text-3xl font-bold text-white tracking-wide">GeoTrust AI - New Investigator Setup</h1>
+            <div class="mt-6 px-5 py-2 rounded-full bg-slate-800/60 border border-slate-700/50 shadow-inner">
+                <span class="text-xs font-bold text-blue-400 tracking-wider">Step 2 of 3: Organization Details</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-2">
+            <input type="text" placeholder="Job Title" class="clay-input w-full p-4 text-white outline-none">
+            <input type="text" placeholder="Department" class="clay-input w-full p-4 text-white outline-none">
+            <input type="text" placeholder="Organization Name" class="clay-input w-full p-4 text-white outline-none">
+            <input type="text" placeholder="License Number" class="clay-input w-full p-4 text-white outline-none">
+            <input type="email" placeholder="Official Email" class="clay-input w-full p-4 text-white outline-none">
+            <select class="clay-input w-full p-4 outline-none cursor-pointer">
+                <option value="" disabled selected hidden>Organization Type</option>
+                <option value="bank">Bank/Financial Institution</option>
+                <option value="compliance">Compliance Firm</option>
+                <option value="investigation">Investigation Agency</option>
+                <option value="corporate">Corporate Risk Team</option>
+            </select>
+        </div>
+
+        <div class="flex gap-4 mt-6">
+            <button class="clay-btn-grey w-1/3 p-4 text-white font-bold tracking-wider text-sm"
+                onclick="switchView('view-signup-2', 'view-signup-1')">
+                Back
+            </button>
+            <button class="clay-btn w-2/3 p-4 text-white font-bold tracking-wider text-sm"
+                onclick="switchView('view-signup-2', 'view-signup-3')">
+                Next: Verification
+            </button>
+        </div>
+    </div>
+
+    <!-- View 4: Sign Up - Step 3: Verification -->
+    <div id="view-signup-3" class="clay-card w-full max-w-[600px] p-10 flex flex-col hidden">
+        <div class="flex flex-col items-center mb-6 text-center">
+            <i class="fa-solid fa-shield-halved text-5xl text-blue-500 mb-4 drop-shadow-md"></i>
+            <h1 class="text-3xl font-bold text-white tracking-wide">GeoTrust AI - New Investigator Setup</h1>
+            <div class="mt-6 px-5 py-2 rounded-full bg-slate-800/60 border border-slate-700/50 shadow-inner">
+                <span class="text-xs font-bold text-blue-400 tracking-wider">Step 3 of 3: Identity Verification</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mt-2">
+            <select class="clay-input w-full p-4 outline-none cursor-pointer">
+                <option value="" disabled selected hidden>Government ID Type</option>
+                <option value="official_id">Official ID</option>
+                <option value="employee_id">Employee ID</option>
+                <option value="professional_license">Professional License</option>
+            </select>
+            <input type="text" placeholder="ID Reference Number" class="clay-input w-full p-4 text-white outline-none">
+
+            <input type="text" placeholder="Issuing Authority" class="clay-input w-full p-4 text-white outline-none">
+            <select class="clay-input w-full p-4 outline-none cursor-pointer">
+                <option value="" disabled selected hidden>Verification Status</option>
+                <option value="pending">Pending</option>
+                <option value="pre_verified">Pre-Verified</option>
+            </select>
+
+            <input type="text" placeholder="Issue Date" onfocus="(this.type='date')" onblur="(this.type='text')"
+                class="clay-input w-full p-4 text-white outline-none">
+            <input type="text" placeholder="Expiry Date" onfocus="(this.type='date')" onblur="(this.type='text')"
+                class="clay-input w-full p-4 text-white outline-none">
+        </div>
+
+        <div class="flex gap-4 mt-6">
+            <button class="clay-btn-grey w-1/3 p-4 text-white font-bold tracking-wider text-sm"
+                onclick="switchView('view-signup-3', 'view-signup-2')">
+                Back
+            </button>
+            <button class="clay-btn w-2/3 p-4 text-white font-bold tracking-wider text-sm"
+                onclick="window.location.href='index.html'">
+                Complete Registration
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function switchView(hideId, showId) {
+            document.getElementById(hideId).classList.add('hidden');
+            document.getElementById(showId).classList.remove('hidden');
+        }
+    </script>
+</body>
+
+</html>
