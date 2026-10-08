@@ -2877,8 +2877,9 @@
         };
         document.getElementById('breadcrumb-title').textContent = titleMap[viewName] || "Dashboard";
 
-        if (viewName === 'dashboard' && this.mapInstance) {
-          setTimeout(() => { this.mapInstance.invalidateSize(); }, 150);
+        if (viewName === 'dashboard') {
+          if (this.mapInstance) setTimeout(() => { this.mapInstance.invalidateSize(); }, 150);
+          if (this.activityChart) setTimeout(() => { this.activityChart.resize(); }, 150);
         } else if (viewName === 'detail' || viewName === 'businesses') {
           setTimeout(() => { this.renderDetailMap(this.activeCase); }, 150);
         }
