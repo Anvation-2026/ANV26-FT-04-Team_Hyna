@@ -2397,7 +2397,7 @@
             <h1 class="page-title">Investigations Queue</h1>
             <div class="page-subtitle">Active compliance queue of businesses undergoing location integrity corroboration.</div>
           </div>
-          <button class="btn btn-primary" onclick="document.getElementById('btn-open-new-case').click()">
+          <button class="btn btn-primary" id="btn-open-new-case">
             + New Investigation
           </button>
         </div>
@@ -3520,16 +3520,20 @@
       // ── New Investigation 4-Step Modal Workflow (Section 20) ──────────────
       bindWorkflowModal() {
         const modal = document.getElementById('new-investigation-modal');
-        const openBtn = document.getElementById('btn-open-new-case');
         const cancelBtn = document.getElementById('btn-wf-cancel');
         const nextBtn = document.getElementById('btn-wf-next');
+        const openBtns = [document.getElementById('btn-open-new-case'), document.getElementById('btn-new-report')];
 
-        if (!modal || !openBtn) return;
+        if (!modal) return;
 
-        openBtn.addEventListener('click', () => {
-          app.wfStep = 1;
-          app.renderWorkflowStep(1);
-          modal.style.display = 'flex';
+        openBtns.forEach(btn => {
+          if (btn) {
+            btn.addEventListener('click', () => {
+              app.wfStep = 1;
+              app.renderWorkflowStep(1);
+              modal.style.display = 'flex';
+            });
+          }
         });
 
         cancelBtn?.addEventListener('click', () => {
