@@ -92,7 +92,7 @@ async function runLiveInvestigation() {
             latitude: parseFloat(osmData[0].lat),
             longitude: parseFloat(osmData[0].lon)
         };
-        const evalRes = await fetch('http://192.168.1.5.8080/api/evaluate-live', {
+        const evalRes = await fetch('http://localhost:8080/api/evaluate-live', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
