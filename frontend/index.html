@@ -1987,6 +1987,48 @@
           </div>
         </div>
 
+        <!-- Mandatory Case Coverage Section -->
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="card-header" style="border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span class="card-title">Mandatory Case Coverage</span>
+              <div class="card-subtitle">Required demonstration scenarios</div>
+            </div>
+          </div>
+          <div class="card-body" style="padding: 18px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+            <!-- Credible -->
+            <div class="metric-card" onclick="app.loadCase('inv-001')" style="border-left: 4px solid var(--success); cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <span class="metric-label" style="color: var(--success);">CREDIBLE</span>
+                <span class="tabular" style="font-weight: 700; font-size: 14px; color: var(--text-primary);">87/100</span>
+              </div>
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Apex Industrial Supplies</div>
+              <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 4px;">Status: <span style="color:var(--text-primary);">Credible</span></div>
+              <div style="font-size: 11.5px; color: var(--text-secondary);">Evidence: <span style="color:var(--text-primary);">Strong supporting evidence</span></div>
+            </div>
+            <!-- Suspicious -->
+            <div class="metric-card" onclick="app.loadCase('inv-002')" style="border-left: 4px solid var(--danger); cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <span class="metric-label" style="color: var(--danger);">SUSPICIOUS / GHOST-ADDRESS</span>
+                <span class="tabular" style="font-weight: 700; font-size: 14px; color: var(--text-primary);">28/100</span>
+              </div>
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Nova Trading Network</div>
+              <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 4px;">Status: <span style="color:var(--text-primary);">Suspicious Location Pattern</span></div>
+              <div style="font-size: 11.5px; color: var(--text-secondary);">Evidence: <span style="color:var(--text-primary);">Weak evidence + contradictions</span></div>
+            </div>
+            <!-- Ambiguous -->
+            <div class="metric-card" onclick="app.loadCase('inv-003')" style="border-left: 4px solid var(--warning); cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <span class="metric-label" style="color: var(--warning);">AMBIGUOUS / SHARED-LOCATION</span>
+                <span class="tabular" style="font-weight: 700; font-size: 14px; color: var(--text-primary);">58/100</span>
+              </div>
+              <div style="font-size: 13.5px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Vertex Solutions</div>
+              <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 4px;">Status: <span style="color:var(--text-primary);">Ambiguous / Shared Location</span></div>
+              <div style="font-size: 11.5px; color: var(--text-secondary);">Evidence: <span style="color:var(--text-primary);">Mixed evidence + shared address</span></div>
+            </div>
+          </div>
+        </div>
+
         <div id="mainDashboardContent">
         <!-- Section 7: KPI Overview Cards (Soft Neumorphic Depth) -->
         <div class="metric-grid">
@@ -1997,15 +2039,15 @@
               <span class="metric-trend">+4 this week</span>
             </div>
           </div>
-          <div class="metric-card" id="kpi-card-risk" data-kpi="Suspicious" title="Click to filter high risk cases">
+          <div class="metric-card" id="kpi-card-risk" data-kpi="Suspicious Location Pattern" title="Click to filter high risk cases">
             <span class="metric-label">High Risk</span>
             <div class="metric-value-row">
               <span class="metric-value tabular" style="color:var(--danger);">06</span>
               <span class="metric-trend">Requires review</span>
             </div>
           </div>
-          <div class="metric-card" id="kpi-card-ambiguous" data-kpi="Ambiguous" title="Click to filter ambiguous cases">
-            <span class="metric-label">Ambiguous</span>
+          <div class="metric-card" id="kpi-card-ambiguous" data-kpi="Ambiguous / Shared Location" title="Click to filter ambiguous cases">
+            <span class="metric-label">Ambiguous / Shared</span>
             <div class="metric-value-row">
               <span class="metric-value tabular" style="color:var(--warning);">08</span>
               <span class="metric-trend">Shared / Mixed</span>
@@ -2125,7 +2167,7 @@
               <div class="map-filter-group" id="map-filter-controls">
                 <button class="map-filter-btn active" data-map-filter="All">All</button>
                 <button class="map-filter-btn" data-map-filter="Credible">Credible</button>
-                <button class="map-filter-btn" data-map-filter="Ambiguous">Ambiguous</button>
+                <button class="map-filter-btn" data-map-filter="Ambiguous">Ambiguous / Shared</button>
                 <button class="map-filter-btn" data-map-filter="Suspicious">Suspicious</button>
               </div>
               <div style="font-size:11px; color:var(--text-secondary); margin-left:auto;">
@@ -2444,7 +2486,7 @@
             <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
               Strong location evidence<br />Low contradiction
             </div>
-            <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('apex')">
+            <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('inv-001')">
               Open Case 01 &rarr;
             </button>
           </div>
@@ -2458,7 +2500,7 @@
             <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
               Weak activity evidence<br />Multiple contradictions (3.2 km mismatch)
             </div>
-            <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('nova')">
+            <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('inv-002')">
               Open Case 02 &rarr;
             </button>
           </div>
@@ -2472,7 +2514,7 @@
             <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">
               Shared co-working desk<br />Mixed telemetry evidence
             </div>
-            <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('vertex')">
+            <button class="btn btn-secondary btn-sm" style="margin-top:auto;" onclick="app.loadCase('inv-003')">
               Open Case 03 &rarr;
             </button>
           </div>
@@ -2554,7 +2596,7 @@
           <div class="filter-chip-group">
             <button class="filter-chip active" data-filter="all">All Reports (24)</button>
             <button class="filter-chip" data-filter="credible">Credible</button>
-            <button class="filter-chip" data-filter="ambiguous">Ambiguous</button>
+            <button class="filter-chip" data-filter="ambiguous">Ambiguous / Shared</button>
             <button class="filter-chip" data-filter="suspicious">Suspicious</button>
           </div>
           <input type="text" id="report-search" class="form-input" style="width:220px;" placeholder="Filter reports by business..." />
@@ -2593,8 +2635,8 @@
             <div style="display:flex; gap:6px;">
               <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('All')">All</button>
               <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('Credible')">Credible</button>
-              <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('Ambiguous')">Ambiguous</button>
-              <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('Suspicious')">Suspicious</button>
+              <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('Ambiguous / Shared Location')">Ambiguous / Shared</button>
+              <button class="btn btn-secondary btn-sm" onclick="app.filterTableByClassification('Suspicious Location Pattern')">Suspicious</button>
             </div>
           </div>
           <div class="table-container">
@@ -2693,7 +2735,7 @@
             </div>
             <div class="card-body">
               <div class="dist-bars-container">
-                <div class="dist-bar-item" onclick="app.filterTableByClassification('Suspicious')">
+                <div class="dist-bar-item" onclick="app.filterTableByClassification('Suspicious Location Pattern')">
                   <div class="dist-label-row">
                     <span class="dist-label-title" style="color:var(--danger);">High Risk (Suspicious)</span>
                     <span class="tabular"><strong>6 Cases</strong> (25%)</span>
@@ -2702,7 +2744,7 @@
                     <div class="dist-bar-fill" style="width:25%; background:var(--danger);"></div>
                   </div>
                 </div>
-                <div class="dist-bar-item" onclick="app.filterTableByClassification('Ambiguous')">
+                <div class="dist-bar-item" onclick="app.filterTableByClassification('Ambiguous / Shared Location')">
                   <div class="dist-label-row">
                     <span class="dist-label-title" style="color:var(--warning);">Medium Risk (Ambiguous)</span>
                     <span class="tabular"><strong>8 Cases</strong> (33%)</span>
@@ -2731,14 +2773,14 @@
             </div>
             <div class="card-body">
               <div style="display:flex; flex-direction:column; gap:8px;">
-                <div class="attention-row" onclick="app.loadCase('nova')">
+                <div class="attention-row" onclick="app.loadCase('inv-002')">
                   <div>
                     <div class="attention-biz-name">Activity Distance Mismatch (&gt; 2 km)</div>
                     <div class="attention-reason">Physical telemetry far removed from claimed postal premises</div>
                   </div>
                   <span class="badge badge-danger">High Severity</span>
                 </div>
-                <div class="attention-row" onclick="app.loadCase('vertex')">
+                <div class="attention-row" onclick="app.loadCase('inv-003')">
                   <div>
                     <div class="attention-biz-name">Shared Shell Density (&gt; 5 entities)</div>
                     <div class="attention-reason">Multiple independent ventures registered to identical unpartitioned desk</div>
@@ -3133,7 +3175,7 @@
   <script>
     // Robust Application Controller
     const app = {
-      activeCase: "apex",
+      activeCase: "inv-001",
       activeView: "dashboard",
       currentFilter: "all",
       mapInstance: null,
@@ -3507,7 +3549,7 @@
           const icon = this.createMarkerIcon(biz.classification);
           const marker = L.marker(latLng, { icon }).addTo(this.mapInstance);
 
-          const badgeClass = biz.classification === 'Credible' ? 'badge-success' : (biz.classification === 'Ambiguous' ? 'badge-warning' : 'badge-danger');
+          const badgeClass = biz.classification.includes('Credible') ? 'badge-success' : (biz.classification.includes('Ambiguous') ? 'badge-warning' : 'badge-danger');
 
           const popupContent = `
             <div class="popup-biz-title">${biz.name}</div>
@@ -3527,9 +3569,9 @@
 
         // Update Location Summary statistics (Section 14)
         document.getElementById('sum-monitored').textContent = this.businesses.length;
-        document.getElementById('sum-credible').textContent = this.businesses.filter(b => b.classification === 'Credible').length;
-        document.getElementById('sum-ambiguous').textContent = this.businesses.filter(b => b.classification === 'Ambiguous').length;
-        document.getElementById('sum-suspicious').textContent = this.businesses.filter(b => b.classification === 'Suspicious').length;
+        document.getElementById('sum-credible').textContent = this.businesses.filter(b => b.classification .includes('Credible')).length;
+        document.getElementById('sum-ambiguous').textContent = this.businesses.filter(b => b.classification .includes('Ambiguous')).length;
+        document.getElementById('sum-suspicious').textContent = this.businesses.filter(b => b.classification .includes('Suspicious')).length;
       },
 
       bindMapControls() {
@@ -3597,10 +3639,10 @@
         if (biz.locationSummary && biz.locationSummary.clusterCoords) {
           const clusterLatLng = [biz.locationSummary.clusterCoords.lat, biz.locationSummary.clusterCoords.lng];
           L.circle(latLng, {
-            color: biz.classification === 'Credible' ? '#16A34A' : (biz.classification === 'Ambiguous' ? '#D97706' : '#DC2626'),
-            fillColor: biz.classification === 'Credible' ? '#16A34A' : (biz.classification === 'Ambiguous' ? '#D97706' : '#DC2626'),
+            color: biz.classification .includes('Credible') ? '#16A34A' : (biz.classification .includes('Ambiguous') ? '#D97706' : '#DC2626'),
+            fillColor: biz.classification .includes('Credible') ? '#16A34A' : (biz.classification .includes('Ambiguous') ? '#D97706' : '#DC2626'),
             fillOpacity: 0.12,
-            radius: biz.classification === 'Credible' ? 420 : (biz.classification === 'Ambiguous' ? 300 : 3200)
+            radius: biz.classification .includes('Credible') ? 420 : (biz.classification .includes('Ambiguous') ? 300 : 3200)
           }).addTo(this.detailMapInstance);
 
           if (biz.classification !== 'Credible') {
@@ -3626,7 +3668,7 @@
         }
 
         tbody.innerHTML = data.map(b => {
-          const badgeClass = b.classification === 'Credible' ? 'badge-success' : (b.classification === 'Ambiguous' ? 'badge-warning' : 'badge-danger');
+          const badgeClass = b.classification.includes('Credible') ? 'badge-success' : (b.classification.includes('Ambiguous') ? 'badge-warning' : 'badge-danger');
           const riskClass = b.risk === 'Low' ? 'badge-success' : (b.risk === 'Medium' ? 'badge-warning' : 'badge-danger');
 
           return `
@@ -4196,7 +4238,7 @@
         if (!tbody) return;
 
         tbody.innerHTML = this.businesses.map(b => {
-          const badgeClass = b.classification === 'Credible' ? 'badge-success' : (b.classification === 'Ambiguous' ? 'badge-warning' : 'badge-danger');
+          const badgeClass = b.classification.includes('Credible') ? 'badge-success' : (b.classification.includes('Ambiguous') ? 'badge-warning' : 'badge-danger');
           const riskClass = b.risk === 'Low' ? 'badge-success' : (b.risk === 'Medium' ? 'badge-warning' : 'badge-danger');
           return `
             <tr class="clickable-row" onclick="app.loadCase('${b.key}')">
