@@ -25,23 +25,27 @@ public class ApiController {
     private static final Map<String, BusinessProfile> mockRegistry = new HashMap<>();
 
     static {
-        // A legit tech company
-        BusinessProfile b1 = new BusinessProfile();
-        b1.setClaimedIndustry("Tech");
-        b1.setSqFt(500);
-        mockRegistry.put("hynastudio nagercoil", b1);
+        BusinessProfile b1 = new BusinessProfile(); b1.setClaimedIndustry("Tech"); b1.setSqFt(500); 
+        mockRegistry.put("hynastudio", b1);
+        
+        BusinessProfile b2 = new BusinessProfile(); b2.setClaimedIndustry("Tech"); b2.setSqFt(500000); 
+        mockRegistry.put("google", b2);
+        
+        BusinessProfile b3 = new BusinessProfile(); b3.setClaimedIndustry("Tech"); b3.setSqFt(300000); 
+        mockRegistry.put("microsoft", b3);
+        
+        BusinessProfile b4 = new BusinessProfile(); b4.setClaimedIndustry("Heavy Manufacturing"); b4.setSqFt(150000); 
+        mockRegistry.put("titanium steel", b4);
+        
+        BusinessProfile b5 = new BusinessProfile(); b5.setClaimedIndustry("Finance"); b5.setSqFt(25000); 
+        mockRegistry.put("jp morgan", b5);
 
-        // A legit manufacturing plant
-        BusinessProfile b2 = new BusinessProfile();
-        b2.setClaimedIndustry("Heavy Manufacturing");
-        b2.setSqFt(150000);
-        mockRegistry.put("titanium steel bengaluru", b2);
+        // Keep existing ones for backward compatibility
+        BusinessProfile b6 = new BusinessProfile(); b6.setClaimedIndustry("Heavy Manufacturing"); b6.setSqFt(200); 
+        mockRegistry.put("ghost logistics", b6);
 
-        // A shell company (registered as manufacturing, but tiny)
-        BusinessProfile b3 = new BusinessProfile();
-        b3.setClaimedIndustry("Heavy Manufacturing");
-        b3.setSqFt(200);
-        mockRegistry.put("ghost logistics chennai", b3);
+        BusinessProfile b7 = new BusinessProfile(); b7.setClaimedIndustry("Tech"); b7.setSqFt(1200); 
+        mockRegistry.put("21 monk", b7);
     }
 
     private final BusinessProfileRepository repository;
@@ -110,13 +114,23 @@ public class ApiController {
         String businessName = rawName != null ? rawName.toLowerCase() : "";
 
         // Rule 1 (Registry Check)
-        if (!mockRegistry.containsKey(businessName)) {
+        String searchString = input.getBusinessName().toLowerCase();
+        BusinessProfile registered = null;
+
+        // Loop through registry keys to see if the search string contains any known company keyword
+        for (String key : mockRegistry.keySet()) {
+            if (searchString.contains(key)) {
+                registered = mockRegistry.get(key);
+                break;
+            }
+        }
+
+        // If no keyword matched, return the FATAL error
+        if (registered == null) {
             score = 0;
             explanations.add("🚨 FATAL: Business entity not found in Government MCA Registry.");
             return ResponseEntity.ok(new VerificationResult(score, explanations));
         }
-
-        BusinessProfile registered = mockRegistry.get(businessName);
 
         // Rule 2 (Asset Overstatement)
         if (input.getSqFt() != null && input.getSqFt() > (registered.getSqFt() * 1.5)) {

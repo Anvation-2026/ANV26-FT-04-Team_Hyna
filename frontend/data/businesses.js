@@ -120,5 +120,42 @@ window.GEOTRUST_BUSINESSES = [
       { title: "Shared Address", desc: "Address is a known shared co-working facility." },
       { title: "Employee Count", desc: "Employee count exceeds stated physical capacity." }
     ]
+  },
+  {
+    id: "INV-004",
+    key: "inv-004",
+    name: "21 Monk",
+    businessName: "21 Monk",
+    score: 82,
+    classification: "Credible",
+    risk: "Low",
+    status: "Verified",
+    address: "21 Monk Avenue, Tech Park",
+    city: "Chennai",
+    updated: "Just now",
+    industry: "Tech",
+    reg: "REG-2121",
+    coordinates: { lat: 13.0827, lng: 80.2707 },
+    locationSummary: { 
+      clusterCoords: { lat: 13.0827, lng: 80.2707 },
+      claimed: "21 Monk Avenue",
+      nearestCluster: "0.5 km",
+      related: "5 Tech Peers",
+      shared: "Dedicated floor"
+    },
+    explanation: "Business location verified against registry and spatial footprints.",
+    registryConsistency: "Strong",
+    locationActivity: "Moderate",
+    geographicConsistency: "Strong",
+    locationType: "Unique",
+    contradictionLevel: "Low",
+    supportingCount: 4,
+    contradictionCount: 0,
+    sourceCount: 3,
+    signals: [
+      { name: "Registry Match", type: "success", result: "Verified", contribution: "+30", source: "MCA" },
+      { name: "IP Telemetry", type: "success", result: "Localized", contribution: "+20", source: "Network" }
+    ],
+    contradictions: []
   }
 ];
