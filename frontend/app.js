@@ -1,20 +1,35 @@
 let mapInstance = null;
 
+// Enforce login
+if (!sessionStorage.getItem('geotrust_session')) {
+    window.location.href = 'login.html';
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Session management / Sign out
+    const topLoginBtn = document.getElementById('btn-login-toggle');
+    if(topLoginBtn) {
+        topLoginBtn.innerText = "Sign Out";
+        topLoginBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('geotrust_session');
+            window.location.href = 'login.html';
+        });
+    }
+
     // Keep existing logic
     const viewLogin = document.getElementById('view-login');
     const viewDashboard = document.getElementById('view-dashboard');
     const viewDetails = document.getElementById('view-details');
     const loginBtn = document.getElementById('login-btn');
     const closeDetailsBtn = document.getElementById('close-details-btn');
-
+    
     if(loginBtn) {
         loginBtn.addEventListener('click', () => {
             if(viewLogin) viewLogin.classList.add('hidden');
             if(viewDashboard) viewDashboard.classList.remove('hidden');
         });
     }
-    
+
     if(closeDetailsBtn) {
         closeDetailsBtn.addEventListener('click', () => {
             if(viewDetails) viewDetails.classList.add('hidden');
@@ -25,6 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const liveSearchBtn = document.getElementById('liveSearchBtn');
     if(liveSearchBtn) {
         liveSearchBtn.addEventListener('click', runLiveInvestigation);
+    }
+    
+    const clearLiveSearchBtn = document.getElementById('clearLiveSearchBtn');
+    if(clearLiveSearchBtn) {
+        clearLiveSearchBtn.addEventListener('click', () => {
+            document.getElementById('liveResultBox').classList.add('hidden');
+            document.getElementById('liveResultBox').style.display = 'none';
+            document.getElementById('mainDashboardContent').classList.remove('hidden');
+            document.getElementById('liveSearchInput').value = '';
+        });
     }
 });
 
@@ -40,11 +65,19 @@ async function runLiveInvestigation() {
 
     try {
         // Step A (Geocoding)
-        const osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query)); 
-        const osmData = await osmRes.json();
+        let osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query)); 
+        let osmData = await osmRes.json();
+
+        // Fallback: If exact query fails, try searching just the last word (usually the city)
+        if (osmData.length === 0) {
+            const words = query.split(' ');
+            const cityFallback = words[words.length - 1];
+            osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(cityFallback));
+            osmData = await osmRes.json();
+        }
 
         if (osmData.length === 0) {
-            alert("Real-world location not found. Try adding the city.");
+            alert("Location not found. Please try a broader city name.");
             liveSearchBtn.innerText = originalBtnText;
             liveSearchBtn.disabled = false;
             return;
@@ -69,6 +102,8 @@ async function runLiveInvestigation() {
         liveResultBox.style.display = 'block'; 
         if(liveResultBox.classList.contains('hidden')) liveResultBox.classList.remove('hidden');
         
+        document.getElementById('mainDashboardContent').classList.add('hidden');
+        
         document.getElementById('liveBusinessName').innerText = query;
         document.getElementById('liveScore').innerText = 'Score: ' + evalData.score;
         
@@ -89,7 +124,7 @@ async function runLiveInvestigation() {
 
         mapInstance = L.map('map-container').setView([osmData[0].lat, osmData[0].lon], 16);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '©️ OpenStreetMap contributors' }).addTo(mapInstance);
 
         L.marker([osmData[0].lat, osmData[0].lon])
             .addTo(mapInstance)

@@ -1766,10 +1766,13 @@
         </div>
 
         <!-- Live Investigation Result Box -->
-        <div id="liveResultBox" style="display: none; margin-top: 24px; margin-bottom: 24px;" class="card">
-          <div class="card-header">
-            <h2 id="liveBusinessName" class="card-title" style="font-size: 16px;"></h2>
-            <h1 id="liveScore" class="badge badge-neutral" style="font-size: 14px; margin-left: 10px;"></h1>
+        <div id="liveResultBox" style="display: none; margin-top: 24px; margin-bottom: 24px;" class="card hidden">
+          <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center;">
+              <h2 id="liveBusinessName" class="card-title" style="font-size: 16px; margin: 0;"></h2>
+              <h1 id="liveScore" class="badge badge-neutral" style="font-size: 14px; margin-left: 10px; margin-bottom: 0;"></h1>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="clearLiveSearchBtn">Clear Search / Back</button>
           </div>
           <div class="card-body">
             <ul id="liveExplanations" style="margin-left: 20px; color: var(--text-secondary); margin-bottom: 16px;"></ul>
@@ -1777,6 +1780,7 @@
           </div>
         </div>
 
+        <div id="mainDashboardContent">
         <!-- Section 7: KPI Overview Cards (Soft Neumorphic Depth) -->
         <div class="metric-grid">
           <div class="metric-card" id="kpi-card-all" data-kpi="all" title="Click to view all cases">
@@ -2036,6 +2040,7 @@
         <!-- Section 29: Data Disclaimer Note -->
         <div class="data-disclaimer-note">
           Demo environment — assessments use open, organizer-provided or synthetic evidence. GeoTrust does not provide official government, tax, banking or regulatory verification.
+        </div>
         </div>
       </section>
 
@@ -3141,9 +3146,8 @@
         L.control.zoom({ position: 'topright' }).addTo(this.mapInstance);
 
         // Muted CartoDB Positron / OSM tiles
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; OpenStreetMap &copy; CARTO',
-          subdomains: 'abcd',
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+          attribution: '©️ OpenStreetMap contributors',
           maxZoom: 19
         }).addTo(this.mapInstance);
 
@@ -3271,8 +3275,8 @@
 
         L.control.zoom({ position: 'topright' }).addTo(this.detailMapInstance);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; OpenStreetMap &copy; CARTO',
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+          attribution: '©️ OpenStreetMap contributors',
           maxZoom: 19
         }).addTo(this.detailMapInstance);
 

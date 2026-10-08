@@ -228,7 +228,7 @@ function runSession(ok){
   if(i<li.length){li[i].className='c';i++;setTimeout(step,520)}
   else{$('#sList').style.display='none';$('#sTitle').textContent='Welcome back';$('#sSub').textContent='Your session is ready.';$('#sid').textContent='S-'+Math.random().toString(36).slice(2,8).toUpperCase();$('#sDone').style.display='block'}
  })()}
-$('#enter').onclick=()=>{ window.location.href = 'index.html'; };
+$('#enter').onclick=()=>{ sessionStorage.setItem('geotrust_session', '{"id":"GT-INV-0417","name":"Arjun Kumar"}'); window.location.href = 'index.html'; };
 /* signup */
 const names=['Investigator details','Organization details','Professional verification','Account security'];let st=0;
 const reqOk=el=>{let v=el.value.trim(),ok=!!v;
