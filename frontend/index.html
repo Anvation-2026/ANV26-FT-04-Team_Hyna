@@ -1799,6 +1799,38 @@
       }
     }
 
+    /* Workflow Steps Indicator (Modal Tabs) */
+    .workflow-steps-indicator {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-card);
+      overflow-x: auto;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+    
+    .workflow-step {
+      padding: 14px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    
+    .workflow-step:hover {
+      color: var(--text-primary);
+      background-color: var(--bg-hover);
+    }
+    
+    .workflow-step.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600;
+      background-color: var(--primary-subtle);
+    }
+
     @media print {
       #sidebar, #topbar, .reports-toolbar, .map-controls-strip, .btn {
         display: none !important;
