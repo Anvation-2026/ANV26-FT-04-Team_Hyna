@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface BusinessProfileRepository extends JpaRepository<BusinessProfile, Long> {
-    Optional<BusinessProfile> findByCaseId(String caseId);
+    Optional<BusinessProfile>  findByCaseId(String caseId);
 }
