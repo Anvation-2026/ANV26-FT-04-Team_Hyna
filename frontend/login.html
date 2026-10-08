@@ -501,8 +501,15 @@
     }
 
     .list li::after {
-      content: "absolute;left:5px;top:18px;bottom:0;width:2px;background:var(--line)}
- .list li:last-child::after {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 18px;
+      bottom: 0;
+      width: 2px;
+      background: var(--line);
+    }
+    .list li:last-child::after {
         display: none
       }
 
