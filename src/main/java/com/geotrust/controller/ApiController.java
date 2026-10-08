@@ -23,20 +23,24 @@ import java.util.Optional;
 public class ApiController {
 
     private static final Map<String, BusinessProfile> mockRegistry = new HashMap<>();
+
     static {
         // A legit tech company
         BusinessProfile b1 = new BusinessProfile();
-        b1.setClaimedIndustry("Tech"); b1.setSqFt(500); 
+        b1.setClaimedIndustry("Tech");
+        b1.setSqFt(500);
         mockRegistry.put("hynastudio nagercoil", b1);
-        
+
         // A legit manufacturing plant
         BusinessProfile b2 = new BusinessProfile();
-        b2.setClaimedIndustry("Heavy Manufacturing"); b2.setSqFt(150000); 
+        b2.setClaimedIndustry("Heavy Manufacturing");
+        b2.setSqFt(150000);
         mockRegistry.put("titanium steel bengaluru", b2);
-        
+
         // A shell company (registered as manufacturing, but tiny)
         BusinessProfile b3 = new BusinessProfile();
-        b3.setClaimedIndustry("Heavy Manufacturing"); b3.setSqFt(200); 
+        b3.setClaimedIndustry("Heavy Manufacturing");
+        b3.setSqFt(200);
         mockRegistry.put("ghost logistics chennai", b3);
     }
 
@@ -54,11 +58,11 @@ public class ApiController {
     @GetMapping("/evaluate/{caseId}")
     public ResponseEntity<VerificationResult> evaluate(@PathVariable String caseId) {
         Optional<BusinessProfile> profileOptional = repository.findByCaseId(caseId);
-        
+
         if (profileOptional.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        
+
         BusinessProfile profile = profileOptional.get();
         int score = 100;
         List<String> explanations = new ArrayList<>();
@@ -85,25 +89,9 @@ public class ApiController {
                     score -= 40;
                     explanations.add("🟡 WARNING: Extremely small footprint for corporate entity. Possible shared workspace or virtual office.");
                 }
-
-                // Rule 4: The 'Over-Claimed Asset' Vector (Urban Density Contradiction)
-                if (sqFt > 10000 && (claimedIndustry.contains("Tech") || claimedIndustry.contains("Consulting") || claimedIndustry.contains("Finance"))) {
-                    score -= 50;
-                    explanations.add("🚩 CRITICAL: Asset Overstatement. Claimed square footage (" + sqFt + ") is highly anomalous for a " + claimedIndustry + " entity in this zone. High probability of loan fraud.");
-                }
             }
         }
 
-        Double latitude = profile.getLatitude();
-        Double longitude = profile.getLongitude();
-
-        // Rule 5: The 'Middle of the Ocean / Invalid Coordinates' Vector
-        if (latitude == null || longitude == null || latitude == 0.0 || longitude == 0.0 || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
-            score -= 100;
-            explanations.add("🚨 FATAL: Invalid or null geographic coordinates provided. Cannot verify physical existence.");
-        }
-
-        // Rule 6: The Verification Check
         if (score == 100) {
             explanations.add("✅ VERIFIED: Claimed industry matches physical building constraints.");
             explanations.add("✅ VERIFIED: No spatial contradictions detected.");
@@ -114,70 +102,45 @@ public class ApiController {
     }
 
     @PostMapping("/evaluate-live")
-    public ResponseEntity<VerificationResult> evaluateLive(@RequestBody BusinessProfile liveProfile) {
+    public ResponseEntity<VerificationResult> evaluateLive(@RequestBody BusinessProfile input) {
         int score = 100;
         List<String> explanations = new ArrayList<>();
 
-        String businessName = liveProfile.getBusinessName();
-        String searchKey = businessName != null ? businessName.toLowerCase() : "";
+        String rawName = input.getBusinessName();
+        String businessName = rawName != null ? rawName.toLowerCase() : "";
 
-        // Check 1: Registry Match
-        if (!mockRegistry.containsKey(searchKey)) {
+        // Rule 1 (Registry Check)
+        if (!mockRegistry.containsKey(businessName)) {
             score = 0;
-            explanations.add("🚨 FATAL: Business not found in Government MCA Registry.");
+            explanations.add("🚨 FATAL: Business entity not found in Government MCA Registry.");
             return ResponseEntity.ok(new VerificationResult(score, explanations));
         }
 
-        // Check 2: Asset Verification
-        BusinessProfile registered = mockRegistry.get(searchKey);
-        
-        Integer liveSqFt = liveProfile.getSqFt();
-        if (liveSqFt == null) {
-            liveSqFt = 500;
-        }
+        BusinessProfile registered = mockRegistry.get(businessName);
 
-        String liveIndustry = liveProfile.getClaimedIndustry();
-        if (liveIndustry == null) {
-            liveIndustry = "Tech";
-        }
-
-        if (liveSqFt > (registered.getSqFt() * 1.5)) {
+        // Rule 2 (Asset Overstatement)
+        if (input.getSqFt() != null && input.getSqFt() > (registered.getSqFt() * 1.5)) {
             score -= 50;
-            explanations.add("🚩 CRITICAL: Asset Overstatement. Claimed " + liveSqFt + " sqft, but registered for only " + registered.getSqFt() + " sqft.");
+            explanations.add("🚩 CRITICAL: Asset Overstatement. Investigator claimed " + input.getSqFt() + " sqft, but entity is legally registered for only " + registered.getSqFt() + " sqft.");
         }
 
-        // Check 3: Industry Verification
-        if (!liveIndustry.equalsIgnoreCase(registered.getClaimedIndustry())) {
+        // Rule 3 (Industry Mismatch)
+        if (input.getClaimedIndustry() != null && !input.getClaimedIndustry().equalsIgnoreCase(registered.getClaimedIndustry())) {
             score -= 30;
-            explanations.add("⚠️ WARNING: Industry mismatch. Claimed " + liveIndustry + " but registered as " + registered.getClaimedIndustry() + ".");
+            explanations.add("⚠️ WARNING: Industry mismatch. Claimed " + input.getClaimedIndustry() + " but registered as " + registered.getClaimedIndustry() + ".");
         }
 
-        // Check 4: The Physical Reality check
-        Integer regSqFt = registered.getSqFt();
-        String regIndustry = registered.getClaimedIndustry();
-
-        if (regSqFt != null) {
-            if (regSqFt == 0) {
-                score -= 90;
-                explanations.add("🔴 CRITICAL: Zero physical footprint detected. High probability of a mail-drop ghost address.");
-            }
-
-            if (regIndustry != null) {
-                if ((regIndustry.contains("Manufacturing") || regIndustry.contains("Logistics")) && regSqFt < 1000) {
-                    score -= 75;
-                    explanations.add("🔴 CRITICAL: Physical contradiction. " + regIndustry + " requires significant space, but only " + regSqFt + " sq ft is claimed.");
-                }
-
-                if ((regIndustry.contains("Tech") || regIndustry.contains("Finance") || regIndustry.contains("Consulting")) && regSqFt < 300 && regSqFt > 0) {
-                    score -= 40;
-                    explanations.add("🟡 WARNING: Extremely small footprint for corporate entity. Possible shared workspace or virtual office.");
-                }
-            }
+        // Rule 4 (Invalid Coordinates)
+        Double latitude = input.getLatitude();
+        Double longitude = input.getLongitude();
+        if (latitude == null || longitude == null || latitude == 0.0 || longitude == 0.0) {
+            score -= 100;
+            explanations.add("🚨 FATAL: Invalid or null geographic coordinates provided.");
         }
 
+        // Rule 5 (Success)
         if (score == 100) {
-            explanations.add("✅ VERIFIED: Claimed industry matches physical building constraints.");
-            explanations.add("✅ VERIFIED: No spatial contradictions detected.");
+            explanations.add("✅ VERIFIED: Claimed data perfectly matches Government Registry and spatial constraints.");
         }
 
         VerificationResult result = new VerificationResult(score, explanations);
