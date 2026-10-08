@@ -2874,14 +2874,30 @@
       <!-- MODAL: NEW INVESTIGATION 4-STEP WORKFLOW (Section 20) -->
       <div id="new-investigation-modal" class="modal-backdrop" style="display:none;">
         <div class="modal-window">
-          <div class="workflow-steps-indicator">
-            <div class="workflow-step active" id="step-tab-1">01 Business Details</div>
-            <div class="workflow-step" id="step-tab-2">02 Evidence</div>
-            <div class="workflow-step" id="step-tab-3">03 Location Analysis</div>
-            <div class="workflow-step" id="step-tab-4">04 Assessment</div>
+          <div class="modal-header" style="padding: 18px 24px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: var(--bg-card);">
+            <div style="font-size: 15px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.02em;">NEW INVESTIGATION</div>
+            <button class="icon-btn" onclick="document.getElementById('new-investigation-modal').style.display='none'" style="width:24px; height:24px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
           </div>
-
-          <div style="padding:20px;">
+          <div class="wf-layout">
+            <div class="wf-sidebar" id="wf-sidebar">
+              <div class="wf-sidebar-step active"><div class="step-num">1</div>Business Information</div>
+              <div class="wf-sidebar-step"><div class="step-num">2</div>Claimed Trading Address</div>
+              <div class="wf-sidebar-step"><div class="step-num">3</div>Location Evidence</div>
+              <div class="wf-sidebar-step"><div class="step-num">4</div>Supporting Evidence</div>
+              <div class="wf-sidebar-step"><div class="step-num">5</div>Related Documents Upload</div>
+              <div class="wf-sidebar-step"><div class="step-num">6</div>Investigator Notes</div>
+              <div class="wf-sidebar-step"><div class="step-num">7</div>Review</div>
+              
+              <div class="wf-phase-label">Post-Creation</div>
+              <div class="wf-sidebar-step phase-analysis"><div class="step-num">8</div>Investigation Detail</div>
+              <div class="wf-sidebar-step phase-analysis"><div class="step-num">9</div>Map Analysis</div>
+              <div class="wf-sidebar-step phase-analysis"><div class="step-num">10</div>Evidence Analysis</div>
+              <div class="wf-sidebar-step phase-analysis"><div class="step-num">11</div>Contradiction Detection</div>
+              <div class="wf-sidebar-step phase-analysis"><div class="step-num">12</div>Final Assessment</div>
+            </div>
+            <div class="wf-body">
             <!-- Step 1: Business Details -->
             <div id="wf-step-1" class="wf-step-content">
               <div class="form-group">
@@ -2907,8 +2923,41 @@
               </div>
             </div>
 
-            <!-- Step 2: Evidence -->
+            <!-- Step 1: Business Information -->
+            <div id="wf-step-1" class="wf-step-content">
+              <div class="form-group">
+                <label class="form-label">Business Name</label>
+                <input type="text" id="wfi-biz-name" class="form-input" placeholder="e.g. Zenith Metal Works" value="Zenith Precision Tools" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Industry</label>
+                <select id="wfi-biz-industry" class="form-select">
+                  <option value="Industrial Manufacturing">Industrial Manufacturing</option>
+                  <option value="Chemical Export">Chemical Export</option>
+                  <option value="Logistics & Warehousing">Logistics & Warehousing</option>
+                  <option value="Wholesale Distribution">Wholesale Distribution</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Registration Reference</label>
+                <input type="text" id="wfi-biz-reg" class="form-input font-mono" value="REG-91024" />
+              </div>
+            </div>
+
+            <!-- Step 2: Claimed Trading Address -->
             <div id="wf-step-2" class="wf-step-content" style="display:none;">
+              <div class="form-group">
+                <label class="form-label">Claimed Trading Address</label>
+                <input type="text" id="wfi-addr-full" class="form-input" value="Plot 8, Peenya 3rd Phase, Bengaluru" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">City / Region</label>
+                <input type="text" id="wfi-biz-city" class="form-input" value="Bengaluru" />
+              </div>
+            </div>
+
+            <!-- Step 3: Location Evidence -->
+            <div id="wf-step-3" class="wf-step-content" style="display:none;">
               <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">
                 Select telemetric datasets for automated geographic triangulation:
               </div>
@@ -2922,29 +2971,87 @@
                 <label style="display:flex; align-items:center; gap:8px; font-size:12.5px;">
                   <input type="checkbox" checked /> Utility Substation Power Signature
                 </label>
-                <label style="display:flex; align-items:center; gap:8px; font-size:12.5px;">
-                  <input type="checkbox" checked /> Commercial E-Way Bill Logistics Corridor
-                </label>
-              </div>
-              <div style="margin-top:14px; background:var(--bg-subtle); padding:8px 12px; border-radius:4px; font-size:11.5px; color:var(--text-secondary);">
-                Data Pipeline: <strong style="color:var(--text-primary);">Synthetic / Organizer Verification Pack</strong>
               </div>
             </div>
 
-            <!-- Step 3: Location Analysis Pipeline -->
-            <div id="wf-step-3" class="wf-step-content" style="display:none;">
-              <div style="font-size:12.5px; font-weight:600; margin-bottom:12px;">Synthesis Pipeline Running...</div>
+            <!-- Step 4: Supporting Evidence -->
+            <div id="wf-step-4" class="wf-step-content" style="display:none;">
+              <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">
+                Provide external verification data to support the assessment:
+              </div>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:12.5px;">
+                  <input type="checkbox" checked /> Commercial E-Way Bill Logistics Corridor
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:12.5px;">
+                  <input type="checkbox" /> Social Media & Street View Verification
+                </label>
+              </div>
+            </div>
+
+            <!-- Step 5: Related Documents Upload -->
+            <div id="wf-step-5" class="wf-step-content" style="display:none;">
+              <div style="border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 30px; text-align: center; color: var(--text-secondary);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <div style="font-size:13px; font-weight:500;">Drag & Drop Documents Here</div>
+                <div style="font-size:11px; margin-top:4px;">Supports PDF, JPG, PNG</div>
+              </div>
+            </div>
+
+            <!-- Step 6: Investigator Notes -->
+            <div id="wf-step-6" class="wf-step-content" style="display:none;">
+              <div class="form-group">
+                <label class="form-label">Internal Notes / Context</label>
+                <textarea id="wfi-notes" class="form-input" style="height: 100px; resize: none;" placeholder="Enter any initial observations..."></textarea>
+              </div>
+            </div>
+
+            <!-- Step 7: Review -->
+            <div id="wf-step-7" class="wf-step-content" style="display:none;">
+              <div style="font-weight:600; font-size:13.5px; margin-bottom:12px; color:var(--text-primary);">Pre-Flight Review</div>
+              <div id="wfi-review-summary" style="background:var(--bg-subtle); padding:16px; border-radius:var(--radius-md); font-size:12px; display:grid; gap:8px; border:1px solid var(--border-color);">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+
+            <!-- Step 8: Investigation Detail -->
+            <div id="wf-step-8" class="wf-step-content" style="display:none;">
+              <div style="background:var(--primary-subtle); border:1px solid var(--primary-border); padding:16px; border-radius:var(--radius-md); color:var(--primary);">
+                <div style="font-weight:700; font-size:14px; margin-bottom:4px;">Investigation Initialized Successfully!</div>
+                <div style="font-size:12px;">Case ID: GEO-8831-X has been created. Beginning deep analysis pipeline.</div>
+              </div>
+            </div>
+
+            <!-- Step 9: Map Analysis -->
+            <div id="wf-step-9" class="wf-step-content" style="display:none;">
+              <div style="font-size:12.5px; font-weight:600; margin-bottom:12px;">Geospatial Triangulation Running...</div>
               <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-secondary);">
                 <div style="color:var(--success);">✓ Datasets normalized across coordinate bounds</div>
                 <div style="color:var(--success);">✓ Address cadastral matching executed (Peenya Phase 3)</div>
                 <div style="color:var(--success);">✓ Industrial power signature confirmed</div>
-                <div style="color:var(--success);">✓ Shared address shell density verified (0 conflicts)</div>
-                <div style="color:var(--success); font-weight:600;">✓ Triangulated Score: 81 / 100 (Credible)</div>
               </div>
             </div>
 
-            <!-- Step 4: Assessment Result -->
-            <div id="wf-step-4" class="wf-step-content" style="display:none;">
+            <!-- Step 10: Evidence Analysis -->
+            <div id="wf-step-10" class="wf-step-content" style="display:none;">
+              <div style="font-size:12.5px; font-weight:600; margin-bottom:12px;">Document Verification...</div>
+              <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-secondary);">
+                <div style="color:var(--success);">✓ E-Way Bills matched to transport corridors</div>
+                <div style="color:var(--success);">✓ GSTIN registration active and corroborated</div>
+              </div>
+            </div>
+
+            <!-- Step 11: Contradiction Detection -->
+            <div id="wf-step-11" class="wf-step-content" style="display:none;">
+              <div style="font-size:12.5px; font-weight:600; margin-bottom:12px;">Anomaly Scanning...</div>
+              <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-secondary);">
+                <div style="color:var(--success);">✓ Shared address shell density verified (0 conflicts)</div>
+                <div style="color:var(--success);">✓ No blacklisted entities detected in proximity</div>
+              </div>
+            </div>
+
+            <!-- Step 12: Final Assessment -->
+            <div id="wf-step-12" class="wf-step-content" style="display:none;">
               <div style="background:var(--success-bg); border:1px solid var(--success-border); padding:14px; border-radius:var(--radius-md);">
                 <div style="font-weight:700; color:var(--success); font-size:14px;">Assessment Complete</div>
                 <div style="font-size:12.5px; color:var(--text-primary); margin-top:4px;">
@@ -2953,9 +3060,10 @@
               </div>
             </div>
 
-            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px; border-top:1px solid var(--border-color); padding-top:14px;">
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:auto; border-top:1px solid var(--border-color); padding-top:14px;">
               <button class="btn btn-secondary" id="btn-wf-cancel">Cancel</button>
               <button class="btn btn-primary" id="btn-wf-next">Next Step &rarr;</button>
+            </div>
             </div>
           </div>
         </div>
