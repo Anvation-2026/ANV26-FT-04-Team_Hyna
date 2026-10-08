@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -64,6 +66,49 @@ public class ApiController {
                     explanations.add("🟡 WARNING: Extremely small footprint for corporate entity. Possible shared workspace or virtual office.");
                 }
             }
+        }
+
+        // Rule 4: Credible Baseline
+        if (score == 100) {
+            explanations.add("🟢 VERIFIED: Claimed industry matches physical building constraints.");
+            explanations.add("🟢 VERIFIED: No spatial contradictions detected.");
+        }
+
+        VerificationResult result = new VerificationResult(score, explanations);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/evaluate-live")
+    public ResponseEntity<VerificationResult> evaluateLive(@RequestBody BusinessProfile liveProfile) {
+        int score = 100;
+        List<String> explanations = new ArrayList<>();
+
+        Integer sqFt = liveProfile.getSqFt();
+        if (sqFt == null) {
+            sqFt = 500;
+        }
+
+        String claimedIndustry = liveProfile.getClaimedIndustry();
+        if (claimedIndustry == null) {
+            claimedIndustry = "Tech";
+        }
+
+        // Rule 1: The Zero-Footprint Check
+        if (sqFt == 0) {
+            score -= 90;
+            explanations.add("🔴 CRITICAL: Zero physical footprint detected. High probability of a mail-drop ghost address.");
+        }
+
+        // Rule 2: Heavy Industry Contradiction
+        if ((claimedIndustry.contains("Manufacturing") || claimedIndustry.contains("Logistics")) && sqFt < 1000) {
+            score -= 75;
+            explanations.add("🔴 CRITICAL: Physical contradiction. " + claimedIndustry + " requires significant space, but only " + sqFt + " sq ft is claimed.");
+        }
+
+        // Rule 3: High-Density Office (Virtual Office/Coworking)
+        if ((claimedIndustry.contains("Tech") || claimedIndustry.contains("Finance") || claimedIndustry.contains("Consulting")) && sqFt < 300 && sqFt > 0) {
+            score -= 40;
+            explanations.add("🟡 WARNING: Extremely small footprint for corporate entity. Possible shared workspace or virtual office.");
         }
 
         // Rule 4: Credible Baseline
