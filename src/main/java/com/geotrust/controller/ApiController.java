@@ -65,13 +65,28 @@ public class ApiController {
                     score -= 40;
                     explanations.add("🟡 WARNING: Extremely small footprint for corporate entity. Possible shared workspace or virtual office.");
                 }
+
+                // Rule 4: The 'Over-Claimed Asset' Vector (Urban Density Contradiction)
+                if (sqFt > 10000 && (claimedIndustry.contains("Tech") || claimedIndustry.contains("Consulting") || claimedIndustry.contains("Finance"))) {
+                    score -= 50;
+                    explanations.add("🚩 CRITICAL: Asset Overstatement. Claimed square footage (" + sqFt + ") is highly anomalous for a " + claimedIndustry + " entity in this zone. High probability of loan fraud.");
+                }
             }
         }
 
-        // Rule 4: Credible Baseline
+        Double latitude = profile.getLatitude();
+        Double longitude = profile.getLongitude();
+
+        // Rule 5: The 'Middle of the Ocean / Invalid Coordinates' Vector
+        if (latitude == null || longitude == null || latitude == 0.0 || longitude == 0.0 || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+            score -= 100;
+            explanations.add("🚨 FATAL: Invalid or null geographic coordinates provided. Cannot verify physical existence.");
+        }
+
+        // Rule 6: The Verification Check
         if (score == 100) {
-            explanations.add("🟢 VERIFIED: Claimed industry matches physical building constraints.");
-            explanations.add("🟢 VERIFIED: No spatial contradictions detected.");
+            explanations.add("✅ VERIFIED: Claimed industry matches physical building constraints.");
+            explanations.add("✅ VERIFIED: No spatial contradictions detected.");
         }
 
         VerificationResult result = new VerificationResult(score, explanations);
@@ -111,10 +126,25 @@ public class ApiController {
             explanations.add("🟡 WARNING: Extremely small footprint for corporate entity. Possible shared workspace or virtual office.");
         }
 
-        // Rule 4: Credible Baseline
+        // Rule 4: The 'Over-Claimed Asset' Vector (Urban Density Contradiction)
+        if (sqFt > 10000 && (claimedIndustry.contains("Tech") || claimedIndustry.contains("Consulting") || claimedIndustry.contains("Finance"))) {
+            score -= 50;
+            explanations.add("🚩 CRITICAL: Asset Overstatement. Claimed square footage (" + sqFt + ") is highly anomalous for a " + claimedIndustry + " entity in this zone. High probability of loan fraud.");
+        }
+
+        Double latitude = liveProfile.getLatitude();
+        Double longitude = liveProfile.getLongitude();
+
+        // Rule 5: The 'Middle of the Ocean / Invalid Coordinates' Vector
+        if (latitude == null || longitude == null || latitude == 0.0 || longitude == 0.0 || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+            score -= 100;
+            explanations.add("🚨 FATAL: Invalid or null geographic coordinates provided. Cannot verify physical existence.");
+        }
+
+        // Rule 6: The Verification Check
         if (score == 100) {
-            explanations.add("🟢 VERIFIED: Claimed industry matches physical building constraints.");
-            explanations.add("🟢 VERIFIED: No spatial contradictions detected.");
+            explanations.add("✅ VERIFIED: Claimed industry matches physical building constraints.");
+            explanations.add("✅ VERIFIED: No spatial contradictions detected.");
         }
 
         VerificationResult result = new VerificationResult(score, explanations);
