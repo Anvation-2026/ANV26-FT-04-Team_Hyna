@@ -722,44 +722,11 @@
       transition: width 0.4s ease;
     }
 
-    /* Section 9: Assessment Activity 7-Day Line Chart */
-    .activity-chart-wrap {
+    /* Section 9: Assessment Activity Real Chart (Chart.js Canvas) */
+    .activity-chart-canvas-wrap {
       position: relative;
       width: 100%;
-      height: 140px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-    }
-
-    .activity-svg {
-      width: 100%;
-      height: 110px;
-      overflow: visible;
-    }
-
-    .activity-axis-labels {
-      display: flex;
-      justify-content: space-between;
-      padding-top: 6px;
-      border-top: 1px solid var(--border-color);
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    .chart-tooltip {
-      position: absolute;
-      background: #172033;
-      color: #FFFFFF;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      pointer-events: none;
-      transform: translate(-50%, -100%);
-      white-space: nowrap;
-      z-index: 50;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      display: none;
+      height: 165px;
     }
 
     /* ==========================================================================
@@ -1889,54 +1856,21 @@
             </div>
           </div>
 
-          <!-- Right Panel: Assessment Activity (Section 9) -->
+          <!-- Right Panel: Assessment Activity (Section 9 - Real Chart) -->
           <div class="card">
             <div class="card-header">
               <div>
                 <span class="card-title">Assessment Activity</span>
                 <div class="card-subtitle">7-day volume: Cases assessed (Demo / Operational log)</div>
               </div>
-              <span class="badge badge-neutral" style="font-size:10.5px;">Past 7 Days</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="badge badge-neutral" style="font-size:10.5px;">Past 7 Days</span>
+                <span style="font-size:11px; font-weight:600; color:var(--primary);" class="tabular">46 Total Assessed</span>
+              </div>
             </div>
-            <div class="card-body">
-              <div class="activity-chart-wrap" id="activity-chart-container">
-                <!-- SVG Line Chart (Cases Assessed) -->
-                <svg class="activity-svg" viewBox="0 0 460 110" id="activity-svg">
-                  <!-- Grid Lines -->
-                  <line x1="20" y1="20" x2="440" y2="20" stroke="#E3E7ED" stroke-width="1" stroke-dasharray="3 3" />
-                  <line x1="20" y1="55" x2="440" y2="55" stroke="#E3E7ED" stroke-width="1" stroke-dasharray="3 3" />
-                  <line x1="20" y1="90" x2="440" y2="90" stroke="#E3E7ED" stroke-width="1" stroke-dasharray="3 3" />
-                  
-                  <!-- Thin Clean Trend Line (No Glowing Line, No Gradients) -->
-                  <polyline
-                    fill="none"
-                    stroke="#2563EB"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    points="30,70  95,40  160,60  225,30  290,50  355,20  420,40"
-                  />
-                  <!-- Data Circles -->
-                  <circle cx="30" cy="70" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Monday" data-count="4" />
-                  <circle cx="95" cy="40" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Tuesday" data-count="7" />
-                  <circle cx="160" cy="60" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Wednesday" data-count="5" />
-                  <circle cx="225" cy="30" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Thursday" data-count="8" />
-                  <circle cx="290" cy="50" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Friday" data-count="6" />
-                  <circle cx="355" cy="20" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Saturday" data-count="9" />
-                  <circle cx="420" cy="40" r="3.5" fill="#FFFFFF" stroke="#2563EB" stroke-width="2" class="activity-pt" data-day="Sunday" data-count="7" />
-                </svg>
-
-                <div class="activity-axis-labels">
-                  <span>Mon (4)</span>
-                  <span>Tue (7)</span>
-                  <span>Wed (5)</span>
-                  <span>Thu (8)</span>
-                  <span>Fri (6)</span>
-                  <span>Sat (9)</span>
-                  <span>Sun (7)</span>
-                </div>
-
-                <div id="chart-tooltip" class="chart-tooltip"></div>
+            <div class="card-body" style="padding-top:10px; padding-bottom:12px;">
+              <div class="activity-chart-canvas-wrap">
+                <canvas id="activityChartCanvas"></canvas>
               </div>
             </div>
           </div>
@@ -2856,6 +2790,14 @@
     }
   </script>
 
+  <!-- Chart.js Vendor Script (Real Interactive Canvas Chart Engine) -->
+  <script src="vendor/chart.umd.js"></script>
+  <script>
+    if (typeof Chart === 'undefined') {
+      document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"><\/script>');
+    }
+  </script>
+
   <!-- Centralized Business Datasets (Actual Coordinates for the 6 Demo Businesses) -->
   <script src="data/businesses.js"></script>
 
@@ -3035,25 +2977,136 @@
         });
       },
 
+      activityChart: null,
+
       initActivityChart() {
-        const tooltip = document.getElementById('chart-tooltip');
-        const container = document.getElementById('activity-chart-container');
-        document.querySelectorAll('.activity-pt').forEach(pt => {
-          pt.addEventListener('mouseenter', (e) => {
-            const day = pt.dataset.day;
-            const count = pt.dataset.count;
-            tooltip.textContent = `${day}: ${count} cases assessed`;
-            tooltip.style.display = 'block';
+        const canvas = document.getElementById('activityChartCanvas');
+        if (!canvas) return;
 
-            const rect = pt.getBoundingClientRect();
-            const parentRect = container.getBoundingClientRect();
-            tooltip.style.left = `${rect.left - parentRect.left + 4}px`;
-            tooltip.style.top = `${rect.top - parentRect.top - 8}px`;
-          });
+        if (typeof Chart === 'undefined') {
+          setTimeout(() => this.initActivityChart(), 150);
+          return;
+        }
 
-          pt.addEventListener('mouseleave', () => {
-            tooltip.style.display = 'none';
-          });
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 160);
+        gradient.addColorStop(0, 'rgba(37, 99, 235, 0.16)');
+        gradient.addColorStop(0.7, 'rgba(37, 99, 235, 0.03)');
+        gradient.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+
+        if (this.activityChart) {
+          this.activityChart.destroy();
+        }
+
+        this.activityChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            datasets: [{
+              label: 'Cases assessed',
+              data: [4, 7, 5, 8, 6, 9, 7],
+              borderColor: '#2563EB',
+              borderWidth: 2.2,
+              tension: 0.35,
+              fill: true,
+              backgroundColor: gradient,
+              pointBackgroundColor: '#FFFFFF',
+              pointBorderColor: '#2563EB',
+              pointBorderWidth: 2,
+              pointRadius: 4.5,
+              pointHoverRadius: 7,
+              pointHoverBackgroundColor: '#2563EB',
+              pointHoverBorderColor: '#FFFFFF',
+              pointHoverBorderWidth: 2.5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+              duration: 750,
+              easing: 'easeOutQuart'
+            },
+            interaction: {
+              mode: 'index',
+              intersect: false
+            },
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                backgroundColor: '#172033',
+                titleColor: '#FFFFFF',
+                bodyColor: '#F1F4F9',
+                padding: { top: 8, bottom: 8, left: 12, right: 12 },
+                cornerRadius: 6,
+                titleFont: {
+                  family: 'Inter',
+                  size: 12,
+                  weight: '600'
+                },
+                bodyFont: {
+                  family: 'Inter',
+                  size: 11.5,
+                  weight: '500'
+                },
+                displayColors: false,
+                callbacks: {
+                  title: function(context) {
+                    return context[0].label;
+                  },
+                  label: function(context) {
+                    return `${context.parsed.y} cases assessed`;
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: {
+                  display: false
+                },
+                ticks: {
+                  color: '#667085',
+                  font: {
+                    family: 'Inter',
+                    size: 11,
+                    weight: '500'
+                  },
+                  callback: function(val, index) {
+                    const shortDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                    return shortDays[index];
+                  }
+                },
+                border: {
+                  color: '#E3E7ED'
+                }
+              },
+              y: {
+                min: 0,
+                max: 10,
+                ticks: {
+                  stepSize: 2,
+                  color: '#8E9BAE',
+                  font: {
+                    family: 'Inter',
+                    size: 10.5
+                  },
+                  callback: function(val) {
+                    return val + ' cases';
+                  }
+                },
+                grid: {
+                  color: '#EEF2F6',
+                  drawTicks: false
+                },
+                border: {
+                  display: false
+                }
+              }
+            }
+          }
         });
       },
 
