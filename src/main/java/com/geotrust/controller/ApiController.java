@@ -24,17 +24,31 @@ public class ApiController {
 
     private static final Map<String, BusinessProfile> mockRegistry = new HashMap<>();
 
+    private static double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        int R = 6371; // Earth radius in km
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(dLon/2) * Math.sin(dLon/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
     static {
         BusinessProfile b1 = new BusinessProfile(); b1.setClaimedIndustry("Tech"); b1.setSqFt(500); 
+        b1.setRegisteredLat(8.1833); b1.setRegisteredLng(77.4119); // Nagercoil
         mockRegistry.put("hynastudio", b1);
         
         BusinessProfile b2 = new BusinessProfile(); b2.setClaimedIndustry("Tech"); b2.setSqFt(500000); 
+        b2.setRegisteredLat(12.9716); b2.setRegisteredLng(77.5946); // Bengaluru
         mockRegistry.put("google", b2);
         
         BusinessProfile b3 = new BusinessProfile(); b3.setClaimedIndustry("Tech"); b3.setSqFt(300000); 
         mockRegistry.put("microsoft", b3);
         
         BusinessProfile b4 = new BusinessProfile(); b4.setClaimedIndustry("Heavy Manufacturing"); b4.setSqFt(150000); 
+        b4.setRegisteredLat(13.0827); b4.setRegisteredLng(80.2707); // Chennai
         mockRegistry.put("titanium steel", b4);
         
         BusinessProfile b5 = new BusinessProfile(); b5.setClaimedIndustry("Finance"); b5.setSqFt(25000); 
@@ -150,6 +164,14 @@ public class ApiController {
         if (latitude == null || longitude == null || latitude == 0.0 || longitude == 0.0) {
             score -= 100;
             explanations.add("🚨 FATAL: Invalid or null geographic coordinates provided.");
+        } else if (registered.getRegisteredLat() != null && registered.getRegisteredLng() != null) {
+            double distance = calculateDistance(latitude, longitude, registered.getRegisteredLat(), registered.getRegisteredLng());
+
+            // If the claimed location is more than 50km away from the registered location
+            if (distance > 50.0) {
+                score -= 60;
+                explanations.add("🚨 FATAL LOCATION ANOMALY: Claimed location is " + String.format("%.1f", distance) + " km away from the officially registered headquarters.");
+            }
         }
 
         // Rule 5 (Success)

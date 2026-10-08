@@ -18,6 +18,8 @@ public class BusinessProfile {
     private Integer sqFt;
     private Double latitude;
     private Double longitude;
+    private Double registeredLat;
+    private Double registeredLng;
 
     public BusinessProfile() {
     }
@@ -86,5 +88,21 @@ public class BusinessProfile {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public Double getRegisteredLat() {
+        return registeredLat;
+    }
+
+    public void setRegisteredLat(Double registeredLat) {
+        this.registeredLat = registeredLat;
+    }
+
+    public Double getRegisteredLng() {
+        return registeredLng;
+    }
+
+    public void setRegisteredLng(Double registeredLng) {
+        this.registeredLng = registeredLng;
     }
 }
