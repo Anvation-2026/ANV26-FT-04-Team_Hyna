@@ -37,9 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Live Investigation feature
-    const liveSearchBtn = document.getElementById('liveSearchBtn');
-    if(liveSearchBtn) {
-        liveSearchBtn.addEventListener('click', runLiveInvestigation);
+    const liveInvestigateBtn = document.getElementById('liveInvestigateBtn');
+    if(liveInvestigateBtn) {
+        liveInvestigateBtn.addEventListener('click', runLiveInvestigation);
     }
     
     const clearLiveSearchBtn = document.getElementById('clearLiveSearchBtn');
@@ -48,20 +48,21 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('liveResultBox').classList.add('hidden');
             document.getElementById('liveResultBox').style.display = 'none';
             document.getElementById('mainDashboardContent').classList.remove('hidden');
-            document.getElementById('liveSearchInput').value = '';
+            document.getElementById('liveBusinessName').value = '';
+            document.getElementById('liveClaimedSqFt').value = '';
         });
     }
 });
 
 async function runLiveInvestigation() {
-    const liveSearchInput = document.getElementById('liveSearchInput');
-    const query = liveSearchInput.value.trim();
+    const liveBusinessNameInput = document.getElementById('liveBusinessName');
+    const query = liveBusinessNameInput.value.trim();
     if (!query) return;
 
-    const liveSearchBtn = document.getElementById('liveSearchBtn');
-    const originalBtnText = liveSearchBtn.innerText;
-    liveSearchBtn.innerText = "Loading...";
-    liveSearchBtn.disabled = true;
+    const liveInvestigateBtn = document.getElementById('liveInvestigateBtn');
+    const originalBtnText = liveInvestigateBtn.innerText;
+    liveInvestigateBtn.innerText = "Loading...";
+    liveInvestigateBtn.disabled = true;
 
     try {
         // Step A (Geocoding)
@@ -78,22 +79,23 @@ async function runLiveInvestigation() {
 
         if (osmData.length === 0) {
             alert("Location not found. Please try a broader city name.");
-            liveSearchBtn.innerText = originalBtnText;
-            liveSearchBtn.disabled = false;
+            liveInvestigateBtn.innerText = originalBtnText;
+            liveInvestigateBtn.disabled = false;
             return;
         }
 
         // Step B (Evaluate)
+        const payload = {
+            businessName: query,
+            claimedIndustry: document.getElementById('liveClaimedIndustry').value,
+            sqFt: parseInt(document.getElementById('liveClaimedSqFt').value) || 0,
+            latitude: parseFloat(osmData[0].lat),
+            longitude: parseFloat(osmData[0].lon)
+        };
         const evalRes = await fetch('http://localhost:8080/api/evaluate-live', { 
             method: 'POST', 
             headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify({ 
-                businessName: query, 
-                latitude: parseFloat(osmData[0].lat), 
-                longitude: parseFloat(osmData[0].lon), 
-                sqFt: 500, 
-                claimedIndustry: "Tech" 
-            }) 
+            body: JSON.stringify(payload) 
         }); 
         const evalData = await evalRes.json();
 
@@ -104,7 +106,7 @@ async function runLiveInvestigation() {
         
         document.getElementById('mainDashboardContent').classList.add('hidden');
         
-        document.getElementById('liveBusinessName').innerText = query;
+        document.getElementById('liveResultBusinessName').innerText = query;
         document.getElementById('liveScore').innerText = 'Score: ' + evalData.score;
         
         const explanationsList = document.getElementById('liveExplanations');
@@ -135,7 +137,7 @@ async function runLiveInvestigation() {
         console.error(err);
         alert("An error occurred during the live investigation.");
     } finally {
-        liveSearchBtn.innerText = originalBtnText;
-        liveSearchBtn.disabled = false;
+        liveInvestigateBtn.innerText = originalBtnText;
+        liveInvestigateBtn.disabled = false;
     }
 }
