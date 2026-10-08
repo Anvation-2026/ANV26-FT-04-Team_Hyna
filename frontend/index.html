@@ -11,9 +11,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <!-- Leaflet CSS for Map Overview -->
-  <link rel="stylesheet" href="vendor/leaflet.css" />
+  <!-- Leaflet CSS & JS for Map Overview -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     /* ==========================================================================
@@ -1754,14 +1754,27 @@
       <!-- VIEW 1: DASHBOARD -->
       <section id="view-dashboard-section" class="view-panel">
         <!-- Page Header (Section 6) -->
-        <div class="page-header">
+        <div class="page-header" style="align-items: center;">
           <div>
-            <h1 class="page-title">Investigation Dashboard</h1>
+            <h1 class="page-title">Live OSINT Tool</h1>
             <div class="page-subtitle">Monitor business location assessments and evidence reviews.</div>
           </div>
-          <button class="btn btn-primary" id="btn-open-new-case">
-            + New Investigation
-          </button>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <input type="text" id="liveSearchInput" class="form-input" placeholder="Enter Business & City (e.g., Google Bengaluru)" style="width: 280px;">
+            <button class="btn btn-primary" id="liveSearchBtn">Live Investigate</button>
+          </div>
+        </div>
+
+        <!-- Live Investigation Result Box -->
+        <div id="liveResultBox" style="display: none; margin-top: 24px; margin-bottom: 24px;" class="card">
+          <div class="card-header">
+            <h2 id="liveBusinessName" class="card-title" style="font-size: 16px;"></h2>
+            <h1 id="liveScore" class="badge badge-neutral" style="font-size: 14px; margin-left: 10px;"></h1>
+          </div>
+          <div class="card-body">
+            <ul id="liveExplanations" style="margin-left: 20px; color: var(--text-secondary); margin-bottom: 16px;"></ul>
+            <div id="map-container" style="height: 400px; width: 100%; border-radius: var(--radius-lg); overflow: hidden; z-index: 1;"></div>
+          </div>
         </div>
 
         <!-- Section 7: KPI Overview Cards (Soft Neumorphic Depth) -->
@@ -2800,7 +2813,7 @@
 
   <!-- Centralized Business Datasets (Actual Coordinates for the 6 Demo Businesses) -->
   <script src="data/businesses.js"></script>
-
+  <script src="app.js"></script>
   <!-- ==========================================================================
        MAIN ENTERPRISE JAVASCRIPT APPLICATION LOGIC
        ========================================================================== -->
