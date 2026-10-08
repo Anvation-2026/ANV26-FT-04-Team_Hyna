@@ -55,9 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function runLiveInvestigation() {
-    const liveBusinessNameInput = document.getElementById('liveBusinessName');
-    const query = liveBusinessNameInput.value.trim();
-    if (!query) return;
+    const businessNameInput = document.getElementById('liveBusinessName');
+    const addressInput = document.getElementById('liveClaimedAddress');
+    const businessNameQuery = businessNameInput.value.trim();
+    const addressQuery = addressInput.value.trim();
+    if (!businessNameQuery || !addressQuery) return;
 
     const liveInvestigateBtn = document.getElementById('liveInvestigateBtn');
     const originalBtnText = liveInvestigateBtn.innerText;
@@ -66,12 +68,12 @@ async function runLiveInvestigation() {
 
     try {
         // Step A (Geocoding)
-        let osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query));
+        let osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressQuery));
         let osmData = await osmRes.json();
 
         // Fallback: If exact query fails, try searching just the last word (usually the city)
         if (osmData.length === 0) {
-            const words = query.split(' ');
+            const words = addressQuery.split(' ');
             const cityFallback = words[words.length - 1];
             osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(cityFallback));
             osmData = await osmRes.json();
@@ -84,7 +86,7 @@ async function runLiveInvestigation() {
 
         // Step B (Evaluate)
         const payload = {
-            businessName: query,
+            businessName: businessNameQuery,
             claimedIndustry: document.getElementById('liveClaimedIndustry').value,
             sqFt: parseInt(document.getElementById('liveClaimedSqFt').value) || 0,
             latitude: parseFloat(osmData[0].lat),
@@ -104,7 +106,7 @@ async function runLiveInvestigation() {
 
         document.getElementById('mainDashboardContent').classList.add('hidden');
 
-        document.getElementById('liveResultBusinessName').innerText = query;
+        document.getElementById('liveResultBusinessName').innerText = businessNameQuery;
         document.getElementById('liveScore').innerText = 'Score: ' + evalData.score;
 
         const explanationsList = document.getElementById('liveExplanations');
@@ -128,7 +130,7 @@ async function runLiveInvestigation() {
 
         L.marker([osmData[0].lat, osmData[0].lon])
             .addTo(mapInstance)
-            .bindPopup(osmData[0].display_name)
+            .bindPopup(addressQuery)
             .openPopup();
 
     } catch (err) {

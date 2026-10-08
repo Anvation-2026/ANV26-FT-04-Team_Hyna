@@ -1959,8 +1959,9 @@
             <h1 class="page-title">Live OSINT Tool</h1>
             <div class="page-subtitle">Monitor business location assessments and evidence reviews.</div>
           </div>
-          <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items:center; width: 100%; margin-top: 16px;">
-            <input type="text" id="liveBusinessName" class="form-input" placeholder="Target Business & City (e.g., hynastudio nagercoil)">
+          <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items:center; width: 100%; margin-top: 16px;">
+            <input type="text" id="liveBusinessName" class="form-input" placeholder="Target Business Name (e.g., Hyna Studio)">
+            <input type="text" id="liveClaimedAddress" class="form-input" placeholder="Physical Address (e.g., WCC Road, Nagercoil)">
             <select id="liveClaimedIndustry" class="form-input" style="height: 100%;">
               <option value="Tech">Tech</option>
               <option value="Heavy Manufacturing">Heavy Manufacturing</option>
@@ -1968,7 +1969,7 @@
               <option value="Finance">Finance</option>
             </select>
             <input type="number" id="liveClaimedSqFt" class="form-input" placeholder="Claimed Sq Ft (e.g., 500)">
-            <button id="liveInvestigateBtn" class="btn btn-primary" style="grid-column: span 3;">Execute Multi-Signal Verification</button>
+            <button id="liveInvestigateBtn" class="btn btn-primary" style="grid-column: span 4;">Execute Multi-Signal Verification</button>
           </div>
         </div>
 
