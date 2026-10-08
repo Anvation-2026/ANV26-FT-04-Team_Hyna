@@ -1,259 +1,877 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>GeoTrust AI – Investigator Access</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#121212;--panel:#1c1c1e;--line:#3a3a3d;--tx:#f4f4f5;--mu:#8f8f96;--pu:#a98bf5;--cr:#ebe3a6;--err:#ff8a8a;--ok:#7ddba0;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-*,*::before,*::after{box-sizing:inherit}
-html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;min-height:100%;background:var(--bg);color:var(--tx);font-family:Manrope,Inter,system-ui,sans-serif;font-size:14px}
-.app{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);min-height:100vh}
-/* art */
-.art{position:relative;padding:26px;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:14px;overflow:hidden;background:#17181a;border-radius:0 28px 28px 0}
-.t{border-radius:22px;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;min-height:150px;font-size:clamp(17px,1.7vw,24px);line-height:1.3;font-weight:500;position:relative;overflow:hidden}
-.t.ph{background:radial-gradient(ellipse 60% 75% at 30% 35%,#8d95a3 0,#4c5361 45%,#2a2d36 100%);opacity:.75}
-.t.ph.b{background:radial-gradient(ellipse 55% 70% at 65% 55%,#5b5a78 0,#3a3a52 50%,#23232f 100%)}
-.t.pu{background:var(--pu);color:#17102b}.t.cr{background:var(--cr);color:#26230f}
-.t.pu.mid{align-items:center;justify-content:center}
-.t .plus{position:absolute;top:18px;left:20px;font-size:26px;font-weight:300;line-height:1}
-.t.dots{background-image:radial-gradient(rgba(23,16,43,.35) 1.2px,transparent 1.4px);background-size:22px 22px;background-position:6px 6px}
-.t.dots span{background:var(--pu);padding:6px 0 0}
-.logo{width:76px;height:76px}
-.art .lg{position:absolute;left:0;right:0;bottom:0;height:0}
-/* pane */
-.pane{display:flex;align-items:center;justify-content:center;padding:40px 24px}
-.box{width:100%;max-width:400px}
-h1{font-size:34px;font-weight:500;margin:0 0 10px;letter-spacing:-.01em}
-.sub{color:var(--mu);margin:0 0 30px;line-height:1.55;max-width:34ch}
-.f{position:relative;margin-bottom:16px}
-.f label{position:absolute;top:-7px;left:20px;padding:0 6px;background:var(--bg);font-size:11px;color:var(--mu);z-index:1}
-.f input,.f select{width:100%;height:50px;background:transparent;color:var(--tx);border:1px solid var(--line);border-radius:24px;padding:0 22px;font:inherit;font-size:14px;outline:none;appearance:none;-webkit-appearance:none}
-.f select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%238f8f96' stroke-width='1.6'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 20px center;padding-right:44px}
-.f select option{background:#1c1c1e}
-.f input:focus,.f select:focus{border-color:var(--pu);box-shadow:0 0 0 3px rgba(169,139,245,.2)}
-.f.bad input,.f.bad select{border-color:var(--err)}
-.f .e{display:none;color:var(--err);font-size:12px;margin:6px 0 0 22px}.f.bad .e{display:block}
-.f .eye{position:absolute;right:8px;top:7px;width:36px;height:36px;border:0;background:none;color:var(--mu);cursor:pointer;border-radius:50%}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.meta{display:flex;justify-content:space-between;align-items:center;margin:2px 4px 22px;font-size:13px;color:var(--mu)}
-.chk{display:flex;gap:9px;align-items:center;cursor:pointer}
-.chk input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:1px solid var(--line);border-radius:6px;margin:0;display:grid;place-content:center;cursor:pointer;flex:none}
-.chk input:checked{background:var(--pu);border-color:var(--pu)}
-.chk input:checked::after{content:"";width:9px;height:5px;border:2px solid #17102b;border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
-a,.lnk{color:var(--tx);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line);background:none;border:0;font:inherit;cursor:pointer;padding:0}
-a:hover,.lnk:hover{text-decoration-color:var(--pu)}
-.btn{width:100%;height:52px;border-radius:26px;border:0;background:#fff;color:#111;font:inherit;font-weight:600;font-size:14px;cursor:pointer;transition:transform .15s}
-.btn:active{transform:scale(.98)}
-.btn.g{background:#232325;color:var(--tx);font-weight:500;height:46px}
-.btn.g:hover{background:#2c2c2f}
-.btn.pu{background:var(--pu)}
-.or{display:flex;align-items:center;gap:14px;color:var(--mu);font-size:12px;margin:20px 0}
-.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
-.foot{margin-top:26px;text-align:center;color:var(--mu)}
-.demo{margin-top:22px;padding:14px 16px;border:1px dashed var(--line);border-radius:18px;font-size:12px;color:var(--mu);line-height:1.6}
-.demo b{color:var(--tx);font-weight:600}
-.view{display:none}.view.on{display:block;animation:in .35s ease}
-@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-:focus-visible{outline:2px solid var(--pu);outline-offset:3px}
-/* stepper */
-.steps{display:flex;gap:6px;margin:0 0 6px}
-.steps i{flex:1;height:4px;border-radius:2px;background:var(--line);transition:background .3s}
-.steps i.d{background:var(--pu)}
-.stl{color:var(--mu);font-size:12px;margin:0 0 22px;display:flex;justify-content:space-between}
-.stl b{color:var(--tx);font-weight:600}
-.nav{display:flex;gap:10px;margin-top:8px}.nav .btn.g{width:40%}
-.note{font-size:12px;color:var(--mu);margin:-4px 4px 16px;line-height:1.5}
-.str{display:flex;gap:4px;margin:-6px 6px 16px}.str i{flex:1;height:3px;border-radius:2px;background:var(--line)}
-.str i.s{background:var(--pu)}
-/* status list */
-.list{list-style:none;margin:0 0 26px;padding:0;display:grid;gap:0}
-.list li{display:flex;gap:14px;align-items:flex-start;padding:0 0 18px;position:relative;color:var(--mu)}
-.list li::before{content:"";width:12px;height:12px;border-radius:50%;border:2px solid var(--line);margin-top:3px;flex:none;background:var(--bg);z-index:1}
-.list li::after{content:"absolute;left:5px;top:18px;bottom:0;width:2px;background:var(--line)}
-.list li:last-child::after{display:none}
-.list li.d{color:var(--tx)}.list li.d::before{background:var(--ok);border-color:var(--ok)}
-.list li.c{color:var(--tx)}.list li.c::before{border-color:var(--cr);background:var(--cr);animation:pl 1.4s infinite}
-@keyframes pl{50%{box-shadow:0 0 0 6px rgba(235,227,166,.15)}}
-.list small{display:block;color:var(--mu);margin-top:2px}
-.card{background:var(--panel);border-radius:20px;padding:16px 18px;margin-bottom:22px;font-size:13px;display:grid;gap:8px}
-.card div{display:flex;justify-content:space-between;gap:12px}.card span{color:var(--mu)}
-.card code{font-family:ui-monospace,"JetBrains Mono",monospace;font-size:12px}
-.pill{display:inline-block;background:rgba(235,227,166,.14);color:var(--cr);border-radius:20px;padding:4px 12px;font-size:12px;margin-bottom:16px}
-@media(max-width:900px){.app{grid-template-columns:1fr}.art{display:none}.pane{align-items:flex-start;padding-top:48px}}
-@media(max-width:420px){.row{grid-template-columns:1fr}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GeoTrust AI – Investigator Access</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #121212;
+      --panel: #1c1c1e;
+      --line: #3a3a3d;
+      --tx: #f4f4f5;
+      --mu: #8f8f96;
+      --pu: #a98bf5;
+      --cr: #ebe3a6;
+      --err: #ff8a8a;
+      --ok: #7ddba0;
+      box-sizing: border-box;
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px)
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: inherit
+    }
+
+    html {
+      height: 100%;
+      scroll-padding-top: env(safe-area-inset-top, 0px)
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--tx);
+      font-family: Manrope, Inter, system-ui, sans-serif;
+      font-size: 14px
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      min-height: 100vh
+    }
+
+    /* art */
+    .art {
+      position: relative;
+      padding: 26px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-rows: 1fr;
+      gap: 14px;
+      overflow: hidden;
+      background: #17181a;
+      border-radius: 0 28px 28px 0
+    }
+
+    .t {
+      border-radius: 22px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 150px;
+      font-size: clamp(17px, 1.7vw, 24px);
+      line-height: 1.3;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden
+    }
+
+    .t.ph {
+      background: radial-gradient(ellipse 60% 75% at 30% 35%, #8d95a3 0, #4c5361 45%, #2a2d36 100%);
+      opacity: .75
+    }
+
+    .t.ph.b {
+      background: radial-gradient(ellipse 55% 70% at 65% 55%, #5b5a78 0, #3a3a52 50%, #23232f 100%)
+    }
+
+    .t.pu {
+      background: var(--pu);
+      color: #17102b
+    }
+
+    .t.cr {
+      background: var(--cr);
+      color: #26230f
+    }
+
+    .t.pu.mid {
+      align-items: center;
+      justify-content: center
+    }
+
+    .t .plus {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      font-size: 26px;
+      font-weight: 300;
+      line-height: 1
+    }
+
+    .t.dots {
+      background-image: radial-gradient(rgba(23, 16, 43, .35) 1.2px, transparent 1.4px);
+      background-size: 22px 22px;
+      background-position: 6px 6px
+    }
+
+    .t.dots span {
+      background: var(--pu);
+      padding: 6px 0 0
+    }
+
+    .logo {
+      width: 76px;
+      height: 76px
+    }
+
+    .art .lg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0
+    }
+
+    /* pane */
+    .pane {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px
+    }
+
+    .box {
+      width: 100%;
+      max-width: 400px
+    }
+
+    h1 {
+      font-size: 34px;
+      font-weight: 500;
+      margin: 0 0 10px;
+      letter-spacing: -.01em
+    }
+
+    .sub {
+      color: var(--mu);
+      margin: 0 0 30px;
+      line-height: 1.55;
+      max-width: 34ch
+    }
+
+    .f {
+      position: relative;
+      margin-bottom: 16px
+    }
+
+    .f label {
+      position: absolute;
+      top: -7px;
+      left: 20px;
+      padding: 0 6px;
+      background: var(--bg);
+      font-size: 11px;
+      color: var(--mu);
+      z-index: 1
+    }
+
+    .f input,
+    .f select {
+      width: 100%;
+      height: 50px;
+      background: transparent;
+      color: var(--tx);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 0 22px;
+      font: inherit;
+      font-size: 14px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none
+    }
+
+    .f select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%238f8f96' stroke-width='1.6'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 20px center;
+      padding-right: 44px
+    }
+
+    .f select option {
+      background: #1c1c1e
+    }
+
+    .f input:focus,
+    .f select:focus {
+      border-color: var(--pu);
+      box-shadow: 0 0 0 3px rgba(169, 139, 245, .2)
+    }
+
+    .f.bad input,
+    .f.bad select {
+      border-color: var(--err)
+    }
+
+    .f .e {
+      display: none;
+      color: var(--err);
+      font-size: 12px;
+      margin: 6px 0 0 22px
+    }
+
+    .f.bad .e {
+      display: block
+    }
+
+    .f .eye {
+      position: absolute;
+      right: 8px;
+      top: 7px;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: none;
+      color: var(--mu);
+      cursor: pointer;
+      border-radius: 50%
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 2px 4px 22px;
+      font-size: 13px;
+      color: var(--mu)
+    }
+
+    .chk {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      cursor: pointer
+    }
+
+    .chk input {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      margin: 0;
+      display: grid;
+      place-content: center;
+      cursor: pointer;
+      flex: none
+    }
+
+    .chk input:checked {
+      background: var(--pu);
+      border-color: var(--pu)
+    }
+
+    .chk input:checked::after {
+      content: "";
+      width: 9px;
+      height: 5px;
+      border: 2px solid #17102b;
+      border-top: 0;
+      border-right: 0;
+      transform: rotate(-45deg) translate(1px, -1px)
+    }
+
+    a,
+    .lnk {
+      color: var(--tx);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--line);
+      background: none;
+      border: 0;
+      font: inherit;
+      cursor: pointer;
+      padding: 0
+    }
+
+    a:hover,
+    .lnk:hover {
+      text-decoration-color: var(--pu)
+    }
+
+    .btn {
+      width: 100%;
+      height: 52px;
+      border-radius: 26px;
+      border: 0;
+      background: #fff;
+      color: #111;
+      font: inherit;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform .15s
+    }
+
+    .btn:active {
+      transform: scale(.98)
+    }
+
+    .btn.g {
+      background: #232325;
+      color: var(--tx);
+      font-weight: 500;
+      height: 46px
+    }
+
+    .btn.g:hover {
+      background: #2c2c2f
+    }
+
+    .btn.pu {
+      background: var(--pu)
+    }
+
+    .or {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--mu);
+      font-size: 12px;
+      margin: 20px 0
+    }
+
+    .or::before,
+    .or::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line)
+    }
+
+    .foot {
+      margin-top: 26px;
+      text-align: center;
+      color: var(--mu)
+    }
+
+    .demo {
+      margin-top: 22px;
+      padding: 14px 16px;
+      border: 1px dashed var(--line);
+      border-radius: 18px;
+      font-size: 12px;
+      color: var(--mu);
+      line-height: 1.6
+    }
+
+    .demo b {
+      color: var(--tx);
+      font-weight: 600
+    }
+
+    .view {
+      display: none
+    }
+
+    .view.on {
+      display: block;
+      animation: in .35s ease
+    }
+
+    @keyframes in {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--pu);
+      outline-offset: 3px
+    }
+
+    /* stepper */
+    .steps {
+      display: flex;
+      gap: 6px;
+      margin: 0 0 6px
+    }
+
+    .steps i {
+      flex: 1;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--line);
+      transition: background .3s
+    }
+
+    .steps i.d {
+      background: var(--pu)
+    }
+
+    .stl {
+      color: var(--mu);
+      font-size: 12px;
+      margin: 0 0 22px;
+      display: flex;
+      justify-content: space-between
+    }
+
+    .stl b {
+      color: var(--tx);
+      font-weight: 600
+    }
+
+    .nav {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px
+    }
+
+    .nav .btn.g {
+      width: 40%
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--mu);
+      margin: -4px 4px 16px;
+      line-height: 1.5
+    }
+
+    .str {
+      display: flex;
+      gap: 4px;
+      margin: -6px 6px 16px
+    }
+
+    .str i {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--line)
+    }
+
+    .str i.s {
+      background: var(--pu)
+    }
+
+    /* status list */
+    .list {
+      list-style: none;
+      margin: 0 0 26px;
+      padding: 0;
+      display: grid;
+      gap: 0
+    }
+
+    .list li {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 0 0 18px;
+      position: relative;
+      color: var(--mu)
+    }
+
+    .list li::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--line);
+      margin-top: 3px;
+      flex: none;
+      background: var(--bg);
+      z-index: 1
+    }
+
+    .list li::after {
+      content: "absolute;left:5px;top:18px;bottom:0;width:2px;background:var(--line)}
+ .list li:last-child::after {
+        display: none
+      }
+
+      .list li.d {
+        color: var(--tx)
+      }
+
+      .list li.d::before {
+        background: var(--ok);
+        border-color: var(--ok)
+      }
+
+      .list li.c {
+        color: var(--tx)
+      }
+
+      .list li.c::before {
+        border-color: var(--cr);
+        background: var(--cr);
+        animation: pl 1.4s infinite
+      }
+
+      @keyframes pl {
+        50% {
+          box-shadow: 0 0 0 6px rgba(235, 227, 166, .15)
+        }
+      }
+
+      .list small {
+        display: block;
+        color: var(--mu);
+        margin-top: 2px
+      }
+
+      .card {
+        background: var(--panel);
+        border-radius: 20px;
+        padding: 16px 18px;
+        margin-bottom: 22px;
+        font-size: 13px;
+        display: grid;
+        gap: 8px
+      }
+
+      .card div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px
+      }
+
+      .card span {
+        color: var(--mu)
+      }
+
+      .card code {
+        font-family: ui-monospace, "JetBrains Mono", monospace;
+        font-size: 12px
+      }
+
+      .pill {
+        display: inline-block;
+        background: rgba(235, 227, 166, .14);
+        color: var(--cr);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 12px;
+        margin-bottom: 16px
+      }
+
+      @media(max-width:900px) {
+        .app {
+          grid-template-columns: 1fr
+        }
+
+        .art {
+          display: none
+        }
+
+        .pane {
+          align-items: flex-start;
+          padding-top: 48px
+        }
+      }
+
+      @media(max-width:420px) {
+        .row {
+          grid-template-columns: 1fr
+        }
+      }
+
+      @media(prefers-reduced-motion:reduce) {
+        * {
+          animation: none !important;
+          transition: none !important
+        }
+      }
+  </style>
 </head>
+
 <body>
-<div class="app">
-<aside class="art" aria-hidden="true">
-  <div class="t ph"></div>
-  <div class="t pu dots"><span>Evidence over assumption.<br>Every address checked.</span></div>
-  <div class="t ph b"></div>
-  <div class="t pu mid">
-    <svg class="logo" viewBox="0 0 64 64" fill="#111"><path d="M32 4 8 13v17c0 15 10 26 24 30 14-4 24-15 24-30V13L32 4Zm0 8 16 6v12c0 10-6 18-16 22-10-4-16-12-16-22V18l16-6Z"/><path d="M32 22l8 4v6c0 5-3 9-8 11-5-2-8-6-8-11v-6l8-4Z"/></svg>
+  <div class="app">
+    <aside class="art" aria-hidden="true">
+      <div class="t ph"></div>
+      <div class="t pu dots"><span>Evidence over assumption.<br>Every address checked.</span></div>
+      <div class="t ph b"></div>
+      <div class="t pu mid">
+        <svg class="logo" viewBox="0 0 64 64" fill="#111">
+          <path
+            d="M32 4 8 13v17c0 15 10 26 24 30 14-4 24-15 24-30V13L32 4Zm0 8 16 6v12c0 10-6 18-16 22-10-4-16-12-16-22V18l16-6Z" />
+          <path d="M32 22l8 4v6c0 5-3 9-8 11-5-2-8-6-8-11v-6l8-4Z" />
+        </svg>
+      </div>
+      <div class="t cr"><span class="plus">+</span>Know where a business really trades</div>
+      <div class="t ph"></div>
+      <div class="t cr"><span class="plus">+</span>Every score traces back to its source</div>
+      <div class="t ph b"></div>
+      <div class="t pu"><span>Built for investigators</span></div>
+    </aside>
+
+    <main class="pane">
+      <div class="box">
+
+        <!-- LOGIN -->
+        <section class="view on" id="v-login" aria-labelledby="h-login">
+          <h1 id="h-login">Sign in</h1>
+          <p class="sub">Access the GeoTrust investigation workspace with your investigator credentials.</p>
+          <form id="fl" novalidate>
+            <div class="f"><label for="lid">Investigator ID or work email</label><input id="lid" autocomplete="username"
+                required>
+              <div class="e">Enter your investigator ID or work email.</div>
+            </div>
+            <div class="f"><label for="lpw">Password</label><input id="lpw" type="password"
+                autocomplete="current-password" required><button type="button" class="eye" aria-label="Show password"
+                data-eye="lpw">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg></button>
+              <div class="e">Enter your password.</div>
+            </div>
+            <div class="meta"><label class="chk"><input type="checkbox" id="rem"> Remember this device</label><button
+                type="button" class="lnk" id="forgot">Forgot password?</button></div>
+            <button class="btn" type="submit">Sign in</button>
+          </form>
+          <div class="or">Or</div>
+          <button class="btn g" id="demoFill" type="button">Use demo investigator account</button>
+          <div class="demo"><b>Demo account</b><br>ID: GT-INV-0417 &nbsp;·&nbsp; arjun.kumar@geotrust.demo<br>Password:
+            Demo@1234</div>
+          <p class="foot">New investigator? <button class="lnk" data-go="v-s">Create investigator account</button></p>
+        </section>
+
+        <!-- SESSION -->
+        <section class="view" id="v-session" aria-live="polite">
+          <h1 id="sTitle">Signing you in</h1>
+          <p class="sub" id="sSub">Checking your access to the investigation workspace.</p>
+          <ul class="list" id="sList">
+            <li>Validating credentials</li>
+            <li>Identifying investigator</li>
+            <li>Confirming role</li>
+            <li>Creating secure session</li>
+            <li>Opening dashboard</li>
+          </ul>
+          <div id="sDone" style="display:none">
+            <div class="card">
+              <div><span>Signed in as</span><b id="who">Arjun Kumar</b></div>
+              <div><span>Role</span><b>Investigator</b></div>
+              <div><span>Session</span><code id="sid"></code></div>
+            </div>
+            <button class="btn" id="enter">Open dashboard</button>
+          </div>
+        </section>
+
+        <!-- SIGNUP -->
+        <section class="view" id="v-s" aria-labelledby="h-s">
+          <h1 id="h-s">Create account</h1>
+          <p class="sub">Investigator accounts are tied to an organization and need approval before access.</p>
+          <div class="steps" id="bars"><i class="d"></i><i></i><i></i><i></i></div>
+          <div class="stl"><b id="stName">Investigator details</b><span id="stNum">Step 1 of 4</span></div>
+          <form id="fs" novalidate>
+            <div class="step" data-s="0">
+              <div class="f"><label for="s1">Full name</label><input id="s1" autocomplete="name" required>
+                <div class="e">Enter your full name.</div>
+              </div>
+              <div class="f"><label for="s2">Work email</label><input id="s2" type="email" autocomplete="email"
+                  required>
+                <div class="e">Enter a valid work email.</div>
+              </div>
+              <div class="row">
+                <div class="f"><label for="s3">Mobile number</label><input id="s3" type="tel" inputmode="tel"
+                    placeholder="+91" required>
+                  <div class="e">Enter a valid number.</div>
+                </div>
+                <div class="f"><label for="s4">Investigator ID</label><input id="s4" required>
+                  <div class="e">Required.</div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="f"><label for="s5">Job title</label><input id="s5" required>
+                  <div class="e">Required.</div>
+                </div>
+                <div class="f"><label for="s6">Department</label><select id="s6" required>
+                    <option value="">Select</option>
+                    <option>Risk &amp; Compliance</option>
+                    <option>Fraud Investigation</option>
+                    <option>Credit Operations</option>
+                    <option>Audit</option>
+                  </select>
+                  <div class="e">Choose one.</div>
+                </div>
+              </div>
+            </div>
+            <div class="step" data-s="1" hidden>
+              <div class="f"><label for="o1">Organization name</label><input id="o1" required>
+                <div class="e">Required.</div>
+              </div>
+              <div class="f"><label for="o2">Organization type</label><select id="o2" required>
+                  <option value="">Select</option>
+                  <option>Bank / NBFC</option>
+                  <option>Regulator</option>
+                  <option>Audit firm</option>
+                  <option>Enterprise</option>
+                  <option>Government agency</option>
+                </select>
+                <div class="e">Choose one.</div>
+              </div>
+              <div class="f"><label for="o3">Official organization email</label><input id="o3" type="email" required>
+                <div class="e">Enter a valid organization email.</div>
+              </div>
+              <div class="row">
+                <div class="f"><label for="o4">Registration or license ref.</label><input id="o4" required>
+                  <div class="e">Required.</div>
+                </div>
+                <div class="f"><label for="o5">Office location</label><input id="o5" placeholder="City, State" required>
+                  <div class="e">Required.</div>
+                </div>
+              </div>
+            </div>
+            <div class="step" data-s="2" hidden>
+              <div class="f"><label for="p1">Verification type</label><select id="p1" required>
+                  <option value="">Select</option>
+                  <option>Employee ID card</option>
+                  <option>Authority letter</option>
+                  <option>Professional license</option>
+                </select>
+                <div class="e">Choose one.</div>
+              </div>
+              <div class="f"><label for="p2">Reference number</label><input id="p2" required>
+                <div class="e">Required.</div>
+              </div>
+              <div class="f"><label for="p3">Issuing authority</label><input id="p3" required>
+                <div class="e">Required.</div>
+              </div>
+              <div class="row">
+                <div class="f"><label for="p4">Issue date</label><input id="p4" type="date" required>
+                  <div class="e">Required.</div>
+                </div>
+                <div class="f"><label for="p5">Expiry date</label><input id="p5" type="date" required>
+                  <div class="e">Must be after issue date.</div>
+                </div>
+              </div>
+              <p class="note">Verification status starts as <b style="color:var(--cr)">Pending</b>. For this demo,
+                verification is synthetic and does not check real government records.</p>
+            </div>
+            <div class="step" data-s="3" hidden>
+              <div class="f"><label for="a1">Password</label><input id="a1" type="password" autocomplete="new-password"
+                  required>
+                <div class="e">Use at least 8 characters with a number and a symbol.</div>
+              </div>
+              <div class="str" id="str"><i></i><i></i><i></i><i></i></div>
+              <div class="f"><label for="a2">Confirm password</label><input id="a2" type="password"
+                  autocomplete="new-password" required>
+                <div class="e">Passwords do not match.</div>
+              </div>
+              <label class="chk" style="margin:0 4px 14px"><input type="checkbox" id="mfa"> Turn on multi-factor
+                authentication (optional)</label>
+              <label class="chk" style="margin:0 4px 18px"><input type="checkbox" id="tc"> I accept the terms and the
+                demo data notice</label>
+              <div class="f" style="margin:-6px 0 14px">
+                <div class="e" id="tcE" style="margin-top:0">Accept the terms to continue.</div>
+              </div>
+            </div>
+            <div class="nav"><button type="button" class="btn g" id="back" hidden>Back</button><button type="submit"
+                class="btn" id="next">Continue</button></div>
+          </form>
+          <p class="foot">Already have an account? <button class="lnk" data-go="v-login">Sign in</button></p>
+        </section>
+
+        <!-- PENDING -->
+        <section class="view" id="v-pending">
+          <span class="pill">Pending organization approval</span>
+          <h1>Registration submitted</h1>
+          <p class="sub">Your organization admin will review your details. We’ll email you when your account is ready.
+          </p>
+          <div class="card">
+            <div><span>Reference</span><code id="ref"></code></div>
+            <div><span>Applicant</span><b id="pn"></b></div>
+            <div><span>Organization</span><b id="po"></b></div>
+          </div>
+          <ul class="list">
+            <li class="d">Registration submitted<small>Details received</small></li>
+            <li class="c">Organization approval<small>Waiting for your admin</small></li>
+            <li>Verification check<small>Demo verification only</small></li>
+            <li>Account activated<small>You can sign in</small></li>
+          </ul>
+          <button class="btn" data-go="v-login">Back to sign in</button>
+        </section>
+
+      </div>
+    </main>
   </div>
-  <div class="t cr"><span class="plus">+</span>Know where a business really trades</div>
-  <div class="t ph"></div>
-  <div class="t cr"><span class="plus">+</span>Every score traces back to its source</div>
-  <div class="t ph b"></div>
-  <div class="t pu"><span>Built for investigators</span></div>
-</aside>
-
-<main class="pane"><div class="box">
-
-<!-- LOGIN -->
-<section class="view on" id="v-login" aria-labelledby="h-login">
-  <h1 id="h-login">Sign in</h1>
-  <p class="sub">Access the GeoTrust investigation workspace with your investigator credentials.</p>
-  <form id="fl" novalidate>
-    <div class="f"><label for="lid">Investigator ID or work email</label><input id="lid" autocomplete="username" required><div class="e">Enter your investigator ID or work email.</div></div>
-    <div class="f"><label for="lpw">Password</label><input id="lpw" type="password" autocomplete="current-password" required><button type="button" class="eye" aria-label="Show password" data-eye="lpw">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></button><div class="e">Enter your password.</div></div>
-    <div class="meta"><label class="chk"><input type="checkbox" id="rem"> Remember this device</label><button type="button" class="lnk" id="forgot">Forgot password?</button></div>
-    <button class="btn" type="submit">Sign in</button>
-  </form>
-  <div class="or">Or</div>
-  <button class="btn g" id="demoFill" type="button">Use demo investigator account</button>
-  <div class="demo"><b>Demo account</b><br>ID: GT-INV-0417 &nbsp;·&nbsp; arjun.kumar@geotrust.demo<br>Password: Demo@1234</div>
-  <p class="foot">New investigator? <button class="lnk" data-go="v-s">Create investigator account</button></p>
-</section>
-
-<!-- SESSION -->
-<section class="view" id="v-session" aria-live="polite">
-  <h1 id="sTitle">Signing you in</h1>
-  <p class="sub" id="sSub">Checking your access to the investigation workspace.</p>
-  <ul class="list" id="sList">
-    <li>Validating credentials</li><li>Identifying investigator</li><li>Confirming role</li><li>Creating secure session</li><li>Opening dashboard</li>
-  </ul>
-  <div id="sDone" style="display:none">
-    <div class="card"><div><span>Signed in as</span><b id="who">Arjun Kumar</b></div><div><span>Role</span><b>Investigator</b></div><div><span>Session</span><code id="sid"></code></div></div>
-    <button class="btn" id="enter">Open dashboard</button>
-  </div>
-</section>
-
-<!-- SIGNUP -->
-<section class="view" id="v-s" aria-labelledby="h-s">
-  <h1 id="h-s">Create account</h1>
-  <p class="sub">Investigator accounts are tied to an organization and need approval before access.</p>
-  <div class="steps" id="bars"><i class="d"></i><i></i><i></i><i></i></div>
-  <div class="stl"><b id="stName">Investigator details</b><span id="stNum">Step 1 of 4</span></div>
-  <form id="fs" novalidate>
-    <div class="step" data-s="0">
-      <div class="f"><label for="s1">Full name</label><input id="s1" autocomplete="name" required><div class="e">Enter your full name.</div></div>
-      <div class="f"><label for="s2">Work email</label><input id="s2" type="email" autocomplete="email" required><div class="e">Enter a valid work email.</div></div>
-      <div class="row">
-        <div class="f"><label for="s3">Mobile number</label><input id="s3" type="tel" inputmode="tel" placeholder="+91" required><div class="e">Enter a valid number.</div></div>
-        <div class="f"><label for="s4">Investigator ID</label><input id="s4" required><div class="e">Required.</div></div>
-      </div>
-      <div class="row">
-        <div class="f"><label for="s5">Job title</label><input id="s5" required><div class="e">Required.</div></div>
-        <div class="f"><label for="s6">Department</label><select id="s6" required><option value="">Select</option><option>Risk &amp; Compliance</option><option>Fraud Investigation</option><option>Credit Operations</option><option>Audit</option></select><div class="e">Choose one.</div></div>
-      </div>
-    </div>
-    <div class="step" data-s="1" hidden>
-      <div class="f"><label for="o1">Organization name</label><input id="o1" required><div class="e">Required.</div></div>
-      <div class="f"><label for="o2">Organization type</label><select id="o2" required><option value="">Select</option><option>Bank / NBFC</option><option>Regulator</option><option>Audit firm</option><option>Enterprise</option><option>Government agency</option></select><div class="e">Choose one.</div></div>
-      <div class="f"><label for="o3">Official organization email</label><input id="o3" type="email" required><div class="e">Enter a valid organization email.</div></div>
-      <div class="row">
-        <div class="f"><label for="o4">Registration or license ref.</label><input id="o4" required><div class="e">Required.</div></div>
-        <div class="f"><label for="o5">Office location</label><input id="o5" placeholder="City, State" required><div class="e">Required.</div></div>
-      </div>
-    </div>
-    <div class="step" data-s="2" hidden>
-      <div class="f"><label for="p1">Verification type</label><select id="p1" required><option value="">Select</option><option>Employee ID card</option><option>Authority letter</option><option>Professional license</option></select><div class="e">Choose one.</div></div>
-      <div class="f"><label for="p2">Reference number</label><input id="p2" required><div class="e">Required.</div></div>
-      <div class="f"><label for="p3">Issuing authority</label><input id="p3" required><div class="e">Required.</div></div>
-      <div class="row">
-        <div class="f"><label for="p4">Issue date</label><input id="p4" type="date" required><div class="e">Required.</div></div>
-        <div class="f"><label for="p5">Expiry date</label><input id="p5" type="date" required><div class="e">Must be after issue date.</div></div>
-      </div>
-      <p class="note">Verification status starts as <b style="color:var(--cr)">Pending</b>. For this demo, verification is synthetic and does not check real government records.</p>
-    </div>
-    <div class="step" data-s="3" hidden>
-      <div class="f"><label for="a1">Password</label><input id="a1" type="password" autocomplete="new-password" required><div class="e">Use at least 8 characters with a number and a symbol.</div></div>
-      <div class="str" id="str"><i></i><i></i><i></i><i></i></div>
-      <div class="f"><label for="a2">Confirm password</label><input id="a2" type="password" autocomplete="new-password" required><div class="e">Passwords do not match.</div></div>
-      <label class="chk" style="margin:0 4px 14px"><input type="checkbox" id="mfa"> Turn on multi-factor authentication (optional)</label>
-      <label class="chk" style="margin:0 4px 18px"><input type="checkbox" id="tc"> I accept the terms and the demo data notice</label>
-      <div class="f" style="margin:-6px 0 14px"><div class="e" id="tcE" style="margin-top:0">Accept the terms to continue.</div></div>
-    </div>
-    <div class="nav"><button type="button" class="btn g" id="back" hidden>Back</button><button type="submit" class="btn" id="next">Continue</button></div>
-  </form>
-  <p class="foot">Already have an account? <button class="lnk" data-go="v-login">Sign in</button></p>
-</section>
-
-<!-- PENDING -->
-<section class="view" id="v-pending">
-  <span class="pill">Pending organization approval</span>
-  <h1>Registration submitted</h1>
-  <p class="sub">Your organization admin will review your details. We’ll email you when your account is ready.</p>
-  <div class="card"><div><span>Reference</span><code id="ref"></code></div><div><span>Applicant</span><b id="pn"></b></div><div><span>Organization</span><b id="po"></b></div></div>
-  <ul class="list">
-    <li class="d">Registration submitted<small>Details received</small></li>
-    <li class="c">Organization approval<small>Waiting for your admin</small></li>
-    <li>Verification check<small>Demo verification only</small></li>
-    <li>Account activated<small>You can sign in</small></li>
-  </ul>
-  <button class="btn" data-go="v-login">Back to sign in</button>
-</section>
-
-</div></main>
-</div>
-<script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-function go(id){$$('.view').forEach(v=>v.classList.toggle('on',v.id===id));(document.querySelector('#'+id+' input')||{focus(){}}).focus()}
-$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
-$$('[data-eye]').forEach(b=>b.onclick=()=>{const i=$('#'+b.dataset.eye);const h=i.type==='password';i.type=h?'text':'password';b.setAttribute('aria-label',h?'Hide password':'Show password')});
-const bad=(el,on)=>el.closest('.f').classList.toggle('bad',on);
-/* login */
-const DEMO={id:['gt-inv-0417','arjun.kumar@geotrust.demo'],pw:'Demo@1234',name:'Arjun Kumar'};
-$('#demoFill').onclick=()=>{$('#lid').value='arjun.kumar@geotrust.demo';$('#lpw').value=DEMO.pw;$('#fl').requestSubmit()};
-$('#forgot').onclick=()=>{const i=$('#lid');if(!i.value.trim()){bad(i,true);i.focus();i.closest('.f').querySelector('.e').textContent='Enter your ID or email first, then select Forgot password.';return}alert('Demo: a reset link would be sent to '+i.value.trim())};
-$('#fl').onsubmit=e=>{e.preventDefault();const a=$('#lid'),p=$('#lpw');a.closest('.f').querySelector('.e').textContent='Enter your investigator ID or work email.';
- bad(a,!a.value.trim());bad(p,!p.value);if(!a.value.trim()||!p.value)return;
- const ok=DEMO.id.includes(a.value.trim().toLowerCase())&&p.value===DEMO.pw;
- go('v-session');runSession(ok)};
-function runSession(ok){
- const li=$$('#sList li');li.forEach(l=>l.className='');$('#sDone').style.display='none';$('#sList').style.display='';
- $('#sTitle').textContent='Signing you in';$('#sSub').textContent='Checking your access to the investigation workspace.';
- let i=0;(function step(){
-  if(i>0)li[i-1].className='d';
-  if(!ok&&i===1){li[1].className='';$('#sTitle').textContent='Sign-in failed';$('#sSub').innerHTML='We couldn’t match that ID and password. Check them and try again, or use the demo account.<br><br><button class="btn" onclick="go(\'v-login\')">Try again</button>';return}
-  if(i<li.length){li[i].className='c';i++;setTimeout(step,520)}
-  else{$('#sList').style.display='none';$('#sTitle').textContent='Welcome back';$('#sSub').textContent='Your session is ready.';$('#sid').textContent='S-'+Math.random().toString(36).slice(2,8).toUpperCase();$('#sDone').style.display='block'}
- })()}
-$('#enter').onclick=()=>{ sessionStorage.setItem('geotrust_session', '{"id":"GT-INV-0417","name":"Arjun Kumar"}'); window.location.href = 'index.html'; };
-/* signup */
-const names=['Investigator details','Organization details','Professional verification','Account security'];let st=0;
-const reqOk=el=>{let v=el.value.trim(),ok=!!v;
- if(el.type==='email')ok=/^\S+@\S+\.\S+$/.test(v);
- if(el.type==='tel')ok=v.replace(/\D/g,'').length>=10;
- if(el.id==='p5')ok=!!v&&v>$('#p4').value;
- if(el.id==='a1')ok=v.length>=8&&/\d/.test(v)&&/[^\w\s]/.test(v);
- if(el.id==='a2')ok=v!==''&&v===$('#a1').value;
- bad(el,!ok);return ok};
-function draw(){$$('.step').forEach(s=>s.hidden=+s.dataset.s!==st);
- $$('#bars i').forEach((b,i)=>b.classList.toggle('d',i<=st));
- $('#stName').textContent=names[st];$('#stNum').textContent='Step '+(st+1)+' of 4';
- $('#back').hidden=st===0;$('#next').textContent=st===3?'Submit registration':'Continue';
- $('#v-s').scrollIntoView({block:'start'})}
-$('#back').onclick=()=>{st--;draw()};
-$$('#fs input,#fs select').forEach(el=>el.addEventListener('input',()=>{if(el.closest('.f').classList.contains('bad'))reqOk(el)}));
-$('#a1').addEventListener('input',e=>{const v=e.target.value;let n=(v.length>=8)+(/\d/.test(v))+(/[^\w\s]/.test(v))+(/[A-Z]/.test(v)&&/[a-z]/.test(v));$$('#str i').forEach((b,i)=>b.classList.toggle('s',i<n))});
-$('#fs').onsubmit=e=>{e.preventDefault();
- let ok=true;$$('.step[data-s="'+st+'"] input:not([type=checkbox]),.step[data-s="'+st+'"] select').forEach(el=>{if(!reqOk(el))ok=false});
- if(st===3&&!$('#tc').checked){ok=false;$('#tcE').parentElement.classList.add('bad')}else $('#tcE').parentElement.classList.remove('bad');
- if(!ok){const f=$('.step[data-s="'+st+'"] .bad input, .step[data-s="'+st+'"] .bad select');f&&f.focus();return}
- if(st<3){st++;draw();return}
- $('#ref').textContent='GT-REG-2026-'+Math.floor(10000+Math.random()*89999);
- $('#pn').textContent=$('#s1').value.trim();$('#po').textContent=$('#o1').value.trim();go('v-pending')};
-$$('#tc').forEach(c=>c.onchange=()=>$('#tcE').parentElement.classList.remove('bad'));
-</script>
+  <script>
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    function go(id) { $$('.view').forEach(v => v.classList.toggle('on', v.id === id)); (document.querySelector('#' + id + ' input') || { focus() { } }).focus() }
+    $$('[data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+    $$('[data-eye]').forEach(b => b.onclick = () => { const i = $('#' + b.dataset.eye); const h = i.type === 'password'; i.type = h ? 'text' : 'password'; b.setAttribute('aria-label', h ? 'Hide password' : 'Show password') });
+    const bad = (el, on) => el.closest('.f').classList.toggle('bad', on);
+    /* login */
+    const DEMO = { id: ['gt-inv-0417', 'arjun.kumar@geotrust.demo'], pw: 'Demo@1234', name: 'Arjun Kumar' };
+    $('#demoFill').onclick = () => { $('#lid').value = 'arjun.kumar@geotrust.demo'; $('#lpw').value = DEMO.pw; $('#fl').requestSubmit() };
+    $('#forgot').onclick = () => { const i = $('#lid'); if (!i.value.trim()) { bad(i, true); i.focus(); i.closest('.f').querySelector('.e').textContent = 'Enter your ID or email first, then select Forgot password.'; return } alert('Demo: a reset link would be sent to ' + i.value.trim()) };
+    $('#fl').onsubmit = e => {
+      e.preventDefault(); const a = $('#lid'), p = $('#lpw'); a.closest('.f').querySelector('.e').textContent = 'Enter your investigator ID or work email.';
+      bad(a, !a.value.trim()); bad(p, !p.value); if (!a.value.trim() || !p.value) return;
+      const ok = DEMO.id.includes(a.value.trim().toLowerCase()) && p.value === DEMO.pw;
+      go('v-session'); runSession(ok)
+    };
+    function runSession(ok) {
+      const li = $$('#sList li'); li.forEach(l => l.className = ''); $('#sDone').style.display = 'none'; $('#sList').style.display = '';
+      $('#sTitle').textContent = 'Signing you in'; $('#sSub').textContent = 'Checking your access to the investigation workspace.';
+      let i = 0; (function step() {
+        if (i > 0) li[i - 1].className = 'd';
+        if (!ok && i === 1) { li[1].className = ''; $('#sTitle').textContent = 'Sign-in failed'; $('#sSub').innerHTML = 'We couldn’t match that ID and password. Check them and try again, or use the demo account.<br><br><button class="btn" onclick="go(\'v-login\')">Try again</button>'; return }
+        if (i < li.length) { li[i].className = 'c'; i++; setTimeout(step, 520) }
+        else { $('#sList').style.display = 'none'; $('#sTitle').textContent = 'Welcome back'; $('#sSub').textContent = 'Your session is ready.'; $('#sid').textContent = 'S-' + Math.random().toString(36).slice(2, 8).toUpperCase(); $('#sDone').style.display = 'block' }
+      })()
+    }
+    $('#enter').onclick = () => { sessionStorage.setItem('geotrust_session', '{"id":"GT-INV-0417","name":"Arjun Kumar"}'); window.location.href = 'index.html'; };
+    /* signup */
+    const names = ['Investigator details', 'Organization details', 'Professional verification', 'Account security']; let st = 0;
+    const reqOk = el => {
+      let v = el.value.trim(), ok = !!v;
+      if (el.type === 'email') ok = /^\S+@\S+\.\S+$/.test(v);
+      if (el.type === 'tel') ok = v.replace(/\D/g, '').length >= 10;
+      if (el.id === 'p5') ok = !!v && v > $('#p4').value;
+      if (el.id === 'a1') ok = v.length >= 8 && /\d/.test(v) && /[^\w\s]/.test(v);
+      if (el.id === 'a2') ok = v !== '' && v === $('#a1').value;
+      bad(el, !ok); return ok
+    };
+    function draw() {
+      $$('.step').forEach(s => s.hidden = +s.dataset.s !== st);
+      $$('#bars i').forEach((b, i) => b.classList.toggle('d', i <= st));
+      $('#stName').textContent = names[st]; $('#stNum').textContent = 'Step ' + (st + 1) + ' of 4';
+      $('#back').hidden = st === 0; $('#next').textContent = st === 3 ? 'Submit registration' : 'Continue';
+      $('#v-s').scrollIntoView({ block: 'start' })
+    }
+    $('#back').onclick = () => { st--; draw() };
+    $$('#fs input,#fs select').forEach(el => el.addEventListener('input', () => { if (el.closest('.f').classList.contains('bad')) reqOk(el) }));
+    $('#a1').addEventListener('input', e => { const v = e.target.value; let n = (v.length >= 8) + (/\d/.test(v)) + (/[^\w\s]/.test(v)) + (/[A-Z]/.test(v) && /[a-z]/.test(v)); $$('#str i').forEach((b, i) => b.classList.toggle('s', i < n)) });
+    $('#fs').onsubmit = e => {
+      e.preventDefault();
+      let ok = true; $$('.step[data-s="' + st + '"] input:not([type=checkbox]),.step[data-s="' + st + '"] select').forEach(el => { if (!reqOk(el)) ok = false });
+      if (st === 3 && !$('#tc').checked) { ok = false; $('#tcE').parentElement.classList.add('bad') } else $('#tcE').parentElement.classList.remove('bad');
+      if (!ok) { const f = $('.step[data-s="' + st + '"] .bad input, .step[data-s="' + st + '"] .bad select'); f && f.focus(); return }
+      if (st < 3) { st++; draw(); return }
+      $('#ref').textContent = 'GT-REG-2026-' + Math.floor(10000 + Math.random() * 89999);
+      $('#pn').textContent = $('#s1').value.trim(); $('#po').textContent = $('#o1').value.trim(); go('v-pending')
+    };
+    $$('#tc').forEach(c => c.onchange = () => $('#tcE').parentElement.classList.remove('bad'));
+  </script>
 </body>
+
 </html>
