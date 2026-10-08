@@ -1,8 +1,8 @@
 let mapInstance = null;
 
-// Enforce login
+// Enforce login — splash is the entry point
 if (!sessionStorage.getItem('geotrust_session')) {
-    window.location.href = 'login.html';
+    window.location.href = 'splash.html';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
