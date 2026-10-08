@@ -1,0 +1,122 @@
+[
+  {
+    "id": "b-1001",
+    "businessName": "TechCorp Data Center",
+    "claimedIndustry": "IT Infrastructure",
+    "sqFt": 150000,
+    "latitude": 37.3382,
+    "longitude": -121.8863
+  },
+  {
+    "id": "b-1002",
+    "businessName": "Downtown Cafe & Bakery",
+    "claimedIndustry": "Restaurant",
+    "sqFt": 2500,
+    "latitude": 40.7128,
+    "longitude": -74.0060
+  },
+  {
+    "id": "b-1003",
+    "businessName": "Smith & Associates Law",
+    "claimedIndustry": "Legal Services",
+    "sqFt": 4000,
+    "latitude": 41.8781,
+    "longitude": -87.6298
+  },
+  {
+    "id": "b-1004",
+    "businessName": "Westside Auto Repair",
+    "claimedIndustry": "Automotive Repair",
+    "sqFt": 6000,
+    "latitude": 34.0522,
+    "longitude": -118.2437
+  },
+  {
+    "id": "b-1005",
+    "businessName": "Valley Medical Clinic",
+    "claimedIndustry": "Healthcare",
+    "sqFt": 12000,
+    "latitude": 33.4484,
+    "longitude": -112.0740
+  },
+  {
+    "id": "b-1006",
+    "businessName": "Global Trading LLC",
+    "claimedIndustry": "Import/Export",
+    "sqFt": 500,
+    "latitude": 25.7617,
+    "longitude": -80.1918
+  },
+  {
+    "id": "b-1007",
+    "businessName": "Apex Consulting",
+    "claimedIndustry": "Management Consulting",
+    "sqFt": 350,
+    "latitude": 39.7392,
+    "longitude": -104.9903
+  },
+  {
+    "id": "b-1008",
+    "businessName": "Nexus Logistics Solutions",
+    "claimedIndustry": "Logistics",
+    "sqFt": 800,
+    "latitude": 29.7604,
+    "longitude": -95.3698
+  },
+  {
+    "id": "b-1009",
+    "businessName": "Creative Media Group",
+    "claimedIndustry": "Digital Marketing",
+    "sqFt": 600,
+    "latitude": 47.6062,
+    "longitude": -122.3321
+  },
+  {
+    "id": "b-1010",
+    "businessName": "Quantum Software Systems",
+    "claimedIndustry": "Software Development",
+    "sqFt": 450,
+    "latitude": 30.2672,
+    "longitude": -97.7431
+  },
+  {
+    "id": "b-1011",
+    "businessName": "Titanium Steel Fabrication",
+    "claimedIndustry": "Heavy Manufacturing",
+    "sqFt": 150,
+    "latitude": 42.3601,
+    "longitude": -71.0589
+  },
+  {
+    "id": "b-1012",
+    "businessName": "MegaWarehouse Distribution",
+    "claimedIndustry": "Warehousing",
+    "sqFt": 250,
+    "latitude": 39.9526,
+    "longitude": -75.1652
+  },
+  {
+    "id": "b-1013",
+    "businessName": "National Trucking Depot",
+    "claimedIndustry": "Freight Transport",
+    "sqFt": 100,
+    "latitude": 38.9072,
+    "longitude": -77.0369
+  },
+  {
+    "id": "b-1014",
+    "businessName": "AgriCorp Farm Equipments",
+    "claimedIndustry": "Agricultural Machinery",
+    "sqFt": 120,
+    "latitude": 32.7767,
+    "longitude": -96.7970
+  },
+  {
+    "id": "b-1015",
+    "businessName": "Universal Chemical Plant",
+    "claimedIndustry": "Chemical Refining",
+    "sqFt": 180,
+    "latitude": 35.2271,
+    "longitude": -80.8431
+  }
+]
