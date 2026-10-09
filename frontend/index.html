@@ -3205,6 +3205,27 @@
         this.initReportsPage();
         this.initOverviewMap();
         this.renderCase(this.activeCase);
+        this.updateKPIs();
+      },
+
+      updateKPIs() {
+        const total = this.businesses.length;
+        const riskCount = this.businesses.filter(b => b.classification.includes('Suspicious')).length;
+        const ambCount = this.businesses.filter(b => b.classification.includes('Ambiguous')).length;
+        const credCount = this.businesses.filter(b => b.classification.includes('Credible')).length;
+
+        const setVal = (sel, val) => { const el = document.querySelector(sel); if(el) el.textContent = val; };
+        setVal('#kpi-card-all .metric-value', String(total).padStart(2, '0'));
+        setVal('#kpi-card-risk .metric-value', String(riskCount).padStart(2, '0'));
+        setVal('#kpi-card-ambiguous .metric-value', String(ambCount).padStart(2, '0'));
+        setVal('#kpi-card-confident .metric-value', String(credCount).padStart(2, '0'));
+        setVal('#active-table-filter-text', `All Cases (${total})`);
+        setVal('button[data-filter="all"]', `All Reports (${total})`);
+        
+        const titleSpan = document.evaluate("//span[contains(@class, 'card-title') and contains(text(), 'Total)')]", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+        if(titleSpan) titleSpan.textContent = `All Monitored Entities (${total} Total)`;
+        
+        setVal('.nav-badge', total);
       },
 
       showToast(text) {
