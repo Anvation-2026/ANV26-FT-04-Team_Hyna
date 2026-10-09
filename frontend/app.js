@@ -54,6 +54,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// ─── Local mock registry (mirrors Java ApiController) ────────────────────────
+const LOCAL_MOCK_REGISTRY = {
+    'hynastudio':   { claimedIndustry: 'Tech',               sqFt: 500,    lat: 8.1833,  lng: 77.4119 },
+    'google':       { claimedIndustry: 'Tech',               sqFt: 500000, lat: 12.9716, lng: 77.5946 },
+    'microsoft':    { claimedIndustry: 'Tech',               sqFt: 300000, lat: null,    lng: null    },
+    'titanium steel':{ claimedIndustry: 'Heavy Manufacturing',sqFt: 150000, lat: 13.0827, lng: 80.2707 },
+    'jp morgan':    { claimedIndustry: 'Finance',            sqFt: 25000,  lat: null,    lng: null    },
+    'ghost logistics':{ claimedIndustry: 'Heavy Manufacturing',sqFt: 200,  lat: null,    lng: null    },
+    '21 monk':      { claimedIndustry: 'Tech',               sqFt: 1200,   lat: null,    lng: null    },
+};
+
+function localHaversineKm(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 +
+              Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+              Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function localEvaluate(payload) {
+    let score = 100;
+    const explanations = [];
+    const search = payload.businessName.toLowerCase();
+
+    // Rule 1 — Registry check
+    let registered = null;
+    for (const key of Object.keys(LOCAL_MOCK_REGISTRY)) {
+        if (search.includes(key)) { registered = LOCAL_MOCK_REGISTRY[key]; break; }
+    }
+    if (!registered) {
+        return { score: 0, explanations: ['🚨 FATAL: Business entity not found in Government MCA Registry.'] };
+    }
+
+    // Rule 2 — Asset overstatement
+    if (payload.sqFt && payload.sqFt > registered.sqFt * 1.5) {
+        score -= 50;
+        explanations.push(`🚩 CRITICAL: Asset Overstatement. Investigator claimed ${payload.sqFt} sqft, but entity is legally registered for only ${registered.sqFt} sqft.`);
+    }
+
+    // Rule 3 — Industry mismatch
+    if (payload.claimedIndustry && payload.claimedIndustry.toLowerCase() !== registered.claimedIndustry.toLowerCase()) {
+        score -= 30;
+        explanations.push(`⚠️ WARNING: Industry mismatch. Claimed ${payload.claimedIndustry} but registered as ${registered.claimedIndustry}.`);
+    }
+
+    // Rule 4 — Coordinates / location anomaly
+    const lat = payload.latitude, lon = payload.longitude;
+    if (!lat || !lon || lat === 0 || lon === 0) {
+        score -= 100;
+        explanations.push('🚨 FATAL: Invalid or null geographic coordinates provided.');
+    } else if (registered.lat && registered.lng) {
+        const dist = localHaversineKm(lat, lon, registered.lat, registered.lng);
+        if (dist > 50) {
+            score -= 60;
+            explanations.push(`🚨 FATAL LOCATION ANOMALY: Claimed location is ${dist.toFixed(1)} km away from the officially registered headquarters.`);
+        }
+    }
+
+    // Rule 5 — All clear
+    if (score === 100) {
+        explanations.push('✅ VERIFIED: Claimed data perfectly matches Government Registry and spatial constraints.');
+    }
+
+    return { score: Math.max(0, score), explanations };
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 async function runLiveInvestigation() {
     const businessNameInput = document.getElementById('liveBusinessName');
     const addressInput = document.getElementById('liveClaimedAddress');
@@ -67,24 +136,21 @@ async function runLiveInvestigation() {
     liveInvestigateBtn.disabled = true;
 
     try {
-        // Step A (Geocoding)
+        // Step A — Geocoding via OpenStreetMap
         let osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(addressQuery));
         let osmData = await osmRes.json();
 
-        // Fallback: If exact query fails, try searching just the last word (usually the city)
         if (osmData.length === 0) {
-            const words = addressQuery.split(' ');
-            const cityFallback = words[words.length - 1];
+            const cityFallback = addressQuery.split(' ').pop();
             osmRes = await fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(cityFallback));
             osmData = await osmRes.json();
         }
 
         if (osmData.length === 0) {
-            console.warn("Location not found on OpenStreetMap. Using default coordinates for mock demonstration.");
-            osmData = [{ lat: '12.9716', lon: '77.5946', display_name: 'Default Mock Location, Bengaluru' }];
+            console.warn("Location not found on OpenStreetMap. Using default coordinates.");
+            osmData = [{ lat: '12.9716', lon: '77.5946' }];
         }
 
-        // Step B (Evaluate)
         const payload = {
             businessName: businessNameQuery,
             claimedIndustry: document.getElementById('liveClaimedIndustry').value,
@@ -92,12 +158,22 @@ async function runLiveInvestigation() {
             latitude: parseFloat(osmData[0].lat),
             longitude: parseFloat(osmData[0].lon)
         };
-        const evalRes = await fetch('http://localhost:8080/api/evaluate-live', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const evalData = await evalRes.json();
+
+        // Step B — Try backend; fall back to local engine if unavailable
+        let evalData;
+        try {
+            const evalRes = await fetch('http://localhost:8080/api/evaluate-live', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: AbortSignal.timeout(4000)   // 4 s timeout
+            });
+            if (!evalRes.ok) throw new Error('Backend returned ' + evalRes.status);
+            evalData = await evalRes.json();
+        } catch (backendErr) {
+            console.warn('Backend unavailable — using local evaluation engine.', backendErr);
+            evalData = localEvaluate(payload);
+        }
 
         // Step C (UI Update)
         const liveResultBox = document.getElementById('liveResultBox');
