@@ -2941,30 +2941,6 @@
               <div class="wf-sidebar-step phase-analysis"><div class="step-num">12</div>Final Assessment</div>
             </div>
             <div class="wf-body">
-            <!-- Step 1: Business Details -->
-            <div id="wf-step-1" class="wf-step-content">
-              <div class="form-group">
-                <label class="form-label">Business Name</label>
-                <input type="text" id="new-biz-name" class="form-input" placeholder="e.g. Zenith Metal Works" value="Zenith Precision Tools" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Industry</label>
-                <select id="new-biz-industry" class="form-select">
-                  <option value="Industrial Manufacturing">Industrial Manufacturing</option>
-                  <option value="Chemical Export">Chemical Export</option>
-                  <option value="Logistics & Warehousing">Logistics & Warehousing</option>
-                  <option value="Wholesale Distribution">Wholesale Distribution</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Registration Reference</label>
-                <input type="text" id="new-biz-reg" class="form-input font-mono" value="REG-91024" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Claimed Trading Address</label>
-                <input type="text" id="new-biz-addr" class="form-input" value="Plot 8, Peenya 3rd Phase, Bengaluru" />
-              </div>
-            </div>
 
             <!-- Step 1: Business Information -->
             <div id="wf-step-1" class="wf-step-content">
@@ -2988,7 +2964,7 @@
             </div>
 
             <!-- Step 2: Claimed Trading Address -->
-            <div id="wf-step-2" class="wf-step-content" style="display:none;">
+            <div id="wf-step-2" class="wf-step-content">
               <div class="form-group">
                 <label class="form-label">Claimed Trading Address</label>
                 <input type="text" id="wfi-addr-full" class="form-input" value="Plot 8, Peenya 3rd Phase, Bengaluru" />
@@ -3000,7 +2976,7 @@
             </div>
 
             <!-- Step 3: Location Evidence -->
-            <div id="wf-step-3" class="wf-step-content" style="display:none;">
+            <div id="wf-step-3" class="wf-step-content">
               <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">
                 Select telemetric datasets for automated geographic triangulation:
               </div>
@@ -3018,7 +2994,7 @@
             </div>
 
             <!-- Step 4: Supporting Evidence -->
-            <div id="wf-step-4" class="wf-step-content" style="display:none;">
+            <div id="wf-step-4" class="wf-step-content">
               <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">
                 Provide external verification data to support the assessment:
               </div>
@@ -3033,7 +3009,7 @@
             </div>
 
             <!-- Step 5: Related Documents Upload -->
-            <div id="wf-step-5" class="wf-step-content" style="display:none;">
+            <div id="wf-step-5" class="wf-step-content">
               <div style="border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 30px; text-align: center; color: var(--text-secondary);">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom:8px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                 <div style="font-size:13px; font-weight:500;">Drag & Drop Documents Here</div>
@@ -3042,7 +3018,7 @@
             </div>
 
             <!-- Step 6: Investigator Notes -->
-            <div id="wf-step-6" class="wf-step-content" style="display:none;">
+            <div id="wf-step-6" class="wf-step-content">
               <div class="form-group">
                 <label class="form-label">Internal Notes / Context</label>
                 <textarea id="wfi-notes" class="form-input" style="height: 100px; resize: none;" placeholder="Enter any initial observations..."></textarea>
@@ -3050,7 +3026,7 @@
             </div>
 
             <!-- Step 7: Review -->
-            <div id="wf-step-7" class="wf-step-content" style="display:none;">
+            <div id="wf-step-7" class="wf-step-content">
               <div style="font-weight:600; font-size:13.5px; margin-bottom:12px; color:var(--text-primary);">Pre-Flight Review</div>
               <div id="wfi-review-summary" style="background:var(--bg-subtle); padding:16px; border-radius:var(--radius-md); font-size:12px; display:grid; gap:8px; border:1px solid var(--border-color);">
                 <!-- Populated by JS -->
@@ -3058,7 +3034,7 @@
             </div>
 
             <!-- Step 8: Investigation Detail -->
-            <div id="wf-step-8" class="wf-step-content" style="display:none;">
+            <div id="wf-step-8" class="wf-step-content">
               <div style="background:var(--primary-subtle); border:1px solid var(--primary-border); padding:16px; border-radius:var(--radius-md); color:var(--primary);">
                 <div style="font-weight:700; font-size:14px; margin-bottom:4px;">Investigation Initialized Successfully!</div>
                 <div style="font-size:12px;">Case ID: GEO-8831-X has been created. Beginning deep analysis pipeline.</div>
@@ -3066,7 +3042,7 @@
             </div>
 
             <!-- Step 9: Map Analysis -->
-            <div id="wf-step-9" class="wf-step-content" style="display:none;">
+            <div id="wf-step-9" class="wf-step-content">
               <div style="font-size:12.5px; font-weight:600; margin-bottom:12px;">Geospatial Triangulation Running...</div>
               <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-secondary);">
                 <div style="color:var(--success);">✓ Datasets normalized across coordinate bounds</div>
@@ -3076,7 +3052,7 @@
             </div>
 
             <!-- Step 10: Evidence Analysis -->
-            <div id="wf-step-10" class="wf-step-content" style="display:none;">
+            <div id="wf-step-10" class="wf-step-content">
               <div style="font-size:12.5px; font-weight:600; margin-bottom:12px;">Document Verification...</div>
               <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-secondary);">
                 <div style="color:var(--success);">✓ E-Way Bills matched to transport corridors</div>
@@ -3085,7 +3061,7 @@
             </div>
 
             <!-- Step 11: Contradiction Detection -->
-            <div id="wf-step-11" class="wf-step-content" style="display:none;">
+            <div id="wf-step-11" class="wf-step-content">
               <div style="font-size:12.5px; font-weight:600; margin-bottom:12px;">Anomaly Scanning...</div>
               <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; color:var(--text-secondary);">
                 <div style="color:var(--success);">✓ Shared address shell density verified (0 conflicts)</div>
@@ -3094,7 +3070,7 @@
             </div>
 
             <!-- Step 12: Final Assessment -->
-            <div id="wf-step-12" class="wf-step-content" style="display:none;">
+            <div id="wf-step-12" class="wf-step-content">
               <div style="background:var(--success-bg); border:1px solid var(--success-border); padding:14px; border-radius:var(--radius-md);">
                 <div style="font-weight:700; color:var(--success); font-size:14px;">Assessment Complete</div>
                 <div style="font-size:12.5px; color:var(--text-primary); margin-top:4px;">
@@ -3390,25 +3366,16 @@
         }
 
         this.activityChart = new Chart(ctx, {
-          type: 'line',
+          type: 'bar',
           data: {
             labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
             datasets: [{
               label: 'Cases assessed',
               data: [4, 7, 5, 8, 6, 9, 7],
-              borderColor: '#2563EB',
-              borderWidth: 2.2,
-              tension: 0.35,
-              fill: true,
-              backgroundColor: gradient,
-              pointBackgroundColor: '#FFFFFF',
-              pointBorderColor: '#2563EB',
-              pointBorderWidth: 2,
-              pointRadius: 4.5,
-              pointHoverRadius: 7,
-              pointHoverBackgroundColor: '#2563EB',
-              pointHoverBorderColor: '#FFFFFF',
-              pointHoverBorderWidth: 2.5
+              backgroundColor: '#2563EB',
+              borderRadius: 4,
+              barPercentage: 0.6,
+              hoverBackgroundColor: '#1D4ED8'
             }]
           },
           options: {
@@ -3892,6 +3859,20 @@
           modal.style.display = 'none';
           app.switchView('investigations');
           app.showToast('Investigation created and added to the queue.');
+        });
+
+        // Make the sidebar steps clickable
+        document.querySelectorAll('#wf-sidebar .wf-sidebar-step').forEach((stepEl, index) => {
+          stepEl.addEventListener('click', () => {
+            const stepNum = index + 1;
+            app.wfStep = stepNum;
+            app.wfGoTo(stepNum);
+            
+            // Re-render specific step views if needed
+            if (stepNum === 7) app.wfRenderReview();
+            if (stepNum === 8) app.wfRenderDetail();
+            if (stepNum === 12) app.wfRenderFinal();
+          });
         });
       },
 
